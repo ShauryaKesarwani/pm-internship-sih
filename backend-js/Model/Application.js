@@ -10,9 +10,10 @@ const applicationSchema = new mongoose.Schema({
         default: "Submitted"
     },
 
-    answers: [{
+    quiz: [{
         question: { type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true },
-        answer: { type: String, required: true }
+        answer: { type: String, required: true },
+        status: {type: String, required: true}
     }],
     documents: [String], //.pdf, .docs
 
