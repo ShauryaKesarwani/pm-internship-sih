@@ -49,6 +49,7 @@ async function loginCompany(req, res) {
         req.session.companyId = companyInDb._id;
         req.session.companyName = companyInDb.uniqueName;
 
+
         return res.json({
             message : "Login Successful",
             company : {
