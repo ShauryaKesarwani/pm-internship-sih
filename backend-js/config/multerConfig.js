@@ -9,19 +9,29 @@ const storage = multer.diskStorage({
     filename: async (req, file, cb) => {
         try {
             const email = req.oidc.user.email;
-            const user = await User.findOne({ email }).select("username");
+            const user = await User.findOne({ email });
+
             if (!user) {
                 return cb(new Error("User not found"), null);
             }
+
             const username = user.username;
-            const ext = path.extname(file.originalname); // keep .pdf/.doc/.docx
+            const ext = path.extname(file.originalname);
             const filename = `${username}${ext}`;
+
+            user.resumeDoc = {
+                filename,
+                path: `/uploads/docs/${filename}`,
+                mimetype: file.mimetype,
+                size: file.size || 0
+            };
+            await user.save();
 
             cb(null, filename);
         } catch (err) {
             cb(err, null);
         }
-    },
+    }
 });
 
 const fileFilter = (req, file, cb) => {

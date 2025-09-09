@@ -1,4 +1,5 @@
 const {isUserAuthenticated} = require('../middleware/UserAuth');
+const upload = require("../config/multerConfig");
 
 const express = require('express')
 
@@ -8,7 +9,9 @@ const {
     companyProfile,
     getProjects,
     editProfile,
-    addProject
+    addProject,
+    getResume,
+    uploadResume
         } = require('../controller/UserController');
 
 const {
@@ -25,6 +28,8 @@ router.get("/company/profile/:companyId", isUserAuthenticated, companyProfile); 
 router.get("/projects", isUserAuthenticated, getProjects); //
 router.post("/project/add", isUserAuthenticated, addProject); //
 router.post("/profile/edit", isUserAuthenticated, editProfile); //
+router.post("/resume/get", isUserAuthenticated, getResume);
+router.post("/resume/upload", isUserAuthenticated, upload.single("resume"), uploadResume);
 
 
 router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); //
