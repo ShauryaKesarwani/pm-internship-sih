@@ -35,7 +35,15 @@ const userSchema = new mongoose.Schema({
         type : String,
     },
     residence: {
-        type : String,
+        pin : {
+            type : Number,
+        },
+        city : {
+            type : String,
+        },
+        state : {
+            type : String,
+        },
     },
 
     experience: {

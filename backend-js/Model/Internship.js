@@ -24,6 +24,9 @@ const internshipSchema = new mongoose.Schema({
         applicationDeadline: {
             type : Date,
         },
+        startDate : {
+            type : String,
+        },
         location: {
             address: {
                 type : String,
