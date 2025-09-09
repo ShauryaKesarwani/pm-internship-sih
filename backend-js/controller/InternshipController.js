@@ -6,6 +6,7 @@ require('dotenv').config();
 
 async function createInternship(req, res) {
     try {
+        console.log(0)
         const {
             title,
             department,
@@ -19,10 +20,12 @@ async function createInternship(req, res) {
             eligibility
         } = req.body;
 
+        console.log(1)
         if (!title || !responsibilities || !duration) {
             return res.status(400).json({ message: "Title, description, and duration are required" });
         }
 
+        console.log(2)
         const newInternship = await Internship.create({
             internshipDetails: {
                 title,
@@ -39,6 +42,7 @@ async function createInternship(req, res) {
             company: req.session.companyId,
         })
 
+        console.log(3)
         return res.status(201).json({
             message: "Internship created successfully",
             newInternship
@@ -52,15 +56,19 @@ async function createInternship(req, res) {
 
 async function getPostedInternships(req, res) {
     try {
+        console.log(1)
         const internships = await Internship.find({ company: req.session.companyId })
             .populate("applications")
             .populate("assignments");
 
 
+        console.log(2)
         if(!internships) {
             return res.status(401).json({ message: "No Internship Found" });
         }
 
+        console.log(3)
+        console.log(internships)
         return res.status(200).json({
             message: "Fetched posted internships",
             count: internships.length,
@@ -132,7 +140,7 @@ async function getApplicantProfile(req, res) { //sending all the data, configure
             .populate("applicant");
 
         if (!application) {
-            return res.status(404).json({ message: "Application not found" });
+            return res.status(404).json({ message: "Applicant not found" });
         }
 
         const internship = await Internship.findById(application.internship);
