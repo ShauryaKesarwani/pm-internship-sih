@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
+import { fetchJson } from "../lib/api";
 
 export default function ProfilePage() {
   const [currentTab, setCurrentTab] = useState<
@@ -27,7 +28,7 @@ export default function ProfilePage() {
       </svg>",
     field: "Product / Tech",
     contact: "+91 98765 43210",
-    residence: "Pune, India",
+    residence: { pin: 411001, city: "Pune", state: "Maharashtra" },
     title: "Product Intern",
     location: "Pune, India",
     about:
@@ -91,6 +92,34 @@ export default function ProfilePage() {
       setTimeout(() => resumeUploadInputRef.current?.focus(), 50);
     }
   }, [isResumeUploadOpen]);
+
+  // Load profile data from backend
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const profile = await fetchJson<{ success: boolean; user: any }>(
+          "/user/profile"
+        );
+        if (profile?.user) {
+          setUser((prev: any) => ({ ...prev, ...profile.user }));
+        }
+      } catch (e) {
+        console.warn("Failed to load profile:", e);
+      }
+      try {
+        const exp = await fetchJson<{ success: boolean; experience: any }>(
+          "/user/experience"
+        );
+        if (exp?.experience) {
+          setUser((prev: any) => ({
+            ...prev,
+            experience: { internships: exp.experience?.internships || [] },
+          }));
+        }
+      } catch {}
+    };
+    load();
+  }, []);
 
   return (
     <>
@@ -168,7 +197,7 @@ export default function ProfilePage() {
                     <div className="rounded-lg border p-4">
                       <p className="text-sm text-neutral-600"><span className="font-medium text-neutral-900">Field:</span> {user.field || "—"}</p>
                       <p className="text-sm text-neutral-600"><span className="font-medium text-neutral-900">Contact:</span> {user.contact || "—"}</p>
-                      <p className="text-sm text-neutral-600"><span className="font-medium text-neutral-900">Residence:</span> {user.residence || "—"}</p>
+                      <p className="text-sm text-neutral-600"><span className="font-medium text-neutral-900">Residence:</span> {user?.residence ? `${user.residence.city || "—"}, ${user.residence.state || "—"} ${user.residence.pin ? `- ${user.residence.pin}` : ""}` : "—"}</p>
                       <p className="text-sm text-neutral-600"><span className="font-medium text-neutral-900">Auth0 ID:</span> {user.auth0Id || "—"}</p>
                     </div>
                   </div>
@@ -265,12 +294,13 @@ export default function ProfilePage() {
                           email: user.email,
                           field: user.field,
                           contact: user.contact,
-                          residence: user.residence,
+                          residencePin: user?.residence?.pin || "",
+                          residenceCity: user?.residence?.city || "",
+                          residenceState: user?.residence?.state || "",
                           about: user.about,
                           skillsCSV: (user.resume?.skills || []).join(", "),
                           socialLinksCSV: (user.resume?.socialLinks || []).join(", "),
                           certificationsCSV: (user.resume?.certifications || []).join(", "),
-                          docResumeUrl: user.resume?.docResume?.url || "",
                         });
                         setIsUploadOpen(true);
                       }}
@@ -473,11 +503,6 @@ export default function ProfilePage() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   setUploadError(null);
-                  // Validate PDF if provided
-                  if (selectedFile && selectedFile.type !== "application/pdf") {
-                    setUploadError("Only PDF files are allowed.");
-                    return;
-                  }
 
                   // Build updated user object
                   const updated = { ...user };
@@ -487,26 +512,34 @@ export default function ProfilePage() {
                   updated.email = formData.email;
                   updated.field = formData.field;
                   updated.contact = formData.contact;
-                  updated.residence = formData.residence;
+                  updated.residence = {
+                    pin: formData.residencePin ? Number(formData.residencePin) : undefined,
+                    city: formData.residenceCity || undefined,
+                    state: formData.residenceState || undefined,
+                  };
                   updated.about = formData.about;
                   updated.resume = {
                     ...user.resume,
                     skills: (formData.skillsCSV || "").split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0),
                     socialLinks: (formData.socialLinksCSV || "").split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0),
                     certifications: (formData.certificationsCSV || "").split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0),
-                    docResume: {
-                      url: formData.docResumeUrl || user.resume?.docResume?.url || "",
-                    },
                   };
 
-                  // Note: In a real app, you'd upload selectedFile to backend and use returned URL
-                  if (selectedFile) {
-                    // Placeholder: keep same URL but indicate pending update
-                    updated.resume.docResume.url = formData.docResumeUrl || updated.resume.docResume.url;
-                  }
-
-                  setUser(updated);
-                  setIsUploadOpen(false);
+                  // Send update to backend
+                  fetchJson<{ message: string; user: any }>(
+                    "/user/profile/edit",
+                    {
+                      method: "POST",
+                      body: JSON.stringify(updated),
+                    }
+                  )
+                    .then((res) => {
+                      if (res?.user) setUser((prev: any) => ({ ...prev, ...res.user }));
+                      setIsUploadOpen(false);
+                    })
+                    .catch((err) => {
+                      setUploadError(err?.message || "Failed to update profile");
+                    });
                 }}
               >
                 {/* Basic fields */}
@@ -566,14 +599,34 @@ export default function ProfilePage() {
                       placeholder="Phone number"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-900">Residence</label>
-                    <input
-                      value={formData?.residence || ""}
-                      onChange={(e) => setFormData({ ...formData, residence: e.target.value })}
-                      className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                      placeholder="City, Country"
-                    />
+                  <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-900">PIN</label>
+                      <input
+                        value={formData?.residencePin || ""}
+                        onChange={(e) => setFormData({ ...formData, residencePin: e.target.value })}
+                        className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                        placeholder="e.g., 411001"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-900">City</label>
+                      <input
+                        value={formData?.residenceCity || ""}
+                        onChange={(e) => setFormData({ ...formData, residenceCity: e.target.value })}
+                        className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                        placeholder="City"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-900">State</label>
+                      <input
+                        value={formData?.residenceState || ""}
+                        onChange={(e) => setFormData({ ...formData, residenceState: e.target.value })}
+                        className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                        placeholder="State"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -619,38 +672,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Resume upload */}
-                <div className="rounded-lg border p-4 shadow-none">
-                  <h4 className="text-sm font-semibold text-neutral-900">Resume (PDF)</h4>
-                  <label htmlFor="resume" className="mt-2 block text-sm font-medium text-neutral-900">
-                    Upload PDF
-                  </label>
-                  <input
-                    id="resume"
-                    name="resume"
-                    type="file"
-                    accept=".pdf,application/pdf"
-                    className="mt-2 w-full cursor-pointer rounded-md border px-3 py-2 text-sm text-neutral-800 file:mr-4 file:rounded-md file:border-0 file:bg-neutral-100 file:px-3 file:py-2 file:text-neutral-800 hover:file:bg-neutral-200"
-                    onChange={(e) => {
-                      const file = e.target.files && e.target.files[0];
-                      setUploadError(null);
-                      setSelectedFile(file ?? null);
-                    }}
-                  />
-                  <label className="mt-3 block text-sm font-medium text-neutral-900">Resume URL (optional)</label>
-                  <input
-                    value={formData?.docResumeUrl || ""}
-                    onChange={(e) => setFormData({ ...formData, docResumeUrl: e.target.value })}
-                    className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                    placeholder="https://.../resume.pdf"
-                  />
-                  {selectedFile && (
-                    <p className="mt-2 text-sm text-neutral-700">Selected: {selectedFile.name}</p>
-                  )}
-                  {uploadError && (
-                    <p className="mt-2 text-sm text-red-600">{uploadError}</p>
-                  )}
-                </div>
+                {/* Resume upload moved to dedicated modal; removed from Edit Profile */}
 
                 <div className="mt-2 flex justify-end gap-3">
                   <button
