@@ -6,16 +6,16 @@ export default function HeaderWhite() {
   return (
     <header className="w-full flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
       <Link href="/" className="flex items-center space-x-4">
-        <img src="/gov-logo.png" alt="Government Logo" className="w-12 h-12 object-contain" />
-        <h1 className="text-2xl font-bold text-gray-900">PM Internship</h1>
+        <img src="/gov-logo.png" alt="Government Logo" className="w-29 h-12 " />
+        <img src="/pmInternship.png" alt="Pm internship Logo" className="w-29 h-12 " />
       </Link>
       <div className="flex space-x-4">
         <button className="bg-orange-500 text-white px-5 py-2 rounded-md font-semibold hover:bg-orange-600">
-          Registration
+          Login/Sign-up
         </button>
-        <button className="border border-gray-400 text-gray-700 px-5 py-2 rounded-md font-semibold hover:bg-gray-100">
-          Login
-        </button>
+        <Link href="/" className="flex items-center space-x-4">
+        <img src="/2047.png" alt="2047 goal Logo" className="w-12 h-12 " />
+      </Link>
       </div>
     </header>
   );
