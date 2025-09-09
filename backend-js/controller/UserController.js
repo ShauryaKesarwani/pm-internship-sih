@@ -1,7 +1,7 @@
 const User = require('../Model/User');
 
-async function login(req, res) {
+async function profile(req, res) {
     // try {
-    //
+    //     const
     // }
 }
