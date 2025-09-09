@@ -30,13 +30,13 @@ connectMongoDB(mongoURI)
 
 app.use(
     session({
-        secret: "mySuperSecretKey", // change this to a long random string
-        resave: false,              // don’t save session if unmodified
-        saveUninitialized: false,   // don’t create session until something is stored
+        secret: "mySuperSecretKey",
+        resave: false,
+        saveUninitialized: false,
         cookie: {
-            maxAge: 1000 * 60 * 60,   // 5 hour
-            secure: false,            // set true if HTTPS
-            httpOnly: true,           // prevents JS access to cookies
+            maxAge: 1000 * 60 * 60 * 24,
+            secure: false,
+            httpOnly: true,
         },
     })
 );

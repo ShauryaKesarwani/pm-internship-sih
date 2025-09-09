@@ -132,38 +132,37 @@ async function getApplicants(req, res) {
 }
 
 
-async function getApplicantProfile(req, res) { //sending all the data, configure it later
+async function getApplicantProfile(req, res) {
     try {
-        const applicationId = req.params.applicationId;
+        const { applicationId } = req.params;
 
+        // Populate applicant details and optionally internship in one go
         const application = await Application.findById(applicationId)
-            .populate("applicant");
+            .populate("applicant")          // applicant details
+            .populate("internship");        // bring internship ref too
 
         if (!application) {
-            return res.status(404).json({ message: "Applicant not found" });
+            return res.status(404).json({ message: "Application not found" });
         }
 
-        const internship = await Internship.findById(application.internship);
-        if (internship.company.toString() !== req.session.companyId) {
+        // Security check: company must own this internship
+        if (application.internship.company.toString() !== req.session.companyId) {
             return res.status(403).json({ message: "Unauthorized" });
         }
 
         return res.status(200).json({
             message: "Applicant profile fetched",
-            applicant: application.applicant,
-            answers: application.answers,
-            documents: application.documents,
+            applicant: application.applicant,     // populated applicant data
+            answers: application.answers || [],
+            documents: application.documents || [],
             status: application.status,
-
         });
 
     } catch (err) {
-        console.error("error in getApplicantProfile:");
-        console.log(err)
+        console.error("error in getApplicantProfile:", err);
         return res.status(500).json({ message: "Server error" });
     }
 }
-
 
 async function internshipDetails(req, res) {
     try {
