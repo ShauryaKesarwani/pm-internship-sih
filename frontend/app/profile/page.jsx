@@ -4,147 +4,127 @@ import Image from "next/image";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import Button from "../components/buttons";
-
-// Define interfaces (same as your code)
-interface InternshipExperience {
-  title: string;
-  company: string;
-  duration: string;
-  description: string;
-}
-
-interface Residence {
-  pin?: number;
-  city?: string;
-  state?: string;
-}
-
-interface Resume {
-  skills?: string[];
-  projects?: string[];
-  certifications?: string[];
-  socialLinks?: string[];
-  // docResume?: any;
-}
-
-interface UserInternships {
-  applications?: string[];
-  pastInternships?: string[];
-  currentInternship?: string;
-}
-
-interface UserData {
-  _id: string;
-  auth0Id?: string;
-  username: string;
-  name: string;
-  gender?: string;
-  email: string;
-  avatar?: string;
-  field?: string;
-  contact?: string;
-  residence?: Residence;
-  experience?: {
-    internships?: InternshipExperience[];
-  };
-  resume?: Resume;
-  internships?: UserInternships;
-  createdAt: string;
-  updatedAt: string;
-  title?: string; // Added to match UI usage
-  location?: string; // Added to match UI usage
-  about?: string; // Added to match UI usage
-  links?: {
-    linkedin?: string;
-    github?: string;
-    website?: string;
-  }; // Added to match UI usage
-}
+import { fetchInternshipHistory, fetchOpenApplications } from "../lib/api";
 
 export default function ProfilePage() {
-  const [currentTab, setCurrentTab] = useState<
-    "profile" | "history" | "applications"
-  >("profile");
-  const [user, setUser] = useState<UserData | null>(null);
-  const [status, setStatus] = useState<string>("Loading profile...");
+  const [currentTab, setCurrentTab] = useState("profile");
+  const [user, setUser] = useState(null);
+  const [currentInternship, setCurrentInternship] = useState(null);
+  const [appliedInternship, setAppliedInternship] = useState(null);
+  const [status, setStatus] = useState("Loading profile...");
+  const [saveStatus, setSaveStatus] = useState("");
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isResumeUploadOpen, setIsResumeUploadOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<any | null>(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
+  const [formData, setFormData] = useState(null);
+  const [internshipHistory, setInternshipHistory] = useState([]);
+  const [openApplications, setOpenApplications] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [loadingApplications, setLoadingApplications] = useState(false);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setStatus("Loading profile...");
-      try {
-        const response = await fetch("http://localhost:7470/user/profile", {
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            setStatus("Session expired. Redirecting to login...");
-            window.location.href = "/api/auth/login"; // Fixed redirect
-            return;
-          }
-          throw new Error(`Network response was not ok (${response.status})`);
-        }
-
-        const data = await response.json();
-        console.log("Fetched user data:", data);
-
-        // Check if the response has the expected structure
-        if (!data.success || !data.user) {
-          throw new Error(
-            "Invalid response format: Missing success or user data"
-          );
-        }
-
-        // Extract the user object and ensure it matches UserData
-        const userData: UserData = data.user;
-        setUser(userData);
-        console.log("Set user data:", userData);
-        setStatus("Profile loaded successfully!");
-      } catch (error: unknown) {
-        const errorMessage = `Error fetching profile: ${
-          (error as Error).message
-        }`;
-        setStatus(errorMessage);
-        console.error(errorMessage);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  const handleSaveChanges = async () => {
-    if (!user) {
-      setStatus("No user data to save.");
-      return;
-    }
-
-    setStatus("Saving...");
+  async function fetchUserProfile() {
     try {
-      const response = await fetch("http://localhost:7470/profile/edit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
+      const response = await fetch("http://localhost:7470/user/profile", {
+        credentials: "include", // <-- This is the important part
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to save: ${response.statusText}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const result = await response.json();
-      setStatus("Profile saved successfully!");
-    } catch (error: unknown) {
-      setStatus(`Error: ${(error as Error).message}`);
-    }
-  };
+      const data = await response.json();
+      const user = data.user;
+      setUser(user);
 
-  // Show loading or error state if user is null
+      // console.log(user);
+    } catch (error) {
+      console.error("Could not fetch user profile:", error);
+    }
+  }
+
+  async function fetchCurrentInternship() {
+    try {
+      const response = await fetch(
+        "http://localhost:7470/user/internship/ongoing",
+        {
+          credentials: "include", // <-- This is the important part
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const Data = data.currentInternship;
+      setCurrentInternship(Data);
+
+      // console.log(Data);
+    } catch (error) {
+      console.error("Could not fetch user profile:", error);
+    }
+  }
+
+  async function fetchAppliedInternship() {
+    try {
+      const response = await fetch(
+        "http://localhost:7470/user/internship/applied",
+        {
+          credentials: "include", // <-- This is the important part
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const Data = data.applications;
+      setAppliedInternship(Data);
+
+      // console.log(Data);
+    } catch (error) {
+      console.error("Could not fetch user profile:", error);
+    }
+  }
+
+  console.log(currentInternship);
+
+  // fetchAppliedInternship();
+  fetchCurrentInternship();
+  // fetchUserProfile();
+  // Fetch internship data when component mounts or tab changes
+  useEffect(() => {
+    const loadInternshipData = async () => {
+      if (currentTab === "history" && internshipHistory.length === 0) {
+        setLoadingHistory(true);
+        try {
+          const history = await fetchInternshipHistory();
+          setInternshipHistory(history);
+        } catch (error) {
+          console.error("Failed to load internship history:", error);
+        } finally {
+          setLoadingHistory(false);
+        }
+      }
+
+      if (currentTab === "applications" && openApplications.length === 0) {
+        setLoadingApplications(true);
+        try {
+          const applications = await fetchOpenApplications();
+          setOpenApplications(applications);
+        } catch (error) {
+          console.error("Failed to load open applications:", error);
+        } finally {
+          setLoadingApplications(false);
+        }
+      }
+    };
+
+    loadInternshipData();
+  }, [currentTab, internshipHistory.length, openApplications.length]);
+
   if (!user) {
     return (
       <>
@@ -318,10 +298,65 @@ export default function ProfilePage() {
                   <h2 className="text-lg font-semibold text-neutral-900">
                     Internship History
                   </h2>
-                  <p className="mt-2 text-sm text-neutral-700">
-                    Your previous internship applications and outcomes will
-                    appear here.
+                  <p className="mt-2 text-sm text-neutral-700 mb-6">
+                    Your previous internship applications and outcomes.
                   </p>
+
+                  {loadingHistory ? (
+                    <div className="flex justify-center items-center py-8">
+                      <div className="text-sm text-neutral-600">
+                        Loading internship history...
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {internshipHistory.map((internship) => (
+                        <div
+                          key={internship.id}
+                          className="rounded-lg border border-[#FFC7B8] p-4 bg-white"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h3 className="font-semibold text-neutral-900">
+                                {internship.position}
+                              </h3>
+                              <p className="text-sm text-neutral-600">
+                                {internship.company}
+                              </p>
+                            </div>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                internship.status === "Completed"
+                                  ? "bg-green-100 text-green-800"
+                                  : internship.status === "Rejected"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {internship.status}
+                            </span>
+                          </div>
+                          <div className="text-sm text-neutral-600 space-y-1">
+                            <p>
+                              <span className="font-medium">Duration:</span>{" "}
+                              {internship.duration}
+                            </p>
+                            <p>
+                              <span className="font-medium">Period:</span>{" "}
+                              {internship.startDate} - {internship.endDate}
+                            </p>
+                            <p>
+                              <span className="font-medium">Location:</span>{" "}
+                              {internship.location}
+                            </p>
+                            <p className="mt-2 text-neutral-700">
+                              {internship.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -330,9 +365,73 @@ export default function ProfilePage() {
                   <h2 className="text-lg font-semibold text-neutral-900">
                     Open Applications
                   </h2>
-                  <p className="mt-2 text-sm text-neutral-700">
+                  <p className="mt-2 text-sm text-neutral-700 mb-6">
                     Track and manage your active applications here.
                   </p>
+
+                  {loadingApplications ? (
+                    <div className="flex justify-center items-center py-8">
+                      <div className="text-sm text-neutral-600">
+                        Loading open applications...
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {openApplications.map((application) => (
+                        <div
+                          key={application.id}
+                          className="rounded-lg border border-[#FFC7B8] p-4 bg-white"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h3 className="font-semibold text-neutral-900">
+                                {application.position}
+                              </h3>
+                              <p className="text-sm text-neutral-600">
+                                {application.company}
+                              </p>
+                            </div>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                application.status === "Under Review"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : application.status === "Interview Scheduled"
+                                  ? "bg-purple-100 text-purple-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {application.status}
+                            </span>
+                          </div>
+                          <div className="text-sm text-neutral-600 space-y-1">
+                            <p>
+                              <span className="font-medium">Applied:</span>{" "}
+                              {application.appliedDate}
+                            </p>
+                            <p>
+                              <span className="font-medium">Deadline:</span>{" "}
+                              {application.deadline}
+                            </p>
+                            <p>
+                              <span className="font-medium">Location:</span>{" "}
+                              {application.location}
+                            </p>
+                            <p className="mt-2 text-neutral-700">
+                              {application.description}
+                            </p>
+                          </div>
+                          <div className="mt-3 flex gap-2">
+                            <button className="px-3 py-1 text-xs bg-[#FF9982] text-white rounded-md hover:bg-[#FF876A]">
+                              View Details
+                            </button>
+                            <button className="px-3 py-1 text-xs border border-[#FF9982] text-[#FF9982] rounded-md hover:bg-[#FFE1D7]">
+                              Withdraw
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -420,16 +519,16 @@ export default function ProfilePage() {
                     ...user?.resume,
                     skills: (formData.skillsCSV || "")
                       .split(",")
-                      .map((s: string) => s.trim())
-                      .filter((s: string) => s.length > 0),
+                      .map((s) => s.trim())
+                      .filter((s) => s.length > 0),
                     socialLinks: (formData.socialLinksCSV || "")
                       .split(",")
-                      .map((s: string) => s.trim())
-                      .filter((s: string) => s.length > 0),
+                      .map((s) => s.trim())
+                      .filter((s) => s.length > 0),
                     certifications: (formData.certificationsCSV || "")
                       .split(",")
-                      .map((s: string) => s.trim())
-                      .filter((s: string) => s.length > 0),
+                      .map((s) => s.trim())
+                      .filter((s) => s.length > 0),
                   };
 
                   // Send update to backend
@@ -442,7 +541,7 @@ export default function ProfilePage() {
                     .then((res) => res.json())
                     .then((data) => {
                       if (data?.user)
-                        setUser((prev: any) => ({ ...prev, ...data.user }));
+                        setUser((prev) => ({ ...prev, ...data.user }));
                       setIsEditProfileOpen(false);
                     })
                     .catch((err) => {
