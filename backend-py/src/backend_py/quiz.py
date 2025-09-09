@@ -119,6 +119,11 @@ class AdaptiveQuiz:
             if not q:
                 print("Failed to fetch question...")
                 continue
+        for i in range(num_questions):
+            q = self.generateQuestion(current_difficulty)
+            if not q:
+                print("Failed to fetch question...")
+                continue
         
             print(f"\nQ{i+1}: {q['question']}")
             for opt in q["options"]:
