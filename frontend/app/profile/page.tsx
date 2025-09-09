@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
+import HeaderWhite from "../components/header";
 import Button from "../components/buttons";
 
 // Define interfaces (same as your code)
@@ -148,6 +149,7 @@ export default function ProfilePage() {
     return (
       <>
         <Navbar />
+        <HeaderWhite />
         <main className="mx-auto max-w-1xl px-4 py-6">
           <div>{status}</div>
         </main>
@@ -158,18 +160,22 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar />
+      <HeaderWhite />
       <main className="w-full px-4 py-6 min-h-screen bg-[#FFF5F2]">
         <section className="grid grid-cols-1 grid-rows-2 gap-6 md:grid-cols-3">
           <div className="md:col-span-1">
             <div className="rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_48px_#FFD1C4]">
               <div className="flex flex-col items-center text-center">
                 <div className="relative h-28 w-28 overflow-hidden rounded-full ring-2 ring-[#FFE1D7]">
-                    <Image
-                      src={user.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'><rect width='256' height='256' rx='24' fill='%23FFE1D7'/><circle cx='128' cy='96' r='40' fill='%23FFC7B8'/><rect x='48' y='152' width='160' height='56' rx='28' fill='%23FFC7B8'/></svg>"}
-                      alt={user.name || "User Avatar"}
-                      fill
-                      className="object-cover"
-                    />
+                  <Image
+                    src={
+                      user.avatar ||
+                      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'><rect width='256' height='256' rx='24' fill='%23FFE1D7'/><circle cx='128' cy='96' r='40' fill='%23FFC7B8'/><rect x='48' y='152' width='160' height='56' rx='28' fill='%23FFC7B8'/></svg>"
+                    }
+                    alt={user.name || "User Avatar"}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <h1 className="mt-4 text-xl font-semibold text-neutral-900">
                   {user.name}
@@ -216,7 +222,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-           <div className="md:col-span-2 md:row-span-2">
+          <div className="md:col-span-2 md:row-span-2">
             <div className="rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_48px_#FFD1C4]">
               {currentTab === "profile" && (
                 <div>
@@ -280,8 +286,12 @@ export default function ProfilePage() {
                           residenceState: user?.residence?.state || "",
                           about: user?.about || "",
                           skillsCSV: (user?.resume?.skills || []).join(", "),
-                          socialLinksCSV: (user?.resume?.socialLinks || []).join(", "),
-                          certificationsCSV: (user?.resume?.certifications || []).join(", "),
+                          socialLinksCSV: (
+                            user?.resume?.socialLinks || []
+                          ).join(", "),
+                          certificationsCSV: (
+                            user?.resume?.certifications || []
+                          ).join(", "),
                         });
                         setIsEditProfileOpen(true);
                       }}
@@ -377,15 +387,19 @@ export default function ProfilePage() {
               onClick={() => setIsEditProfileOpen(false)}
             />
             <div className="relative z-10 w-full max-w-2xl rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_72px_#FFD1C4] max-h-[85vh] overflow-y-auto">
-              <h3 className="text-lg font-semibold text-neutral-900">Edit Profile</h3>
-              <p className="mt-1 text-sm text-neutral-600">Update your profile details.</p>
+              <h3 className="text-lg font-semibold text-neutral-900">
+                Edit Profile
+              </h3>
+              <p className="mt-1 text-sm text-neutral-600">
+                Update your profile details.
+              </p>
 
               <form
                 className="mt-4 space-y-5"
                 onSubmit={(e) => {
                   e.preventDefault();
                   setUploadError(null);
-                  
+
                   // Build updated user object
                   const updated = { ...user };
                   updated.username = formData.username;
@@ -395,16 +409,27 @@ export default function ProfilePage() {
                   updated.field = formData.field;
                   updated.contact = formData.contact;
                   updated.residence = {
-                    pin: formData.residencePin ? Number(formData.residencePin) : undefined,
+                    pin: formData.residencePin
+                      ? Number(formData.residencePin)
+                      : undefined,
                     city: formData.residenceCity || undefined,
                     state: formData.residenceState || undefined,
                   };
                   updated.about = formData.about;
                   updated.resume = {
                     ...user?.resume,
-                    skills: (formData.skillsCSV || "").split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0),
-                    socialLinks: (formData.socialLinksCSV || "").split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0),
-                    certifications: (formData.certificationsCSV || "").split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0),
+                    skills: (formData.skillsCSV || "")
+                      .split(",")
+                      .map((s: string) => s.trim())
+                      .filter((s: string) => s.length > 0),
+                    socialLinks: (formData.socialLinksCSV || "")
+                      .split(",")
+                      .map((s: string) => s.trim())
+                      .filter((s: string) => s.length > 0),
+                    certifications: (formData.certificationsCSV || "")
+                      .split(",")
+                      .map((s: string) => s.trim())
+                      .filter((s: string) => s.length > 0),
                   };
 
                   // Send update to backend
@@ -416,67 +441,94 @@ export default function ProfilePage() {
                   })
                     .then((res) => res.json())
                     .then((data) => {
-                      if (data?.user) setUser((prev: any) => ({ ...prev, ...data.user }));
+                      if (data?.user)
+                        setUser((prev: any) => ({ ...prev, ...data.user }));
                       setIsEditProfileOpen(false);
                     })
                     .catch((err) => {
-                      setUploadError(err?.message || "Failed to update profile");
+                      setUploadError(
+                        err?.message || "Failed to update profile"
+                      );
                     });
                 }}
               >
                 {/* Basic fields */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Username</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Username
+                    </label>
                     <input
                       value={formData?.username || ""}
-                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, username: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="username"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Name</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Name
+                    </label>
                     <input
                       value={formData?.name || ""}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="Full name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Gender</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Gender
+                    </label>
                     <input
                       value={formData?.gender || ""}
-                      onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, gender: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="Gender"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Email</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Email
+                    </label>
                     <input
                       type="email"
                       value={formData?.email || ""}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="email@example.com"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Field</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Field
+                    </label>
                     <input
                       value={formData?.field || ""}
-                      onChange={(e) => setFormData({ ...formData, field: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, field: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="e.g., Product / Tech"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Contact</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Contact
+                    </label>
                     <input
                       value={formData?.contact || ""}
-                      onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, contact: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="Phone number"
                     />
@@ -485,28 +537,49 @@ export default function ProfilePage() {
 
                 <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">PIN</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      PIN
+                    </label>
                     <input
                       value={formData?.residencePin || ""}
-                      onChange={(e) => setFormData({ ...formData, residencePin: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          residencePin: e.target.value,
+                        })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="e.g., 411001"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">City</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      City
+                    </label>
                     <input
                       value={formData?.residenceCity || ""}
-                      onChange={(e) => setFormData({ ...formData, residenceCity: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          residenceCity: e.target.value,
+                        })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="City"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">State</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      State
+                    </label>
                     <input
                       value={formData?.residenceState || ""}
-                      onChange={(e) => setFormData({ ...formData, residenceState: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          residenceState: e.target.value,
+                        })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="State"
                     />
@@ -514,10 +587,14 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900">About</label>
+                  <label className="block text-sm font-medium text-neutral-900">
+                    About
+                  </label>
                   <textarea
                     value={formData?.about || ""}
-                    onChange={(e) => setFormData({ ...formData, about: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, about: e.target.value })
+                    }
                     className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                     rows={4}
                     placeholder="Tell us about yourself"
@@ -527,28 +604,46 @@ export default function ProfilePage() {
                 {/* CSV fields */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Skills (comma-separated)</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Skills (comma-separated)
+                    </label>
                     <input
                       value={formData?.skillsCSV || ""}
-                      onChange={(e) => setFormData({ ...formData, skillsCSV: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, skillsCSV: e.target.value })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="SQL, A/B Testing, Wireframing"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900">Certifications (comma-separated)</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Certifications (comma-separated)
+                    </label>
                     <input
                       value={formData?.certificationsCSV || ""}
-                      onChange={(e) => setFormData({ ...formData, certificationsCSV: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          certificationsCSV: e.target.value,
+                        })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="Cert 1, Cert 2"
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-neutral-900">Social Links (comma-separated)</label>
+                    <label className="block text-sm font-medium text-neutral-900">
+                      Social Links (comma-separated)
+                    </label>
                     <input
                       value={formData?.socialLinksCSV || ""}
-                      onChange={(e) => setFormData({ ...formData, socialLinksCSV: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          socialLinksCSV: e.target.value,
+                        })
+                      }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
                       placeholder="https://linkedin..., https://github..."
                     />
@@ -587,8 +682,12 @@ export default function ProfilePage() {
               onClick={() => setIsResumeUploadOpen(false)}
             />
             <div className="relative z-10 w-full max-w-md rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_72px_#FFD1C4]">
-              <h3 className="text-lg font-semibold text-neutral-900">Upload Resume (PDF)</h3>
-              <p className="mt-1 text-sm text-neutral-600">Choose a PDF to upload. Only .pdf files are allowed.</p>
+              <h3 className="text-lg font-semibold text-neutral-900">
+                Upload Resume (PDF)
+              </h3>
+              <p className="mt-1 text-sm text-neutral-600">
+                Choose a PDF to upload. Only .pdf files are allowed.
+              </p>
 
               <div className="mt-4">
                 <input
@@ -602,7 +701,9 @@ export default function ProfilePage() {
                   }}
                 />
                 {selectedFile && (
-                  <p className="mt-2 text-sm text-neutral-700">Selected: {selectedFile.name}</p>
+                  <p className="mt-2 text-sm text-neutral-700">
+                    Selected: {selectedFile.name}
+                  </p>
                 )}
                 {uploadError && (
                   <p className="mt-2 text-sm text-red-600">{uploadError}</p>

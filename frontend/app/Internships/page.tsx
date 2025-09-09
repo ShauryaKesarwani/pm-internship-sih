@@ -3,16 +3,48 @@
 import React, { useState, useEffect } from "react";
 import InternshipCard from "../components/InternshipCard";
 import FilterSidebar from "../components/FilterSidebar";
+import Navbar from "../components/Navbar";
+import HeaderWhite from "../components/header";
 
-interface Internship {
-  id: number;
-  productName: string;
-  companyName: string;
-  stipend: string;
-  imageUrl: string;
-  mode: string;
-  duration: string;
-  deadline: string;
+interface InternshipLocation {
+  address?: string;
+  pinCode?: number;
+  city?: string;
+}
+
+interface InternshipDetails {
+  title: string;
+  department?: string;
+  responsibilities?: string[];
+  skillsRequired?: string[];
+  openings?: number;
+  duration?: string;
+  applicationDeadline?: string; // Dates are typically handled as ISO strings in JSON
+  startDate?: string;
+  location?: InternshipLocation;
+  stipend?: string;
+}
+
+interface Eligibility {
+  optional?: boolean;
+  highestLevelOfEducation?: string;
+  preferredDegrees?: string[];
+  graduationYearRange?: number[];
+}
+
+interface InternshipData {
+  _id: string; // MongoDB documents have a `_id` field
+  internshipDetails: InternshipDetails;
+  eligibility?: Eligibility;
+
+  assignments?: string[];
+  applications?: string[];
+  company: string; // This is a required reference to a Company document
+
+  status?: boolean;
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 const Internship: React.FC = () => {
@@ -23,7 +55,7 @@ const Internship: React.FC = () => {
     const fetchInternships = async () => {
       try {
         const response = await fetch("/api/internships"); // replace with your backend URL
-        const data = await response.json();
+        const internshipData: InternshipData = data.Internship;
         setInternships(data);
       } catch (error) {
         console.error("Error fetching internships:", error);
@@ -37,12 +69,12 @@ const Internship: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAEFE9] m-0 p-0">
-
+      <Navbar />
+      <HeaderWhite />
       <main className="flex flex-col md:flex-row mt-4 px-4 md:px-8">
         <FilterSidebar />
 
         <div className="flex flex-col items-center mb-10 w-[100%] p-10">
-
           <GuideBox />
 
           <section className="w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -75,7 +107,6 @@ const Internship: React.FC = () => {
               duration="4 Months"
               deadline="5th Nov, 2025"
             />
-
           </section>
         </div>
       </main>
@@ -86,7 +117,6 @@ const Internship: React.FC = () => {
 const GuideBox = () => {
   return (
     <div className="w-full max-w-full mx-auto px-3 sm:px-6 py-2 sm:py-3 bg-white  rounded-xl shadow-sm text-gray-700 sm:text-sm md:text-base mb-8">
-
       <h2 className="text-sm sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2">
         How this page works
       </h2>
@@ -105,7 +135,8 @@ const GuideBox = () => {
       </p>
       <p>
         You can also explore internships from various{" "}
-        <span className="font-semibold">companies and domains</span> listed below.
+        <span className="font-semibold">companies and domains</span> listed
+        below.
       </p>
     </div>
   );
