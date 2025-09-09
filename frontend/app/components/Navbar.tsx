@@ -75,7 +75,7 @@ export default function Header() {
             alt="indian flag"
             loading="lazy"
           />
-          <p>Governemnt of India</p>
+          <p>भारत सरकार / Government Of India</p>
         </div>
         <div className="flex gap-4 justify-end align-items-center">
           <span className="language01">
@@ -89,7 +89,9 @@ export default function Header() {
               </select>
             </form>
           </span>
-          <div>Screen Reader</div>
+          <div>
+            <button>Screen Reader</button>
+          </div>
           <p>/</p>
           <div className="flex gap-4 justify-end align-items-center">
             <button
@@ -112,12 +114,38 @@ export default function Header() {
           </div>
         </div>
       </div>
+      <div className="flex justify-between align-items-center gap-2 py-1">
+        <div className="flex justify-start align-items-center gap-2">
+          <img
+            src="https://www.ux4g.gov.in/assets/img/logos-page/Emblem_of_India%202.png"
+            className="img-fluid"
+            alt="indian flag"
+            loading="lazy"
+          />
+          <img
+            src="https://doc.ux4g.gov.in/assets/img/icon/in-flag.png"
+            className="img-fluid"
+            alt="indian flag"
+            loading="lazy"
+          />
+          <img
+            src="https://doc.ux4g.gov.in/assets/img/icon/in-flag.png"
+            className="img-fluid"
+            alt="indian flag"
+            loading="lazy"
+          />
+        </div>
+        <div className="flex justify-end align-items-center gap-4">
+          <button>Youth Registraiton</button>
+          <button>Login</button>
+        </div>
+      </div>
       {/* <div className="header-top px-2">
         <div className="row">
-          <div className="col-xl-6 col-lg-3 d-flex col-sm-6 col-6 align-items-left justify-around">
-            <span className="goi">
-              <a
-                href="https://www.india.gov.in/"
+        <div className="col-xl-6 col-lg-3 d-flex col-sm-6 col-6 align-items-left justify-around">
+        <span className="goi">
+        <a
+        href="https://www.india.gov.in/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="goi flex gap-2 align-items-center01"
