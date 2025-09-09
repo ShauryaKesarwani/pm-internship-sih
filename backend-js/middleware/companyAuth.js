@@ -9,4 +9,4 @@ function requireCompanyLogin(req, res, next) {
     }
 }
 
-module.exports = requireCompanyLogin;
+module.exports = {requireCompanyLogin};

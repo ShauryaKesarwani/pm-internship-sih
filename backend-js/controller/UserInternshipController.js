@@ -31,20 +31,22 @@ async function appliedInternships(req, res) {
     try {
         const userId = req.user._id;
         const user = await User.findById(userId).populate("internships.applications");
-        if(!user) {
-            return res.status(404).json({message : "user not Found"})
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
         }
+
         const appliedInternships = user.internships.applications;
-        if(!appliedInternships) {
-            return res.status(404).json({message : "No Applications Found"})
+        if (!appliedInternships || appliedInternships.length === 0) {
+            return res.status(404).json({ message: "No Applications Found" });
         }
-        return res.body(200).json({
-            applications : appliedInternships,
-        })
+
+        return res.status(200).json({
+            applications: appliedInternships,
+        });
     } catch (err) {
-        console.error(" user applied internship error:");
-        console.log(err)
-        return res.status(500).json({error: "Server Error"});
+        console.error("user applied internship error:", err);
+        return res.status(500).json({ error: "Server Error" });
     }
 }
 
@@ -60,10 +62,8 @@ async function internshipDetails(req, res) {
         if(!internship) {
             return res.status(404).json({message : "No Internship Found for this ID"})
         }
-        const company = Company.findById(internship.company._id);
         return res.status(200).json({
             internship : internship,
-
         })
     } catch (err) {
         console.error(" user complete internship details error");
