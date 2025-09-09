@@ -1,39 +1,40 @@
 import React from "react";
+import Navbar from "../components/Navbar";
+import HeaderWhite from "../components/header";
+import ClientLogos from "../components/ClientLogos";
 
 const HomePage = () => {
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-[#FAEFE9]">
 
-      {/* Header */}
-      <header className="w-full flex items-center justify-between px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center space-x-4">
-          <img src="/gov-logo.png" alt="Government Logo" className="w-12 h-12 object-contain" />
-          <h1 className="text-2xl font-bold text-gray-900">PM Internship</h1>
+      <Navbar />
+      <HeaderWhite />
+      <section className="w-365 bg-purple-600 py-4 ml-4 mr-4 mt-2 rounded-lg">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <ul className="flex space-x-8 text-white font-medium">
+            <li className="relative group cursor-pointer">
+              <span className="px-3 py-2">Home</span>
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            </li>
+            <li className="relative group cursor-pointer">
+              <span className="px-3 py-2">About</span>
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            </li>
+            <li className="relative group cursor-pointer">
+              <span className="px-3 py-2">Services</span>
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            </li>
+            <li className="relative group cursor-pointer">
+              <span className="px-3 py-2">Contact</span>
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            </li>
+          </ul>
         </div>
-        <div className="flex space-x-4">
-          <button className="bg-orange-500 text-white px-5 py-2 rounded-md font-semibold hover:bg-orange-600">
-            Registration
-          </button>
-          <button className="border border-gray-400 text-gray-700 px-5 py-2 rounded-md font-semibold hover:bg-gray-100">
-            Login
-          </button>
-        </div>
-      </header>
-
-      {/* Navigation Bar */}
-      <nav className="w-full bg-blue-900 text-white px-6 py-3 flex space-x-8 text-sm font-medium">
-        <a href="#" className="hover:underline">Home</a>
-        <a href="#" className="hover:underline">Guidelines/Documentation</a>
-        <a href="#" className="hover:underline">Gallery</a>
-        <a href="#" className="hover:underline">Eligibility</a>
-        <a href="#" className="hover:underline">Mobile App</a>
-        <a href="#" className="hover:underline">Support</a>
-        <a href="#" className="hover:underline">Compendium</a>
-      </nav>
+      </section>
 
       {/* Hero Section */}
-      <section className="w-full bg-gray-50 py-16 px-6 flex flex-col md:flex-row items-center justify-between">
-        <div className="md:w-1/2 space-y-6">
+      <section className="w-600px bg-white py-6 px-6 flex flex-col md:flex-row items-center justify-between ml-10 mr-10 mt-10 mb-10 rounded-lg">
+        <div className="md:w-1/2 space-y-6 pl-39">
           <h2 className="text-4xl font-bold text-gray-900">Stay Protected</h2>
           <p className="text-gray-700 text-lg max-w-md">
             Ensure your safety and security with our comprehensive protection plans tailored for you.
@@ -44,7 +45,7 @@ const HomePage = () => {
         </div>
         <div className="md:w-1/2 flex justify-center mt-10 md:mt-0">
           <img
-            src="/pm-modi.png"
+            src="/pmModi.jpg"
             alt="PM Modi"
             className="object-contain w-[300px] h-[400px]"
           />
@@ -52,18 +53,8 @@ const HomePage = () => {
       </section>
 
       {/* Partners Section */}
-      <section className="w-full py-10 px-6">
-        <h3 className="text-center text-lg font-semibold text-gray-800 mb-6">
-          Our Partners
-        </h3>
-        <div className="flex flex-wrap items-center justify-center gap-10">
-          <img src="/logos/atul.png" alt="Atul" className="w-[100px] h-[50px]" />
-          <img src="/logos/torent.png" alt="Torent" className="w-[100px] h-[50px]" />
-          <img src="/logos/ae.png" alt="AE" className="w-[100px] h-[50px]" />
-          <img src="/logos/mr.png" alt="MR" className="w-[100px] h-[50px]" />
-          <img src="/logos/bayer.png" alt="Bayer" className="w-[100px] h-[50px]" />
-          <img src="/logos/honeywell.png" alt="Honeywell" className="w-[100px] h-[50px]" />
-        </div>
+      <section className="w-full px-6">
+        <ClientLogos />
       </section>
     </div>
   );
