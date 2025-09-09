@@ -140,7 +140,7 @@ async def end_quiz(application_id:str):
     final_data = {"quiz": formatted_quiz}
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"http://localhost:5000/applications/{application_id}/quiz",
+            f"http://localhost:7470/applications/{application_id}/quiz",
             json=final_data
         )
 
