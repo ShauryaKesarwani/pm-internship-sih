@@ -99,12 +99,15 @@ const Quiz: React.FC = () => {
   return (
     <div className="flex flex-col w-full h-[100vh] justify-center items-center p-10 bg-[#FAEFE9] select-none">
 
-      <div className="absolute text-[8rem] font-semibold text-[#FF8F76] z-0 top-15">
+      <div className="absolute text-[8rem] font-semibold text-[#FF8F76] z-0 top-15 sm:[top-0]">
         {currentIndex + 1}/{questions.length}
       </div>
 
       {/* Question */}
-      <div className="bg-[#FCFCFC] w-3/5 rounded-3xl h-[70%] p-5 pl-10 pr-10 mt-22 shadow-[0px_7px_29px_0px_#FF8F76] flex flex-col items-center z-1">
+      <div className="bg-[#FCFCFC] w-full sm:w-4/5 md:w-3/5 max-w-[800px] rounded-3xl h-auto md:h-[70%] 
+                p-5 sm:p-8 md:p-10 mt-10 sm:mt-16 md:mt-24 
+                shadow-[0px_7px_29px_0px_#FF8F76] flex flex-col items-center z-[1]">
+
 
         <div className="flex w-full justify-between">
           <div className="self-center text-[32px] top-0 font-bold text-[#FF8F76] ">{timeLeft}</div>
