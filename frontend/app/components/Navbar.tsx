@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
+import Image from "next/image";
 
 export default function Header() {
   useEffect(() => {
@@ -116,12 +117,15 @@ export default function Header() {
       </div>
       <div className="flex justify-between align-items-center gap-2 py-1">
         <div className="flex justify-start align-items-center gap-2">
-          <img
+          <Image
             src="https://www.ux4g.gov.in/assets/img/logos-page/Emblem_of_India%202.png"
             className="img-fluid"
             alt="indian flag"
-            loading="lazy"
+            width={24}
+            height={16}
+            background="white"
           />
+
           <img
             src="https://doc.ux4g.gov.in/assets/img/icon/in-flag.png"
             className="img-fluid"
