@@ -1,12 +1,35 @@
-const express = require('express')
-const {requireCompanyLogin} = require('../middleware/companyAuth')
-const { loginCompany,
-    getCompanyProfile, updateCompanyProfile } = require('../controller/CompanyController');
+const express = require('express');
+const { requireCompanyLogin } = require('../middleware/companyAuth');
+const {
+    loginCompany,
+    getCompanyProfile,
+    updateCompanyProfile
+} = require('../controller/CompanyController');
+
+const {
+    createInternship,
+    getPostedInternships,
+    closeApplications,
+    getApplicants,
+    getApplicantProfile,
+    updateInternshipDetails,
+    deleteInternship,
+    internshipDetails
+} = require('../controller/InternshipController');
 
 const router = express.Router();
 
-router.post("/login", requireCompanyLogin, loginCompany);
+router.post("/login", loginCompany); // login should not require login first
 router.get("/profile", requireCompanyLogin, getCompanyProfile);
-router.get("/updateProfile", requireCompanyLogin, updateCompanyProfile);
+router.patch("/profile", requireCompanyLogin, updateCompanyProfile);
+
+router.post("/internship", requireCompanyLogin, createInternship);
+router.get("/internships", requireCompanyLogin, getPostedInternships);
+router.patch("/internship/:internshipId/close", requireCompanyLogin, closeApplications);
+router.get("/internship/:internshipId/applicants", requireCompanyLogin, getApplicants);
+router.get("/internship/applicant/:applicationId", requireCompanyLogin, getApplicantProfile);
+router.patch("/internship/:internshipId", requireCompanyLogin, updateInternshipDetails);
+router.delete("/internship/:internshipId", requireCompanyLogin, deleteInternship);
+router.get("/internship/:internshipId", requireCompanyLogin, internshipDetails);
 
 module.exports = router;
