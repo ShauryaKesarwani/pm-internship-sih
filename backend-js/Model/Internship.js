@@ -57,7 +57,18 @@ const internshipSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Application",
     }],
+    exSkills : {
+        pastHired : {
 
+        },
+        currHired: {
+
+        },
+    },
+    currentInterns : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "User"
+    }],
     status: {
         type: Boolean,
         default: true

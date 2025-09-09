@@ -21,6 +21,14 @@ const HomePage = () => {
               <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             </li>
             <li className="relative group cursor-pointer">
+              <span className="px-3 py-2">Guidelines/documentation</span>
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            </li>
+            <li className="relative group cursor-pointer">
+              <span className="px-3 py-2">eligiblity</span>
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            </li>
+            <li className="relative group cursor-pointer">
               <span className="px-3 py-2">Services</span>
               <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             </li>

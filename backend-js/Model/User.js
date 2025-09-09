@@ -73,6 +73,13 @@ const userSchema = new mongoose.Schema({
         pastInternships: [{ type: mongoose.Schema.Types.ObjectId, ref: "Internship" }],
         currentInternship: { type: mongoose.Schema.Types.ObjectId, ref: "Internship" },
     },
+    resumeDoc: {
+        filename: { type: String },
+        path: { type: String },
+        mimetype: { type: String },
+        size: { type: Number },
+        uploadedAt: { type: Date, default: Date.now }
+    }
 
 }, { timestamps: true });
 

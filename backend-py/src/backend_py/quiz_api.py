@@ -45,8 +45,12 @@ def get_question(data: AnswerRequest):
 
     quiz_history.append({
         "question": q["question"],
+        "options": q["options"],
+        "correct_answer": q["answer"],   # ✅ store correct answer
+        "difficulty": q["difficulty"],
+        "weight": q["weight"],
         "user_answer": None,
-        "correct_answer": None,
+        "answered": False
     })
 
     return {
@@ -56,6 +60,7 @@ def get_question(data: AnswerRequest):
         "weight": q["weight"],
         "timer": timer,
     }
+
 
 @app.get("/start-quiz")
 def start_quiz(difficulty: float = 0.5):
@@ -86,24 +91,30 @@ def start_quiz(difficulty: float = 0.5):
 @app.post("/submit-answer")
 def submit_answer(data: AnswerRequest):
     """Submit an answer for the last question"""
-    correct = data.answer == data.correct
-    new_score = data.score + data.difficulty
+    if not quiz_history:
+        return {"error": "No question has been asked yet"}
+
+    last_q = quiz_history[-1]
+    correct = data.answer == last_q["correct_answer"]
+
+    # update score
+    new_score = data.score + last_q.get("weight", 1) if correct else data.score
 
     # update difficulty adaptively
+    old_difficulty = last_q.get("difficulty", 0.5)
     if correct:
-        new_difficulty = data.difficulty + (1 - data.difficulty) / 5
+        new_difficulty = old_difficulty + (1 - old_difficulty) / 5
     else:
-        new_difficulty = data.difficulty - (data.difficulty - 0) / 5
+        new_difficulty = old_difficulty - (old_difficulty - 0) / 5
 
     # update the last question in history
-    if quiz_history:
-        quiz_history[-1].update({
-            "user_answer": data.answer,
-            "correct_answer": data.correct,
-            "was_correct": correct,
-            "score_after": new_score,
-            "answered": True
-        })
+    last_q.update({
+        "user_answer": data.answer,
+        "was_correct": correct,
+        "score_after": new_score,
+        "answered": True,
+        "difficulty": new_difficulty,
+    })
 
     return {
         "correct": correct,
@@ -129,7 +140,7 @@ async def end_quiz(application_id:str):
     final_data = {"quiz": formatted_quiz}
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"http://localhost:5000/applications/{application_id}/quiz",
+            f"http://localhost:7470/applications/{application_id}/quiz",
             json=final_data
         )
 

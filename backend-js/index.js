@@ -17,6 +17,7 @@ const app = express();
 
 app.use(
   cors({
+    origin: 3000,
     credentials: true,
   })
 );
@@ -25,30 +26,22 @@ connectMongoDB(mongoURI)
   .then(() => console.log("MongoDB Connected!!"))
   .catch((err) => console.log("Error, Can't connect to DB", err));
 
-
-
-
 app.use(
-    session({
-        secret: "mySuperSecretKey",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            maxAge: 1000 * 60 * 60 * 24,
-            secure: false,
-            httpOnly: true,
-        },
-    })
+  session({
+    secret: "mySuperSecretKey",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      secure: false,
+      httpOnly: true,
+    },
+  })
 );
-
 
 app.use(jsonParser());
 app.use(configFunc());
 app.use(syncUser);
-
-
-
-
 
 app.use("/company", CompanyRouter);
 app.use("/user", UserRouter);
