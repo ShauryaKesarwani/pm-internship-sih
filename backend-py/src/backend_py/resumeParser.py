@@ -32,6 +32,7 @@ class ResumeParser:
             response_schema = genai.types.Schema(
         type=genai.types.Type.OBJECT,
         properties={
+            "phoneNumber": types.Schema(type=types.Type.STRING),
             "experience": genai.types.Schema(
                 type=genai.types.Type.OBJECT,
                 properties={

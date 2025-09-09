@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from backend_py.quiz import AdaptiveQuiz  # absolute import
 from pydantic import BaseModel
+from typing import List, Dict, Any
+from backend_py.quiz import AdaptiveQuiz  # absolute import
+import httpx
 
 quiz: AdaptiveQuiz | None = None  # global handle
+quiz_history: List[Dict[str, Any]] = []
 
 
 @asynccontextmanager
@@ -26,10 +29,12 @@ class AnswerRequest(BaseModel):
     answer: str
     correct: str
     difficulty: float
+    score: float
 
 
-@app.get("/next-question")
-def get_question(difficulty: float = 0.5):
+@app.post("/next-question")
+def get_question(data: AnswerRequest):
+    difficulty = data.difficulty
     q = quiz.generateQuestion(difficulty)
     if not q:
         return {"error": "Failed to generate question"}
@@ -37,6 +42,12 @@ def get_question(difficulty: float = 0.5):
     # set timer by difficulty
     timers = {"easy": 10, "medium": 15, "hard": 20}
     timer = timers.get(q["difficulty"].lower(), 15)
+
+    quiz_history.append({
+        "question": q["question"],
+        "user_answer": None,
+        "correct_answer": None,
+    })
 
     return {
         "question": q["question"],
@@ -46,11 +57,83 @@ def get_question(difficulty: float = 0.5):
         "timer": timer,
     }
 
+@app.get("/start-quiz")
+def start_quiz(difficulty: float = 0.5):
+    """Start quiz and return the first question"""
+    q = quiz.generateQuestion(difficulty)
+    if not q:
+        return {"error": "Failed to generate first question"}
+
+    # set timer by difficulty
+    timers = {"easy": 10, "medium": 15, "hard": 20}
+    timer = timers.get(q["difficulty"].lower(), 15)
+
+    quiz_history.clear()  # reset old history
+    quiz_history.append({
+        "question": q["question"],
+        "user_answer": None,
+        "correct_answer": None,
+    })
+
+    return {
+        "question": q["question"],
+        "options": q["options"],
+        "difficulty": q["difficulty"],
+        "weight": q["weight"],
+        "timer": timer,
+    }
 
 @app.post("/submit-answer")
 def submit_answer(data: AnswerRequest):
+    """Submit an answer for the last question"""
     correct = data.answer == data.correct
-    return {"correct": correct}
+    new_score = data.score + data.difficulty
+
+    # update difficulty adaptively
+    if correct:
+        new_difficulty = data.difficulty + (1 - data.difficulty) / 5
+    else:
+        new_difficulty = data.difficulty - (data.difficulty - 0) / 5
+
+    # update the last question in history
+    if quiz_history:
+        quiz_history[-1].update({
+            "user_answer": data.answer,
+            "correct_answer": data.correct,
+            "was_correct": correct,
+            "score_after": new_score,
+            "answered": True
+        })
+
+    return {
+        "correct": correct,
+        "new_difficulty": new_difficulty,
+        "score": new_score
+    }
+
+@app.get("/quiz-history")
+def get_history():
+    """View all answered questions so far"""
+    return {"history": quiz_history}
+
+
+@app.post("/end-quiz/{application_id}")
+async def end_quiz(application_id:str):
+    formatted_quiz=[]
+    for q in quiz_history:
+        formatted_quiz.append({
+            "question": q["question"],  # if you store _id from DB, put that here instead
+            "answer": q["user_answer"],
+            "status": "Correct" if q.get("was_correct") else "Incorrect"
+        })
+    final_data = {"quiz": formatted_quiz}
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"http://localhost:5000/applications/{application_id}/quiz",
+            json=final_data
+        )
+
+    return {"message": "Quiz ended", "data": response.json()}
 
 
 # import json

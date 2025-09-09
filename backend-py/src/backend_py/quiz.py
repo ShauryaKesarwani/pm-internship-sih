@@ -92,7 +92,7 @@ class AdaptiveQuiz:
 
         response = self.client.models.generate_content(
             model="gemini-2.5-flash-lite",
-            contents=[prompt, json.dumps(self.samples[:5], indent=2)],
+            contents=[prompt, json.dumps(self.samples[:10], indent=2)],
             config=config,
         )
 
