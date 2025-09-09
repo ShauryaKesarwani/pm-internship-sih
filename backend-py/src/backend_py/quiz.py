@@ -41,10 +41,11 @@ class AdaptiveQuiz:
                     },
                 ),
             ),
+            thinking_config=types.ThinkingConfig(thinking_budget=0)
         )
 
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.5-flash-lite",
             contents=[prompt],
             config=config,
         )
@@ -59,7 +60,7 @@ class AdaptiveQuiz:
         based on these topics 
         Difficulty must be: {difficulty}.
         Rules:
-        -Provide exactly 4 options (A-D)
+        -Provide exactly 4 options
         -One correct answer
         -Include the difficulty again
         -Assign a weight between:
@@ -86,15 +87,29 @@ class AdaptiveQuiz:
                     "weight": types.Schema(type=types.Type.NUMBER),
                 },
             ),
+            thinking_config=types.ThinkingConfig(thinking_budget=0)
         )
 
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.5-flash-lite",
             contents=[prompt, json.dumps(self.samples[:5], indent=2)],
             config=config,
         )
 
-        return json.loads(response.text)
+        text = response.text.strip()
+        if not text:
+            print("Warning: API returned empty response")
+            return None
+
+        try:
+            parsed = json.loads(text)
+            # if API returns a list with 1 item, extract it
+            if isinstance(parsed, list) and len(parsed) == 1:
+                return parsed[0]
+            return parsed
+        except json.JSONDecodeError as e:
+            print(f"Parsing error: {e}\nRaw: {text}")
+            return None
         
     def runQuiz(self, num_questions:int):
         current_difficulty = 0.5
@@ -104,21 +119,28 @@ class AdaptiveQuiz:
             if not q:
                 print("Failed to fetch question...")
                 continue
+        for i in range(num_questions):
+            q = self.generateQuestion(current_difficulty)
+            if not q:
+                print("Failed to fetch question...")
+                continue
         
             print(f"\nQ{i+1}: {q['question']}")
             for opt in q["options"]:
                 print(opt)
+            print(q["answer"])
 
-            user_ans = input("Your answer (A-D): ").strip().upper()
-            if user_ans == q["answer"].upper():
-                print("Correct!")
+            user_ans = int(input("Your answer (1-4): "))
+            if q["answer"] == q["options"][user_ans-1]:
+                print("Correct! Difficulty ", current_difficulty)
                 self.score += q["weight"]
 
-                current_difficulty = current_difficulty + (0.9 - current_difficulty)/2
+                current_difficulty = current_difficulty + (1 - current_difficulty)/5
             else:
-                print("Wrong!")
-                current_difficulty= current_difficulty - (current_difficulty-0.1)/2
+                print("Wrong! Difficulty ", current_difficulty)
+                current_difficulty= current_difficulty - (current_difficulty-0)/5
         print(f"\nFinal Score : {self.score:.2f}/{num_questions}")
+        print(f"\nEstimated Difficulty : {current_difficulty}")
 
 
 if __name__ == "__main__":
@@ -177,7 +199,7 @@ if __name__ == "__main__":
 ]
     weighted_samples = quiz.assignWeight(samples)
     print("Weighted recruiter samples loaded")
-    quiz.runQuiz(num_questions=5)
+    quiz.runQuiz(num_questions=10)
 
 
 

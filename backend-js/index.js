@@ -4,7 +4,10 @@ const { syncUser } = require('./middleware/Auth0');
 const { connectMongoDB } = require('./db/connection')
 const { configFunc } = require('./config/authConfig');
 const { auth, requiresAuth } = require("express-openid-connect");
+const CompanyRouter = require('./routes/CompanyRouter');
+const UserRouter = require('./routes/UserRouter');
 require('dotenv').config();
+
 const PORT = process.env.PORT;
 const mongoURI = process.env.MONGO_URI;
 
@@ -24,9 +27,11 @@ app.use(configFunc());
 app.use(syncUser);
 
 
-app.get('/', requiresAuth(), (req, res) => {
-    console.log(100)
-    return res.json({message : req.oidc.isAuthenticated() ? "true" : "false"});
+app.use("/company", CompanyRouter);
+app.use("/user", UserRouter);
+
+app.get('/health', (req, res) => {
+    return res.json({message : "Working jussss fine"});
 })
 
 app.get('/profile', requiresAuth(), (req, res) => {

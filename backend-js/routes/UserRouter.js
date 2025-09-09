@@ -1,10 +1,13 @@
+const {isUserAuthenticated} = require('../middleware/UserAuth');
+
 const express = require('express')
 
 const {
     profile,
     experience,
     companyProfile,
-    getProjects } = require('../controller/UserController');
+    getProjects,
+    editProfile } = require('../controller/UserController');
 
 const {
     ongoingInternship,
@@ -13,16 +16,16 @@ const {
 
 const router = express.Router();
 
-router.get("/profile", profile);
-router.get("/experience", experience);
-router.get("/company/profile", companyProfile);
-router.get("/projects", getProjects);
+router.get("/profile", isUserAuthenticated, profile);
+router.get("/experience", isUserAuthenticated, experience);
+router.get("/company/profile", isUserAuthenticated, companyProfile);
+router.get("/projects", isUserAuthenticated, getProjects);
+router.post("/profile/edit", isUserAuthenticated, editProfile);
 
 
-router.get("/internship/ongoing", ongoingInternship);
-router.get("/internship/applied", appliedInternships);
-router.get("/internship/details", internshipDetails);
-
+router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship);
+router.get("/internship/applied",isUserAuthenticated, appliedInternships);
+router.get("/internship/details", isUserAuthenticated, internshipDetails);
 
 
 module.exports = router;

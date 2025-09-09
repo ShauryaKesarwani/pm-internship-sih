@@ -63,7 +63,7 @@ export default function Header() {
   };
 
   return (
-    <header>
+    <header className="bg-black text-white">
       <div className="header-top px-2 py-1 flex justify-between w-[95%] items-center justify-self-center mx-auto">
         <div className="flex gap-2 justify-start align-items-center">
           <img
