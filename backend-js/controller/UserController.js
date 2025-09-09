@@ -1,7 +1,7 @@
 const User = require('../Model/User');
 const Internship = require('../Model/Internship');
 const Company = require('../Model/Company');
-
+const Project = require("../Model/Project");
 
 async function profile(req, res) {
     try {
@@ -117,11 +117,43 @@ async function editProfile(req, res) {
     }
 }
 
+async function addProject(req, res) {
+    try {
+        const userId = req.user._id;
+        const { name, description, techStack, link } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ message: "Project name is required" });
+        }
+
+        const newProject = await Project.create({
+            name,
+            description,
+            techStack,
+            link,
+            owner: userId,
+        });
+
+        await User.findByIdAndUpdate(userId, {
+            $push: { "resume.projects": newProject._id },
+        });
+
+        return res.status(201).json({
+            message: "Project added successfully",
+            project: newProject,
+        });
+    } catch (err) {
+        console.error("Error in addProject:", err);
+        return res.status(500).json({ error: "Server Error!!" });
+    }
+}
+
 
 module.exports = {
     profile,
     experience,
     companyProfile,
     getProjects,
-    editProfile
+    editProfile,
+    addProject
 }

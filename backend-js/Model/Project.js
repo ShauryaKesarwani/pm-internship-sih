@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const {Mongoose} = require("mongoose");
 
 const projectSchema = new mongoose.Schema({
     name: {
@@ -16,9 +15,9 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required : false,
     },
-    owner : {
-        type : Mongoose.Schema.Types.ObjectId,
-        ref : "User",
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     }
 }, { timestamps: true });
 
