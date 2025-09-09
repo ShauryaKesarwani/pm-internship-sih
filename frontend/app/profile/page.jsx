@@ -23,77 +23,79 @@ export default function ProfilePage() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
 
-  async function fetchUserProfile() {
-    try {
-      const response = await fetch("http://localhost:7470/user/profile", {
-        credentials: "include", // <-- This is the important part
-      });
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch("http://localhost:7470/user/profile", {
+          credentials: "include",
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const user = data.user;
-      setUser(user);
-
-      // console.log(user);
-    } catch (error) {
-      console.error("Could not fetch user profile:", error);
-    }
-  }
-
-  async function fetchCurrentInternship() {
-    try {
-      const response = await fetch(
-        "http://localhost:7470/user/internship/ongoing",
-        {
-          credentials: "include", // <-- This is the important part
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        setUser(data.user);
+      } catch (e) {
+        setError(e.message);
+        console.error("Could not fetch user profile:", e);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const data = await response.json();
-      const Data = data.currentInternship;
-      setCurrentInternship(Data);
+    fetchUserProfile();
+    // Your fetch logic goes here...
+    const fetchCurrentInternship = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:7470/user/internship/ongoing",
+          {
+            credentials: "include",
+          }
+        );
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setCurrentInternship(data.currentInternship);
+      } catch (error) {
+        console.error("Could not fetch internship:", error);
+      }
+    };
+    fetchCurrentInternship();
 
-      // console.log(Data);
-    } catch (error) {
-      console.error("Could not fetch user profile:", error);
-    }
-  }
+    const fetchAppliedInternship = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:7470/user/internship/applied",
+          {
+            credentials: "include", // <-- This is the important part
+          }
+        );
 
-  async function fetchAppliedInternship() {
-    try {
-      const response = await fetch(
-        "http://localhost:7470/user/internship/applied",
-        {
-          credentials: "include", // <-- This is the important part
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        const Data = data.applications;
+        setAppliedInternship(Data);
+
+        // console.log(Data);
+      } catch (error) {
+        console.error("Could not fetch user profile:", error);
       }
+    };
 
-      const data = await response.json();
-      const Data = data.applications;
-      setAppliedInternship(Data);
+    fetchAppliedInternship();
+  }, []);
 
-      // console.log(Data);
-    } catch (error) {
-      console.error("Could not fetch user profile:", error);
+  useEffect(() => {
+    // Check if the data is not null before logging
+    if (currentInternship) {
+      console.log("Data is now available:");
     }
-  }
+  }, [currentInternship]);
 
-  console.log(currentInternship);
-
-  // fetchAppliedInternship();
-  fetchCurrentInternship();
-  // fetchUserProfile();
   // Fetch internship data when component mounts or tab changes
   useEffect(() => {
     const loadInternshipData = async () => {
