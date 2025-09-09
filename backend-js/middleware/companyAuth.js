@@ -1,6 +1,5 @@
 function requireCompanyLogin(req, res, next) {
     try {
-        console.log(req.session.companyId)
         if (!req.session.companyId) {
             return res.status(401).json({message: "Unauthorized"});
         }

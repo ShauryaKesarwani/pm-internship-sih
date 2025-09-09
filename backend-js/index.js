@@ -3,6 +3,7 @@ const { jsonParser } = require("./middleware/index");
 const { syncUser } = require("./middleware/Auth0");
 const { connectMongoDB } = require("./db/connection");
 const { configFunc } = require("./config/authConfig");
+const session = require("express-session");
 const { auth, requiresAuth } = require("express-openid-connect");
 const CompanyRouter = require("./routes/CompanyRouter");
 const UserRouter = require("./routes/UserRouter");
@@ -16,8 +17,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // Your frontend origin
-    credentials: true, // Allow cookies or auth headers
+    credentials: true,
   })
 );
 
@@ -25,9 +25,30 @@ connectMongoDB(mongoURI)
   .then(() => console.log("MongoDB Connected!!"))
   .catch((err) => console.log("Error, Can't connect to DB", err));
 
+
+
+
+app.use(
+    session({
+        secret: "mySuperSecretKey",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24,
+            secure: false,
+            httpOnly: true,
+        },
+    })
+);
+
+
 app.use(jsonParser());
 app.use(configFunc());
 app.use(syncUser);
+
+
+
+
 
 app.use("/company", CompanyRouter);
 app.use("/user", UserRouter);

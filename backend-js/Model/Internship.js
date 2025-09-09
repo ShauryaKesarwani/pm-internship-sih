@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+require("./Question");
 const internshipSchema = new mongoose.Schema({
     internshipDetails: {
         title: {

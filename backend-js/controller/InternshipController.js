@@ -6,6 +6,7 @@ require('dotenv').config();
 
 async function createInternship(req, res) {
     try {
+        console.log(0)
         const {
             title,
             department,
@@ -19,10 +20,12 @@ async function createInternship(req, res) {
             eligibility
         } = req.body;
 
+        console.log(1)
         if (!title || !responsibilities || !duration) {
             return res.status(400).json({ message: "Title, description, and duration are required" });
         }
 
+        console.log(2)
         const newInternship = await Internship.create({
             internshipDetails: {
                 title,
@@ -39,6 +42,7 @@ async function createInternship(req, res) {
             company: req.session.companyId,
         })
 
+        console.log(3)
         return res.status(201).json({
             message: "Internship created successfully",
             newInternship
@@ -52,15 +56,19 @@ async function createInternship(req, res) {
 
 async function getPostedInternships(req, res) {
     try {
+        console.log(1)
         const internships = await Internship.find({ company: req.session.companyId })
             .populate("applications")
             .populate("assignments");
 
 
+        console.log(2)
         if(!internships) {
             return res.status(401).json({ message: "No Internship Found" });
         }
 
+        console.log(3)
+        console.log(internships)
         return res.status(200).json({
             message: "Fetched posted internships",
             count: internships.length,
@@ -124,38 +132,37 @@ async function getApplicants(req, res) {
 }
 
 
-async function getApplicantProfile(req, res) { //sending all the data, configure it later
+async function getApplicantProfile(req, res) {
     try {
-        const applicationId = req.params.applicationId;
+        const { applicationId } = req.params;
 
+        // Populate applicant details and optionally internship in one go
         const application = await Application.findById(applicationId)
-            .populate("applicant");
+            .populate("applicant")          // applicant details
+            .populate("internship");        // bring internship ref too
 
         if (!application) {
             return res.status(404).json({ message: "Application not found" });
         }
 
-        const internship = await Internship.findById(application.internship);
-        if (internship.company.toString() !== req.session.companyId) {
+        // Security check: company must own this internship
+        if (application.internship.company.toString() !== req.session.companyId) {
             return res.status(403).json({ message: "Unauthorized" });
         }
 
         return res.status(200).json({
             message: "Applicant profile fetched",
-            applicant: application.applicant,
-            answers: application.answers,
-            documents: application.documents,
+            applicant: application.applicant,     // populated applicant data
+            answers: application.answers || [],
+            documents: application.documents || [],
             status: application.status,
-
         });
 
     } catch (err) {
-        console.error("error in getApplicantProfile:");
-        console.log(err)
+        console.error("error in getApplicantProfile:", err);
         return res.status(500).json({ message: "Server error" });
     }
 }
-
 
 async function internshipDetails(req, res) {
     try {
