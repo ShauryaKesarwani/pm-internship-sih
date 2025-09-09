@@ -87,52 +87,74 @@ const Quiz: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading quiz...</div>;
+    return <div className="h-[100vh] flex justify-center items-center text-[3rem] font-semibold text-[#FF8F76] bg-[#FAEFE9]">Loading quiz...</div>;
   }
 
   if (submitted) {
-    return <div>🎉 Quiz Finished! Thanks for submitting.</div>;
+    return <div className="h-[100vh] flex justify-center items-center text-[3rem] font-semibold text-[#FF8F76] bg-[#FAEFE9]">Quiz Finished! Thanks for submitting.</div>;
   }
 
   const currentQuestion = questions[currentIndex];
 
   return (
-    <div>
-      {/* Timer */}
-      <div className="text-[3rem]">{timeLeft}</div>
+    <div className="flex flex-col w-full h-[100vh] justify-center items-center p-10 bg-[#FAEFE9] select-none">
+
+      <div className="absolute text-[8rem] font-semibold text-[#FF8F76] z-0 top-15">
+        {currentIndex + 1}/{questions.length}
+      </div>
 
       {/* Question */}
-      <div>
-        <h2>{currentQuestion.question}</h2>
+      <div className="bg-[#FCFCFC] w-3/5 rounded-3xl h-[70%] p-5 pl-10 pr-10 mt-22 shadow-[0px_7px_29px_0px_#FF8F76] flex flex-col items-center z-1">
 
-        <div>
-          {currentQuestion.options.map((option) => (
-            <button
-              key={option}
-              onClick={() => setSelectedOption(option)}
-              style={{
-                backgroundColor: selectedOption === option ? "#4CAF50" : "#f0f0f0",
-                margin: "5px",
-                padding: "8px 12px",
-                border: "1px solid #ccc",
-                cursor: "pointer",
-              }}
-            >
-              {option}
-            </button>
-          ))}
+        <div className="flex w-full justify-between">
+          <div className="self-center text-[32px] top-0 font-bold text-[#FF8F76] ">{timeLeft}</div>
+        </div>
+
+        <h2 className="mb-5">{currentQuestion.question}</h2>
+
+        <div className="flex flex-col gap-3 w-full items-center">
+          {currentQuestion.options.map((option) => {
+            const isSelected = selectedOption === option;
+
+            return (
+              <button
+                key={option}
+                onClick={() => setSelectedOption(option)}
+                className={`w-full sm:w-4/5 md:w-3/5 h-[50px] flex items-center justify-center 
+              rounded-lg border-2 font-medium text-[16px] transition-colors
+              ${isSelected
+                    ? "bg-[#FF704D] text-white border-[#FF704D]"
+                    : "bg-[#FCFCFC] text-[#333333] border-[#FF704D] hover:bg-[#FFE0D6]"}`
+                }
+              >
+                {option}
+              </button>
+
+            );
+          })}
         </div>
 
         {/* Next or Submit */}
-        {currentIndex === questions.length - 1 ? (
-          <button onClick={handleSubmit} style={{ marginTop: "10px" }}>
-            Submit
-          </button>
-        ) : (
-          <button onClick={handleNext} style={{ marginTop: "10px" }}>
-            Next
-          </button>
-        )}
+        <div className="flex justify-center mt-4">
+          {currentIndex === questions.length - 1 ? (
+            <button
+              onClick={handleSubmit}
+              className="px-6 py-3 rounded-lg bg-[#FF704D] text-white font-semibold 
+                 hover:bg-[#FF5722] transition-colors cursor-pointer"
+            >
+              Submit
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              className="px-6 py-3 rounded-lg bg-[#FF704D] text-white font-semibold 
+                 hover:bg-[#FF5722] transition-colors cursor-pointer"
+            >
+              Next
+            </button>
+          )}
+        </div>
+
       </div>
     </div>
   );
