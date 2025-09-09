@@ -96,88 +96,88 @@ class AdaptiveQuiz:
 
         return json.loads(response.text)
         
-#     def runQuiz(self, num_questions:int):
-#         current_difficulty = 0.5
+    def runQuiz(self, num_questions:int):
+        current_difficulty = 0.5
 
-#         for i in range(num_questions):
-#             q = self.generateQuestion(current_difficulty)
-#             if not q:
-#                 print("Failed to fetch question...")
-#                 continue
+        for i in range(num_questions):
+            q = self.generateQuestion(current_difficulty)
+            if not q:
+                print("Failed to fetch question...")
+                continue
         
-#             print(f"\nQ{i+1}: {q['question']}")
-#             for opt in q["options"]:
-#                 print(opt)
+            print(f"\nQ{i+1}: {q['question']}")
+            for opt in q["options"]:
+                print(opt)
 
-#             user_ans = input("Your answer (A-D): ").strip().upper()
-#             if user_ans == q["answer"].upper():
-#                 print("Correct!")
-#                 self.score += q["weight"]
+            user_ans = input("Your answer (A-D): ").strip().upper()
+            if user_ans == q["answer"].upper():
+                print("Correct!")
+                self.score += q["weight"]
 
-#                 current_difficulty = current_difficulty + (0.9 - current_difficulty)/2
-#             else:
-#                 print("Wrong!");
-#                 current_difficulty= current_difficulty - (current_difficulty-0.1)/2
-#         print(f"\nFinal Score : {self.score:.2f}/{num_questions}")
+                current_difficulty = current_difficulty + (0.9 - current_difficulty)/2
+            else:
+                print("Wrong!")
+                current_difficulty= current_difficulty - (current_difficulty-0.1)/2
+        print(f"\nFinal Score : {self.score:.2f}/{num_questions}")
 
 
-# if __name__ == "__main__":
-#     quiz = AdaptiveQuiz()
-#     samples = [
-#     {
-#         "question": "Which HTML tag is used to create a hyperlink?",
-#         "answer": "<a>",
-#         "difficulty": "easy"
-#     },
-#     {
-#         "question": "Which CSS property is used to change text color?",
-#         "answer": "color",
-#         "difficulty": "easy"
-#     },
-#     {
-#         "question": "Which HTTP method is typically idempotent?",
-#         "answer": "GET",
-#         "difficulty": "medium"
-#     },
-#     {
-#         "question": "In JavaScript, what does the 'this' keyword refer to inside a regular function?",
-#         "answer": "Depends on how the function is called",
-#         "difficulty": "medium"
-#     },
-#     {
-#         "question": "In React, which hook is used for managing state in a functional component?",
-#         "answer": "useState",
-#         "difficulty": "medium"
-#     },
-#     {
-#         "question": "What is the purpose of a Content Delivery Network (CDN)?",
-#         "answer": "Reduce latency by caching static assets closer to users",
-#         "difficulty": "medium"
-#     },
-#     {
-#         "question": "Which of the following best describes REST architecture?",
-#         "answer": "Stateless communication using HTTP methods",
-#         "difficulty": "hard"
-#     },
-#     {
-#         "question": "What is the main advantage of server-side rendering (SSR) in web apps?",
-#         "answer": "Better SEO and faster initial page load",
-#         "difficulty": "hard"
-#     },
-#     {
-#         "question": "In Docker, what does the 'COPY' instruction in a Dockerfile do?",
-#         "answer": "Copies files from host to container",
-#         "difficulty": "medium"
-#     },
-#     {
-#         "question": "Which database query language is commonly used for relational databases?",
-#         "answer": "SQL",
-#         "difficulty": "easy"
-#     }
-# ]
-#     weighted_samples = quiz.assignWeight(samples)
-#     print("Weighted recruiter samples loaded")
-#     quiz.runQuiz(num_questions=5)
+if __name__ == "__main__":
+    quiz = AdaptiveQuiz()
+    samples = [
+    {
+        "question": "Which HTML tag is used to create a hyperlink?",
+        "answer": "<a>",
+        "difficulty": "easy"
+    },
+    {
+        "question": "Which CSS property is used to change text color?",
+        "answer": "color",
+        "difficulty": "easy"
+    },
+    {
+        "question": "Which HTTP method is typically idempotent?",
+        "answer": "GET",
+        "difficulty": "medium"
+    },
+    {
+        "question": "In JavaScript, what does the 'this' keyword refer to inside a regular function?",
+        "answer": "Depends on how the function is called",
+        "difficulty": "medium"
+    },
+    {
+        "question": "In React, which hook is used for managing state in a functional component?",
+        "answer": "useState",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What is the purpose of a Content Delivery Network (CDN)?",
+        "answer": "Reduce latency by caching static assets closer to users",
+        "difficulty": "medium"
+    },
+    {
+        "question": "Which of the following best describes REST architecture?",
+        "answer": "Stateless communication using HTTP methods",
+        "difficulty": "hard"
+    },
+    {
+        "question": "What is the main advantage of server-side rendering (SSR) in web apps?",
+        "answer": "Better SEO and faster initial page load",
+        "difficulty": "hard"
+    },
+    {
+        "question": "In Docker, what does the 'COPY' instruction in a Dockerfile do?",
+        "answer": "Copies files from host to container",
+        "difficulty": "medium"
+    },
+    {
+        "question": "Which database query language is commonly used for relational databases?",
+        "answer": "SQL",
+        "difficulty": "easy"
+    }
+]
+    weighted_samples = quiz.assignWeight(samples)
+    print("Weighted recruiter samples loaded")
+    quiz.runQuiz(num_questions=5)
 
 
 
