@@ -4,10 +4,40 @@ const Internship = require("../Model/Internship");
 require('dotenv').config();
 
 
+async function signUp(req, res) {
+    try {
+        const body = req.body;
+        console.log(body)
+        const email = body.email;
+        console.log(email)
+
+        if(!email) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+        const userInDb = await Company.findOne({
+          email: email
+        });
+
+
+        userInDb.password = await bcrypt.hash(body.password, 10);
+        await userInDb.save()
+
+        return res.status(201).json({
+            message: "User SignUp Sucessful",
+        });
+    } catch (signup_error) {
+        console.log(signup_error);
+        return res.status(500).json({status: "Something went wrong, please try again later."})
+    }
+}
+
+
+
+
 async function loginCompany(req, res) {
     try {
         const {uniqueName, email, password} = req.body;
-        if(!uniqueName || !email || !password) {
+        if(!email && !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
         const companyInDb = await Company.findOne({$or: [{email}, {uniqueName}]});
@@ -33,6 +63,7 @@ async function loginCompany(req, res) {
         return res.status(500).json({ error: 'Server Error' });
     }
 }
+
 
 async function getCompanyProfile(req, res) {
     try {
@@ -78,4 +109,5 @@ module.exports = {
     loginCompany,
     getCompanyProfile,
     updateCompanyProfile,
+    signUp
 }

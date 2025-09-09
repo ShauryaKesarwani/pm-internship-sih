@@ -3,7 +3,8 @@ const { requireCompanyLogin } = require('../middleware/companyAuth');
 const {
     loginCompany,
     getCompanyProfile,
-    updateCompanyProfile
+    updateCompanyProfile,
+    signUp
 } = require('../controller/CompanyController');
 
 const {
@@ -19,9 +20,10 @@ const {
 
 const router = express.Router();
 
-router.post("/login", loginCompany); // login should not require login first
-router.get("/profile", requireCompanyLogin, getCompanyProfile);
-router.patch("/profile", requireCompanyLogin, updateCompanyProfile);
+router.post("/login", loginCompany);
+router.post("/signup", signUp);
+router.get("/profile", requireCompanyLogin, getCompanyProfile); //
+router.patch("/profile/update", requireCompanyLogin, updateCompanyProfile);
 
 router.post("/internship", requireCompanyLogin, createInternship);
 router.get("/internships", requireCompanyLogin, getPostedInternships);
