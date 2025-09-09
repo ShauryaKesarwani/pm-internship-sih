@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     field: {  // e.g., "Tech", "Finance"
         type : String
     },
-    contact: {
+    phoneNumber: {
         type : String,
     },
     residence: {
