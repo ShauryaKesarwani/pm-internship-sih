@@ -14,7 +14,8 @@ const {
 const {
     ongoingInternship,
     appliedInternships,
-    internshipDetails } = require('../controller/UserInternshipController');
+    internshipDetails,
+    saveQuiz } = require('../controller/UserInternshipController');
 
 const router = express.Router();
 
@@ -30,5 +31,5 @@ router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); //
 router.get("/internship/applied",isUserAuthenticated, appliedInternships); //
 router.get("/internship/details/:internshipId", isUserAuthenticated, internshipDetails); //
 
-
+router.post("/:id/quiz", isUserAuthenticated, saveQuiz)
 module.exports = router;

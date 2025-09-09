@@ -72,9 +72,27 @@ async function internshipDetails(req, res) {
     }
 }
 
+async function saveQuiz(req, res){
+    try{
+        const {id} = req.params
+        const {quiz} = req.body
+        const application = await Application.findById(id);
+        if (!application) return res.status(404).json({ error: "Application not found" });
+
+        application.quiz.push(...quiz);  // merge quiz history
+        application.updatedAt = new Date();
+        await application.save();
+
+        res.json({ message: "Quiz saved", application });
+    }
+    catch{
+        res.status(500).json({ error: err.message });
+    }
+}
 
 module.exports = {
     ongoingInternship,
     appliedInternships,
     internshipDetails,
+    saveQuiz
 }
