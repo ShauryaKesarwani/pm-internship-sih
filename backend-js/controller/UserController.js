@@ -231,8 +231,6 @@ async function sendFileToBackend(filePath, userId) {
     }
 }
 
-
-
 async function updateResumeData(userId, parsedResume) {
     try {
         const user = await User.findById(userId).populate("resume.projects");

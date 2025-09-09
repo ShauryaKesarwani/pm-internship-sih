@@ -1,29 +1,31 @@
 const path = require("path");
 const User = require("../Model/User");
 const multer = require("multer");
+const fs = require("fs");
+
+const uploadDir = path.join(__dirname, "uploads", "docs");
+
+// Ensure folder exists
+fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, "uploads/docs"));
+        cb(null, uploadDir);
     },
     filename: async (req, file, cb) => {
         try {
             const email = req.oidc.user.email;
             const user = await User.findOne({ email });
+            if (!user) return cb(new Error("User not found"), null);
 
-            if (!user) {
-                return cb(new Error("User not found"), null);
-            }
-
-            const username = user.username;
             const ext = path.extname(file.originalname);
-            const filename = `${username}${ext}`;
+            const filename = `${user.username}${ext}`;
 
             user.resumeDoc = {
                 filename,
                 path: `/uploads/docs/${filename}`,
                 mimetype: file.mimetype,
-                size: file.size || 0
+                size: file.size || 0,
             };
             await user.save();
 
@@ -31,7 +33,7 @@ const storage = multer.diskStorage({
         } catch (err) {
             cb(err, null);
         }
-    }
+    },
 });
 
 const fileFilter = (req, file, cb) => {
