@@ -1,10 +1,40 @@
-import React from "react";
+"use client";
 
+import React, { useState, useEffect } from "react";
 import InternshipCard from "../components/InternshipCard";
-import FilterSidebar from "../components/FilterSidebar"
-import SidebarMenu from "../components/SidebarMenu";
+import FilterSidebar from "../components/FilterSidebar";
+
+interface Internship {
+  id: number;
+  productName: string;
+  companyName: string;
+  stipend: string;
+  imageUrl: string;
+  mode: string;
+  duration: string;
+  deadline: string;
+}
 
 const Internship: React.FC = () => {
+  const [internships, setInternships] = useState<Internship[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInternships = async () => {
+      try {
+        const response = await fetch("/api/internships"); // replace with your backend URL
+        const data = await response.json();
+        setInternships(data);
+      } catch (error) {
+        console.error("Error fetching internships:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInternships();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#FAEFE9] m-0 p-0">
 
@@ -45,6 +75,7 @@ const Internship: React.FC = () => {
               duration="4 Months"
               deadline="5th Nov, 2025"
             />
+
           </section>
         </div>
       </main>
@@ -54,7 +85,7 @@ const Internship: React.FC = () => {
 
 const GuideBox = () => {
   return (
-    <div className="w-full max-w-full mx-auto px-3 sm:px-6 py-2 sm:py-3 bg-white  rounded-xl shadow-sm text-gray-700 text-xs sm:text-sm md:text-base mb-8">
+    <div className="w-full max-w-full mx-auto px-3 sm:px-6 py-2 sm:py-3 bg-white  rounded-xl shadow-sm text-gray-700 sm:text-sm md:text-base mb-8">
 
       <h2 className="text-sm sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2">
         How this page works
@@ -79,7 +110,5 @@ const GuideBox = () => {
     </div>
   );
 };
-
-
 
 export default Internship;

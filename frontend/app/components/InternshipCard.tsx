@@ -25,7 +25,7 @@ const InternshipCard = ({
 }: InternshipCardProps) => {
   return (
     <div
-      className="w-full rounded-xl shadow-md overflow-hidden border p-3 bg-white
+      className="w-full rounded-xl  overflow-hidden p-3 bg-white shadow-[0px_2px_6px_0px_#FF8F7644]
                     transform transition-transform duration-300 hover:scale-105"
     >
       {/* Image */}
