@@ -77,7 +77,7 @@ async function getPostedInternships(req, res) {
 
 async function closeApplications(req, res) { //thinking of it as the company will get lists of internships and a button with them to turn on and off
     try {
-        const {internshipId} = req.body;
+        const {internshipId} = req.params;
         const internship = await Internship.findById(internshipId);
         if (!internship) {
             return res.status(404).json({ message: "Internship not found" });
@@ -100,7 +100,7 @@ async function closeApplications(req, res) { //thinking of it as the company wil
 
 async function getApplicants(req, res) {
     try {
-        const {internshipId} = req.body;
+        const {internshipId} = req.params;
         // const internship = await Internship.findById(internshipId);
         const internship = await Internship.findOne({
             _id: internshipId,
@@ -126,7 +126,7 @@ async function getApplicants(req, res) {
 
 async function getApplicantProfile(req, res) { //sending all the data, configure it later
     try {
-        const applicationId = req.params;
+        const applicationId = req.params.applicationId;
 
         const application = await Application.findById(applicationId)
             .populate("applicant");
@@ -135,23 +135,46 @@ async function getApplicantProfile(req, res) { //sending all the data, configure
             return res.status(404).json({ message: "Application not found" });
         }
 
-        if (application.internship.toString() !== req.session.companyId) {
+        const internship = await Internship.findById(application.internship);
+        if (internship.company.toString() !== req.session.companyId) {
             return res.status(403).json({ message: "Unauthorized" });
         }
+
         return res.status(200).json({
             message: "Applicant profile fetched",
             applicant: application.applicant,
             answers: application.answers,
             documents: application.documents,
-            status: application.status
+            status: application.status,
+
         });
 
-     } catch (err) {
+    } catch (err) {
         console.error("error in getApplicantProfile:");
         console.log(err)
         return res.status(500).json({ message: "Server error" });
     }
 }
+
+
+async function internshipDetails(req, res) {
+    try {
+        const {internshipId} = req.params;
+
+        const internship = await Internship.findById(internshipId);
+        if(!internship) {
+            return res.status(404).json({message : "No Internship Found for this ID"})
+        }
+        return res.status(200).json({
+            internship : internship,
+        })
+    } catch (err) {
+        console.error(" company complete internship error:");
+        console.log(err)
+        return res.status(500).json({error: "Server Error"});
+    }
+}
+
 
 
 async function updateInternshipDetails(req, res) {
@@ -189,7 +212,7 @@ async function updateInternshipDetails(req, res) {
 
 async function deleteInternship(req, res) {
     try {
-        const internshipId = req.param;
+        const {internshipId} = req.param;
         if(!internshipId) {
             return res.status(404).json({ message: "param provided is null" });
         }
@@ -217,5 +240,6 @@ module.exports = {
     getApplicants,
     getApplicantProfile,
     updateInternshipDetails,
-    deleteInternship
+    deleteInternship,
+    internshipDetails
 }

@@ -13,6 +13,7 @@ const Quiz: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(30);
   const [loading, setLoading] = useState(true);
+  const [submitted, setSubmitted] = useState(false);
 
   // ---------------- MOCK DATA ----------------
   const mockData: Question[] = [
@@ -58,7 +59,7 @@ const Quiz: React.FC = () => {
 
   // Timer effect
   useEffect(() => {
-    if (questions.length === 0) return;
+    if (questions.length === 0 || submitted) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -71,18 +72,26 @@ const Quiz: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentIndex, questions]);
+  }, [currentIndex, questions, submitted]);
 
   const handleNext = () => {
     setSelectedOption(null);
     setTimeLeft(30);
-    setCurrentIndex((prev) =>
-      prev + 1 < questions.length ? prev + 1 : 0
-    );
+    setCurrentIndex((prev) => (prev + 1 < questions.length ? prev + 1 : prev));
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    console.log("Quiz submitted!");
+    // 👉 here you can send answers to backend if needed
   };
 
   if (loading) {
     return <div>Loading quiz...</div>;
+  }
+
+  if (submitted) {
+    return <div>🎉 Quiz Finished! Thanks for submitting.</div>;
   }
 
   const currentQuestion = questions[currentIndex];
@@ -90,7 +99,7 @@ const Quiz: React.FC = () => {
   return (
     <div>
       {/* Timer */}
-      <div>Time Left: {timeLeft}s</div>
+      <div className="text-[3rem]">{timeLeft}</div>
 
       {/* Question */}
       <div>
@@ -114,9 +123,16 @@ const Quiz: React.FC = () => {
           ))}
         </div>
 
-        <button onClick={handleNext} style={{ marginTop: "10px" }}>
-          Next
-        </button>
+        {/* Next or Submit */}
+        {currentIndex === questions.length - 1 ? (
+          <button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+            Submit
+          </button>
+        ) : (
+          <button onClick={handleNext} style={{ marginTop: "10px" }}>
+            Next
+          </button>
+        )}
       </div>
     </div>
   );
