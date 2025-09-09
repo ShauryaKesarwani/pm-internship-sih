@@ -1,0 +1,25 @@
+[project]
+name = "backend-py"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "GamingWithShaurya", email = "shauryakesarwani19@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.116.1",
+    "motor>=3.7.1",
+    "numpy>=2.3.2",
+    "pandas>=2.3.2",
+    "python-dotenv>=1.1.1",
+    "sentence-transformers>=5.1.0",
+    "uvicorn>=0.35.0",
+]
+
+[project.scripts]
+backend-py = "backend_py:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
