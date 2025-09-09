@@ -19,36 +19,66 @@ class ResumeParser:
 
         system_instruction_prompt = """You are a resume parser.
         Extract structured information from resumes into strict JSON format.
-
-        Use this schema:
-        {
-            "full_name": string,
-            "email": string,
-            "phone": string,
-            "location": string,
-            "social_links": [string],
-            "skills": [string],
-            "education": [ 
-                { "degree_or_certification": string, "institution": string, "year": string } 
-            ],
-            "experience": [ 
-                { "role": string, "organization": string, "duration": string, "details": string } 
-            ],
-            "projects_or_portfolio": [ 
-                { "title": string, "description": string } 
-            ],
-            "certifications": [string],
-            "languages": [string],
-            "interests": [string]
-        }
-
-        - Always return valid JSON only, nothing else.
-        - If some fields are missing, use empty string "" or empty list [].
-        - Do not assume this is a tech job; adapt to any domain (medicine, law, arts, etc.).
         """
 
         prompt_part = ("Parse this resume line by line and extract relevant information in given format")
-        #print(prompt_part) # debug print
+
+        generate_content_config = types.GenerateContentConfig(
+            system_instruction=system_instruction_prompt,
+            thinking_config = types.ThinkingConfig(
+                thinking_budget=0,
+            ),
+            response_mime_type="application/json",
+            response_schema = genai.types.Schema(
+        type=genai.types.Type.OBJECT,
+        properties={
+            "experience": genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={
+                    "internships": genai.types.Schema(
+                        type=genai.types.Type.ARRAY,
+                        items=genai.types.Schema(
+                            type=genai.types.Type.OBJECT,
+                            required=["title", "company", "duration", "description"],
+                            properties={
+                                "title": genai.types.Schema(type=genai.types.Type.STRING),
+                                "company": genai.types.Schema(type=genai.types.Type.STRING),
+                                "duration": genai.types.Schema(type=genai.types.Type.STRING),
+                                "description": genai.types.Schema(type=genai.types.Type.STRING),
+                            },
+                        ),
+                    )
+                },
+            ),
+            "resume": genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={
+                    "skills": genai.types.Schema(
+                        type=genai.types.Type.ARRAY,
+                        items=genai.types.Schema(
+                            type=genai.types.Type.OBJECT,
+                            properties={
+                                "type": genai.types.Schema(type=genai.types.Type.STRING),
+                            },
+                        ),
+                    ),
+                    "projects": genai.types.Schema(
+                        type=genai.types.Type.ARRAY,
+                        items=genai.types.Schema(type=genai.types.Type.STRING),  # store project ObjectId as string
+                    ),
+                    "certifications": genai.types.Schema(
+                        type=genai.types.Type.ARRAY,
+                        items=genai.types.Schema(type=genai.types.Type.STRING),
+                    ),
+                    "socialLinks": genai.types.Schema(
+                        type=genai.types.Type.ARRAY,
+                        items=genai.types.Schema(type=genai.types.Type.STRING),
+                    ),
+                },
+            ),
+        },
+    )
+    )
 
         response = self.client.models.generate_content(
             model="gemini-2.5-flash",
@@ -59,10 +89,7 @@ class ResumeParser:
                     mime_type="application/pdf",
                 ),
             ],
-            config=types.GenerateContentConfig(
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
-                system_instruction=system_instruction_prompt
-            ),
+            config=generate_content_config,
         )
 
         # Output the result
