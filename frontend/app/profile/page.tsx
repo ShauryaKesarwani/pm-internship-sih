@@ -361,7 +361,7 @@ export default function ProfilePage() {
               className="absolute inset-0 bg-black/50"
               onClick={() => setIsUploadOpen(false)}
             />
-            <div className="relative z-10 w-full max-w-2xl rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_72px_#FFD1C4] max-h-[85vh] overflow-y-auto">
+            <div className="relative z-10 w-full max-w-2xl rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_72px_#FFD1C4] max-h-[85vh] overflow-y-auto no-scrollbar">
               <h3 className="text-lg font-semibold text-neutral-900">Edit Profile</h3>
               <p className="mt-1 text-sm text-neutral-600">Update your profile details or upload a new resume (PDF).</p>
 
@@ -568,6 +568,10 @@ export default function ProfilePage() {
             </div>
           </div>
         )}
+        <style jsx>{`
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+          .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
       </main>
     </>
   );
