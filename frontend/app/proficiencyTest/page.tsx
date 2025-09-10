@@ -1,6 +1,9 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
+import Menu from "../components/menu";
+import Navbar from "../components/Navbar";
+import HeaderWhite from "../components/header";
+import { div } from "framer-motion/client";
 
 interface Question {
   question: string;
@@ -87,77 +90,90 @@ const Quiz: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="h-[100vh] flex justify-center items-center text-[3rem] font-semibold text-[#FF8F76] bg-[#FAEFE9]">Loading quiz...</div>;
+    return (
+      <div className="h-[100vh] flex justify-center items-center text-[3rem] font-semibold text-[#FF8F76] bg-[#FAEFE9]">
+        Loading quiz...
+      </div>
+    );
   }
 
   if (submitted) {
-    return <div className="h-[100vh] flex justify-center items-center text-[3rem] font-semibold text-[#FF8F76] bg-[#FAEFE9]">Quiz Finished! Thanks for submitting.</div>;
+    return (
+      <div className="h-[100vh] flex justify-center items-center text-[3rem] font-semibold text-[#FF8F76] bg-[#FAEFE9]">
+        Quiz Finished! Thanks for submitting.
+      </div>
+    );
   }
 
   const currentQuestion = questions[currentIndex];
 
   return (
-    <div className="flex flex-col w-full h-[100vh] justify-center items-center p-10 bg-[#FAEFE9] select-none">
-
-      <div className="absolute text-[8rem] font-semibold text-[#FF8F76] z-0 top-15 sm:[top-0]">
-        {currentIndex + 1}/{questions.length}
-      </div>
-
-      {/* Question */}
-      <div className="bg-[#FCFCFC] w-full sm:w-4/5 md:w-3/5 max-w-[800px] rounded-3xl h-auto md:h-[70%] 
-                p-5 sm:p-8 md:p-10 mt-10 sm:mt-16 md:mt-24 
-                shadow-[0px_7px_29px_0px_#FF8F76] flex flex-col items-center z-[1]">
-
-
-        <div className="flex w-full justify-between">
-          <div className="self-center text-[32px] top-0 font-bold text-[#FF8F76] ">{timeLeft}</div>
+    <div>
+      <Navbar />
+      <HeaderWhite />
+      <Menu />
+      <div className="flex flex-col w-full h-[100vh] justify-center items-center p-10 bg-[#FAEFE9] select-none">
+        <div className="absolute text-[8rem] font-semibold text-[#FF8F76] z-0 top-15 sm:[top-0]">
+          {currentIndex + 1}/{questions.length}
         </div>
 
-        <h2 className="mb-5">{currentQuestion.question}</h2>
+        {/* Question */}
+        <div
+          className="bg-[#FCFCFC] w-full sm:w-4/5 md:w-3/5 max-w-[800px] rounded-3xl h-auto md:h-[70%] 
+        p-5 sm:p-8 md:p-10 mt-10 sm:mt-16 md:mt-24 
+        shadow-[0px_7px_29px_0px_#FF8F76] flex flex-col items-center z-[1]"
+        >
+          <div className="flex w-full justify-between">
+            <div className="self-center text-[32px] top-0 font-bold text-[#FF8F76] ">
+              {timeLeft}
+            </div>
+          </div>
 
-        <div className="flex flex-col gap-3 w-full items-center">
-          {currentQuestion.options.map((option) => {
-            const isSelected = selectedOption === option;
+          <h2 className="mb-5">{currentQuestion.question}</h2>
 
-            return (
-              <button
-                key={option}
-                onClick={() => setSelectedOption(option)}
-                className={`w-full sm:w-4/5 md:w-3/5 h-[50px] flex items-center justify-center 
-              rounded-lg border-2 font-medium text-[16px] transition-colors
-              ${isSelected
+          <div className="flex flex-col gap-3 w-full items-center">
+            {currentQuestion.options.map((option) => {
+              const isSelected = selectedOption === option;
+
+              return (
+                <button
+                  key={option}
+                  onClick={() => setSelectedOption(option)}
+                  className={`w-full sm:w-4/5 md:w-3/5 h-[50px] flex items-center justify-center 
+                rounded-lg border-2 font-medium text-[16px] transition-colors
+                ${
+                  isSelected
                     ? "bg-[#FF704D] text-white border-[#FF704D]"
-                    : "bg-[#FCFCFC] text-[#333333] border-[#FF704D] hover:bg-[#FFE0D6]"}`
-                }
+                    : "bg-[#FCFCFC] text-[#333333] border-[#FF704D] hover:bg-[#FFE0D6]"
+                }`}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Next or Submit */}
+          <div className="flex justify-center mt-4">
+            {currentIndex === questions.length - 1 ? (
+              <button
+                onClick={handleSubmit}
+                className="px-6 py-3 rounded-lg bg-[#FF704D] text-white font-semibold 
+            hover:bg-[#FF5722] transition-colors cursor-pointer"
               >
-                {option}
+                Submit
               </button>
-
-            );
-          })}
+            ) : (
+              <button
+                onClick={handleNext}
+                className="px-6 py-3 rounded-lg bg-[#FF704D] text-white font-semibold 
+            hover:bg-[#FF5722] transition-colors cursor-pointer"
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
-
-        {/* Next or Submit */}
-        <div className="flex justify-center mt-4">
-          {currentIndex === questions.length - 1 ? (
-            <button
-              onClick={handleSubmit}
-              className="px-6 py-3 rounded-lg bg-[#FF704D] text-white font-semibold 
-                 hover:bg-[#FF5722] transition-colors cursor-pointer"
-            >
-              Submit
-            </button>
-          ) : (
-            <button
-              onClick={handleNext}
-              className="px-6 py-3 rounded-lg bg-[#FF704D] text-white font-semibold 
-                 hover:bg-[#FF5722] transition-colors cursor-pointer"
-            >
-              Next
-            </button>
-          )}
-        </div>
-
       </div>
     </div>
   );

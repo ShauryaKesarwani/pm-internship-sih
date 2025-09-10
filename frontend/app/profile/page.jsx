@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
+
 import Button from "../components/buttons";
 import { fetchInternshipHistory, fetchOpenApplications } from "../lib/api";
 import Menu from "../components/menu";
@@ -149,6 +150,7 @@ export default function ProfilePage() {
     <>
       <Navbar />
       <HeaderWhite />
+      <Menu />
       <main className="w-full px-4 py-6 min-h-screen bg-[#FFF5F2]">
         <section className="grid grid-cols-1 grid-rows-2 gap-6 md:grid-cols-3">
           <div className="md:col-span-1">
