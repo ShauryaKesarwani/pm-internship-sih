@@ -3,6 +3,9 @@ const upload = require("../config/multerConfig");
 
 const express = require('express')
 
+const { uploadResume, getResume } = require('../controller/ResumeController')
+
+
 const {
     profile,
     experience,
@@ -10,8 +13,6 @@ const {
     getProjects,
     editProfile,
     addProject,
-    getResume,
-    uploadResume
         } = require('../controller/UserController');
 
 const {
