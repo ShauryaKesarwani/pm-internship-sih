@@ -7,12 +7,14 @@ os.chdir(script_dir)
 from internship_recommender_api import router as recommend_router
 from resume_parser_api import router as resume_router
 from quiz_api import router as quiz_router
+from distance_route import router as distance_router
 
 app = FastAPI(title="Internship Platform API")
 
 app.include_router(recommend_router)
 app.include_router(resume_router)
 app.include_router(quiz_router)
+app.include_router(distance_router)
 
 
 # @app.post("/yoink")
