@@ -167,6 +167,41 @@ def metadata_score(candidate: Dict[str, Any], job: Dict[str, Any]) -> float:
 
     return score
 
+from pymongo import MongoClient
+
+# ---------------------------------------------------------
+# MongoDB loader
+# ---------------------------------------------------------
+from bson import ObjectId
+
+def load_jobs_from_mongo(
+    uri: str = "mongodb://localhost:27017",
+    db_name: str = "don-tByteMe",
+    collection_name: str = "internships"
+) -> list[dict]:
+    """
+    Load all internships from local MongoDB and normalize to job dict format.
+    """
+    client = MongoClient(uri)
+    db = client[db_name]
+    collection = db[collection_name]
+
+    jobs = []
+    for doc in collection.find():
+        # Convert ObjectId to string
+        doc_id = str(doc.get("_id"))
+        job = {
+            "id": doc_id,
+            "title": doc.get("title", ""),
+            "company": doc.get("company", ""),
+            "requirements": doc.get("requirements", []),
+            "description": doc.get("description", ""),
+            "tags": doc.get("tags", []),
+            "location": doc.get("location", "remote"),
+            "min_experience_months": doc.get("min_experience_months", 0)
+        }
+        jobs.append(job)
+    return jobs
 
 # ---------------------------------------------------------
 # Example dataset loader (toy dataset)
@@ -328,7 +363,7 @@ def recommend(req: CandidateRequest):
 # ---------------------------------------------------------
 if __name__ == "__main__":
     # Quick demo: create index if not exists
-    jobs = load_example_jobs()
+    jobs = jobs = load_jobs_from_mongo() #load_example_jobs()
     if not os.path.exists(INDEX_FILE) or not os.path.exists(JOB_META_FILE):
         print("Building job index...")
         build_job_index(jobs, EMBEDDER)

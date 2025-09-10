@@ -7,7 +7,7 @@ router = APIRouter()
 
 # Put your MapmyIndia REST Key here
 load_dotenv()
-MAPMYINDIA_REST_KEY = os.getenv("GOOGLE_API_KEY")
+MAPMYINDIA_REST_KEY = os.getenv("MAP_API_KEY")
 
 def get_latlon_from_query(query: str):
     """
