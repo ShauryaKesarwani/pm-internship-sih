@@ -224,19 +224,46 @@ def build_job_index(jobs: List[Dict[str, Any]], embedder: Embedder):
 # ---------------------------------------------------------
 # Query pipeline: retrieve + rerank
 # ---------------------------------------------------------
-def recommend_for_candidate(candidate: Dict[str, Any], embedder: Embedder, top_k=5, rerank_k=20):
-    # 1) candidate text -> embed
+
+def parse_prompt(prompt: str):
+    must_have, must_not = [], []
+    text = prompt.lower()
+
+    if "not" in text:
+        excluded = text.split("not")[-1].strip()
+        must_not = excluded.split()
+    else:
+        must_have = text.split()
+
+    return must_have, must_not
+
+def recommend_for_candidate(
+    candidate: Dict[str, Any], embedder: Embedder, top_k=5, rerank_k=20,
+    prompt_weight=2.0, penalty=-0.5
+):
+    # Parse prompt
+    prompt = " ".join(candidate.get("interests", [])) if candidate.get("interests") else ""
+    must_have, must_not = parse_prompt(prompt)
+
+    # Candidate base embedding
     candidate_text = candidate_to_text(candidate)
     c_emb = embedder.embed_texts([candidate_text])[0].astype("float32")
-    # 2) load index & meta
+
+    # If positive prompt, add weighted
+    if must_have:
+        prompt_emb = embedder.embed_texts([" ".join(must_have)])[0].astype("float32")
+        c_emb = (c_emb + prompt_weight * prompt_emb) / (1 + prompt_weight)
+
+    # Load jobs
     index = load_faiss(INDEX_FILE)
     with open(JOB_META_FILE, "r", encoding="utf8") as f:
         jobs = json.load(f)
-    # 3) search
-    D, I = index.search(np.expand_dims(c_emb, axis=0), rerank_k)  # returns (1, k)
-    idxs = I[0].tolist()
-    sims = D[0].tolist()
-    # 4) prepare reranking candidates
+
+    # Search
+    D, I = index.search(np.expand_dims(c_emb, axis=0), rerank_k)
+    idxs, sims = I[0].tolist(), D[0].tolist()
+
+    # Rerank with penalties
     rerank_candidates = []
     for pos, idx in enumerate(idxs):
         if idx < 0 or idx >= len(jobs):
@@ -244,10 +271,18 @@ def recommend_for_candidate(candidate: Dict[str, Any], embedder: Embedder, top_k
         job = jobs[idx]
         sim_score = sims[pos]
         meta_score = metadata_score(candidate, job)
-        # combine: weighted sum
-        combined = 0.7 * sim_score + 0.3 * meta_score
+
+        combined = 0.6 * sim_score + 0.4 * meta_score
+
+        # 🔹 Apply penalty if job matches "must_not"
+        if must_not:
+            job_text = " ".join(job.get("requirements", []) + job.get("tags", []))
+            if any(word in job_text.lower() for word in must_not):
+                combined += penalty  # drop score (e.g., -0.5)
+
         rerank_candidates.append((job, combined, sim_score, meta_score))
-    # 5) sort and return top_k
+
+    # Sort + return
     rerank_candidates.sort(key=lambda x: x[1], reverse=True)
     results = []
     for job, combined, sim, meta in rerank_candidates[:top_k]:

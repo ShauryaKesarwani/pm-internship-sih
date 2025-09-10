@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import APIRouter
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import List, Dict, Any
 from backend_py.quiz import AdaptiveQuiz  # absolute import
 import httpx
+
+router = APIRouter(prefix="/quiz", tags=["quiz"])
 
 quiz: AdaptiveQuiz | None = None  # global handle
 quiz_history: List[Dict[str, Any]] = []
@@ -31,18 +33,20 @@ def map_numeric_to_level(value: float) -> str:
         return "hard"
 
 
+# -------------------------------
+# Lifespan (startup + shutdown)
+# -------------------------------
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app):
     global quiz
     quiz = AdaptiveQuiz()
-    quiz.assignWeight(samples)
-    print("✅ AdaptiveQuiz initialized")
+    print("✅ AdaptiveQuiz initialized with API key")
     yield
     quiz = None
     print("🛑 AdaptiveQuiz cleaned up")
 
-
-app = FastAPI(lifespan=lifespan)
+# Attach lifespan to router
+router.lifespan_context = lifespan
 
 
 class AnswerRequest(BaseModel):
@@ -52,7 +56,7 @@ class AnswerRequest(BaseModel):
     score: float
 
 
-@app.get("/start-quiz")
+@router.get("/start-quiz")
 def start_quiz(difficulty: float = 0.5):
     """Start quiz and return the first question"""
     level = map_numeric_to_level(difficulty)
@@ -86,7 +90,7 @@ def start_quiz(difficulty: float = 0.5):
     }
 
 
-@app.post("/next-question")
+@router.post("/next-question")
 def get_question(data: AnswerRequest):
     difficulty = data.difficulty
     level = map_numeric_to_level(difficulty)
@@ -119,7 +123,7 @@ def get_question(data: AnswerRequest):
     }
 
 
-@app.post("/submit-answer")
+@router.post("/submit-answer")
 def submit_answer(data: AnswerRequest):
     """Submit an answer for the last question"""
     if not quiz_history:
@@ -152,12 +156,12 @@ def submit_answer(data: AnswerRequest):
     }
 
 
-@app.get("/quiz-history")
+@router.get("/quiz-history")
 def get_history():
     return {"history": quiz_history}
 
 
-@app.post("/end-quiz/{application_id}")
+@router.post("/end-quiz/{application_id}")
 async def end_quiz(application_id: str):
     formatted_quiz = []
     for q in quiz_history:
@@ -174,7 +178,7 @@ async def end_quiz(application_id: str):
         )
     return {"message": "Quiz ended", "data": response.json()}
 
-@app.get("/")
+@router.get("/")
 def root():
     return {"msg": "FastAPI is running 🚀"}
 # import json
