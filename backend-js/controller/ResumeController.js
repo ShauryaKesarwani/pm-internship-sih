@@ -47,7 +47,7 @@ async function uploadResume(req, res){
         const filePath = path.join(__dirname, "..", "uploads", "docs", req.file.filename);
         const parsedResume = await sendFileToBackend(filePath, userId);
         if (parsedResume) {
-            updateResumeData(userId, parsedResume)
+            updateResumeData(userId, JSON.parse(parsedResume))
                 .catch(err => console.error("Error updating resume:", err));
         }
         return res.status(200).json({
@@ -75,62 +75,52 @@ async function sendFileToBackend(filePath, userId) {
             maxBodyLength: Infinity,
         });
 
-        console.log("✅ File sent to FastAPI successfully:", response.data);
+        console.log("File sent to FastAPI successfully:");
         return response.data;
     } catch (err) {
-        console.error("❌ Error sending file to backend:", err.response?.data || err.message);
+        console.error("Error sending file to backend:", err.response?.data || err.message);
     }
 }
 
 async function updateResumeData(userId, parsedResume) {
     try {
         console.log(parsedResume)
-        console.log(1)
         const user = await User.findById(userId).populate("resume.projects");
 
-        console.log(2)
-        // --- Update skills ---
-        if (parsedResume.resume.skills?.length) {
+        // --- Skills ---
+        if (parsedResume.resume?.skills?.length) {
             user.resume.skills = Array.from(
                 new Set([...user.resume.skills, ...parsedResume.resume.skills])
             );
         }
 
-        console.log(3)
-        // --- Update certifications ---
-        if (parsedResume.resume.certifications && parsedResume.resume.certifications.length) {
-            const newCerts = parsedResume.resume.certifications.filter(
-                cert => !user.resume.certifications.includes(cert)
+        // --- Certifications ---
+        if (parsedResume.resume?.certifications?.length) {
+            user.resume.certifications = Array.from(
+                new Set([...user.resume.certifications, ...parsedResume.resume.certifications])
             );
-            user.resume.certifications.push(...newCerts);
         }
 
-        // --- Update social links ---
-        if (parsedResume.resume.socialLinks && parsedResume.resume.socialLinks.length) {
-            const newLinks = parsedResume.resume.socialLinks.filter(
-                link => !user.resume.socialLinks.includes(link)
+        // --- Social Links ---
+        if (parsedResume.resume?.socialLinks?.length) {
+            user.resume.socialLinks = Array.from(
+                new Set([...user.resume.socialLinks, ...parsedResume.resume.socialLinks])
             );
-            user.resume.socialLinks.push(...newLinks);
         }
 
-        // --- Update projects ---
-        if (parsedResume.resume.projects && parsedResume.resume.projects.length) {
+        // --- Projects ---
+        if (parsedResume.resume?.projects?.length) {
             for (const projectStr of parsedResume.resume.projects) {
-                // Check if project already exists in user's projects (by name)
-                const exists = user.resume.projects.some(
-                    p => p.title === projectStr
-                );
-
+                const exists = user.resume.projects.some(p => p.title === projectStr);
                 if (!exists) {
-                    // Save new project in Project collection
-                    const newProject = new Project({ title: projectStr });
-                    await newProject.save();
+                    const newProject = await Project.create({ title: projectStr });
                     user.resume.projects.push(newProject._id);
                 }
             }
         }
 
-        if (parsedResume.experience && parsedResume.experience.internships) {
+        // --- Experience (Internships) ---
+        if (parsedResume.experience?.internships?.length) {
             for (const internship of parsedResume.experience.internships) {
                 const exists = user.experience.internships.some(
                     e => e.title === internship.title && e.company === internship.company
@@ -141,15 +131,19 @@ async function updateResumeData(userId, parsedResume) {
             }
         }
 
+        // --- Phone Number (optional, update only if present) ---
+        if (parsedResume.phoneNumber && !user.phoneNumber) {
+            user.phoneNumber = parsedResume.phoneNumber;
+        }
+
         await user.save();
-        console.log("Resume updated successfully!");
+        console.log("✅ Resume updated successfully!");
         return user;
     } catch (err) {
-        console.error("Error updating resume:", err);
+        console.error("❌ Error updating resume:", err);
         throw err;
     }
 }
-
 
 
 module.exports = {
