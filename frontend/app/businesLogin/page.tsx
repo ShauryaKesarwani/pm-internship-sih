@@ -1,113 +1,199 @@
-"use client"
-import { useState, FormEvent } from "react";
-import { FaEye, FaEyeSlash, FaGoogle, FaGithub } from "react-icons/fa";
+"use client";
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
+import HeaderWhite from "../components/header";
+import Button from "../components/buttons";
 
-export default function LoginPage() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const BusinessLoginPage = () => {
+  const [formData, setFormData] = useState({
+    companyName: "",
+    email: "",
+    phone: "",
+    industry: "",
+    address: "",
+    username: "",
+    password: ""
+  });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    
-    // Store employer data in localStorage
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleContinue = () => {
+    // Store employer data in localStorage with Indian language support
     const employerData = {
-      name: username || "Business User",
-      email: username,
-      type: "employer"
+      name: formData.companyName || formData.username || "व्यवसाय उपयोगकर्ता",
+      email: formData.email || formData.username,
+      phone: formData.phone,
+      industry: formData.industry,
+      address: formData.address,
+      type: "employer",
+      language: "hi" // Default to Hindi
     };
     
     localStorage.setItem('user', JSON.stringify(employerData));
+    localStorage.setItem('isLoggedIn', 'true');
     
     // Redirect to home page to show logged in state
     window.location.href = '/';
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black px-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-        <div className="flex justify-center mb-6">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 2L3 7v6c0 5 3 9 9 9s9-4 9-9V7l-9-5z"
-            />
+    <div className="min-h-screen bg-[#FAEFE9]">
+      <Navbar />
+      <HeaderWhite />
+      
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl w-full space-y-8">
+          <div className="text-center">
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              व्यवसाय पंजीकरण / Business Registration
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              कृपया अपनी कंपनी की जानकारी प्रदान करें / Please provide your company details to continue
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+                    कंपनी का नाम / Company Name *
+                  </label>
+                  <input
+                    id="companyName"
+                    name="companyName"
+                    type="text"
+                    required
+                    className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    placeholder="कंपनी का नाम दर्ज करें / Enter company name"
+                    value={formData.companyName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    ईमेल पता / Email Address *
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    placeholder="ईमेल पता दर्ज करें / Enter email address"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    फोन नंबर / Phone Number *
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    placeholder="फोन नंबर दर्ज करें / Enter phone number"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="industry" className="block text-sm font-medium text-gray-700">
+                    उद्योग / Industry *
+                  </label>
+                  <select
+                    id="industry"
+                    name="industry"
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    value={formData.industry}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">उद्योग चुनें / Select industry</option>
+                    <option value="technology">प्रौद्योगिकी / Technology</option>
+                    <option value="finance">वित्त / Finance</option>
+                    <option value="healthcare">स्वास्थ्य सेवा / Healthcare</option>
+                    <option value="education">शिक्षा / Education</option>
+                    <option value="manufacturing">विनिर्माण / Manufacturing</option>
+                    <option value="retail">खुदरा / Retail</option>
+                    <option value="agriculture">कृषि / Agriculture</option>
+                    <option value="other">अन्य / Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                  कंपनी का पता / Company Address *
+                </label>
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  required
+                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  placeholder="कंपनी का पता दर्ज करें / Enter company address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                    उपयोगकर्ता नाम / Username *
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    placeholder="उपयोगकर्ता नाम दर्ज करें / Enter username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    पासवर्ड / Password *
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                    placeholder="पासवर्ड दर्ज करें / Enter password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Button onClick={handleContinue}>
+                  जारी रखें / Continue
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        {/* Heading */}
-        <h1 className="text-3xl font-semibold text-center mb-2">Welcome</h1>
-        <p className="text-center text-gray-600 mb-8">
-          Log in to don-t-byte-me to continue to Don'tByteMe.
-        </p>
-
-        {/* Form */}
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Username or Email address*
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-
-          <div className="relative">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Password*
-            </label>
-            <input
-              type={passwordVisible ? "text" : "password"}
-              id="password"
-              name="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-            <button
-              type="button"
-              onClick={() => setPasswordVisible(!passwordVisible)}
-              className="absolute inset-y-0 right-3 pt-5 flex items-center text-gray-500"
-              tabIndex={-1}
-              aria-label={passwordVisible ? "Hide password" : "Show password"}
-            >
-              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-
-          <div className="flex justify-end">
-            <a href="#" className="text-blue-600 text-sm hover:underline">
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            Continue
-          </button>
-        </form>
-
-        <p className="text-center text-gray-700 mt-6">
-          Don't have an account?{" "}
-          <a href="#" className="text-blue-600 hover:underline">
-            Sign up
-          </a>
-        </p>
       </div>
     </div>
   );
-}
+};
+
+export default BusinessLoginPage;
