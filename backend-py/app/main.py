@@ -4,9 +4,9 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
-from internship_recommender_api import router as recommend_router
-from resume_parser_api import router as resume_router
-from quiz_api import router as quiz_router
+from .internship_recommender_api import router as recommend_router
+from .resume_parser_api import router as resume_router
+from .quiz_api import router as quiz_router
 
 app = FastAPI(title="Internship Platform API")
 

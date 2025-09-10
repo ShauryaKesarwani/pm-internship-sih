@@ -114,7 +114,7 @@ const Quiz: React.FC = () => {
       <Menu />
       <div className="flex flex-col w-full h-[100vh] justify-center items-center p-10 bg-[#FAEFE9] select-none">
         <div className="absolute text-[8rem] font-semibold text-[#FF8F76] z-0 top-15 sm:[top-0]">
-          {currentIndex + 1}/{questions.length}
+          {/* {currentIndex + 1}/{questions.length} */}
         </div>
 
         {/* Question */}

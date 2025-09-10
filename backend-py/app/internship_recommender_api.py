@@ -4,9 +4,9 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
 from fastapi import APIRouter
-from models import CandidateRequest, RecommendationResponse, JobResponse
-from recommender import Recommender
-from user_service import get_user_candidate
+from .models import CandidateRequest, RecommendationResponse, JobResponse
+from .recommender import Recommender
+from .user_service import get_user_candidate
 
 # app = FastAPI(title="Internship Recommender API")
 router = APIRouter(prefix="/recommend", tags=["recommendations"])

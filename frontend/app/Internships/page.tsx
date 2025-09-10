@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
+import Menu from "../components/menu";
 
 interface Internship {
   id: string;
@@ -68,6 +69,11 @@ const InternshipsPage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
+  
+  // Generate functionality
+  const [showGeneratedInternships, setShowGeneratedInternships] = useState(false);
+  const [generatedInternships, setGeneratedInternships] = useState<Internship[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Dummy data for demonstration
   const dummyInternships: Internship[] = [
@@ -396,6 +402,126 @@ const InternshipsPage = () => {
     );
   };
 
+  // Generate internships function
+  const generateInternships = async () => {
+    setIsGenerating(true);
+    try {
+      // Backend API call for generating internships
+      const response = await fetch(`http://localhost:7470/internships/generate`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          searchTerm: searchTerm,
+          filters: {
+            category: selectedCategory,
+            location: selectedLocation,
+            type: selectedType,
+            duration: selectedDuration,
+            minStipend: minStipend,
+            maxStipend: maxStipend
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedInternships(data.internships || []);
+        setShowGeneratedInternships(true);
+      } else {
+        console.error("Generate failed:", response.status);
+        // Fallback to dummy data
+        generateDummyInternships();
+      }
+    } catch (error) {
+      console.error("Generate error:", error);
+      // Fallback to dummy data
+      generateDummyInternships();
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Generate dummy internships as fallback
+  const generateDummyInternships = () => {
+    const dummyGeneratedInternships: Internship[] = [
+      {
+        id: "gen_1",
+        title: "AI/ML Development Intern",
+        company: "TechInnovate Labs",
+        companyLogo: "/api/placeholder/40/40",
+        location: "Bangalore, India",
+        type: "Hybrid",
+        duration: "6 months",
+        stipend: 4500,
+        stipendType: "Performance-based",
+        startDate: "2024-03-01",
+        deadline: "2024-02-15",
+        description: "Work on cutting-edge AI projects including machine learning models, natural language processing, and computer vision applications.",
+        requirements: ["Python", "TensorFlow", "PyTorch", "SQL"],
+        skills: ["Machine Learning", "Deep Learning", "Data Science", "Python"],
+        category: "Technology",
+        postedDate: "2024-01-15",
+        applicants: 67,
+        rating: 4.9,
+        isBookmarked: false,
+        isLiked: false,
+        imageUrl: "/api/placeholder/300/200"
+      },
+      {
+        id: "gen_2",
+        title: "Full Stack Development Intern",
+        company: "StartupHub Technologies",
+        companyLogo: "/api/placeholder/40/40",
+        location: "Mumbai, India",
+        type: "Remote",
+        duration: "4 months",
+        stipend: 3500,
+        stipendType: "Fixed",
+        startDate: "2024-02-15",
+        deadline: "2024-01-30",
+        description: "Build scalable web applications using modern technologies like React, Node.js, and cloud platforms.",
+        requirements: ["React", "Node.js", "JavaScript", "MongoDB"],
+        skills: ["Frontend Development", "Backend Development", "Database Design"],
+        category: "Technology",
+        postedDate: "2024-01-20",
+        applicants: 89,
+        rating: 4.7,
+        isBookmarked: false,
+        isLiked: false,
+        imageUrl: "/api/placeholder/300/200"
+      },
+      {
+        id: "gen_3",
+        title: "Digital Marketing Intern",
+        company: "GrowthMax Agency",
+        companyLogo: "/api/placeholder/40/40",
+        location: "Delhi, India",
+        type: "On-site",
+        duration: "3 months",
+        stipend: 2800,
+        stipendType: "Fixed",
+        startDate: "2024-02-01",
+        deadline: "2024-01-25",
+        description: "Manage social media campaigns, create engaging content, and analyze marketing performance metrics.",
+        requirements: ["Social Media Marketing", "Content Creation", "Analytics"],
+        skills: ["Digital Marketing", "Social Media", "Content Strategy"],
+        category: "Marketing",
+        postedDate: "2024-01-18",
+        applicants: 45,
+        rating: 4.5,
+        isBookmarked: false,
+        isLiked: false,
+        imageUrl: "/api/placeholder/300/200"
+      }
+    ];
+
+    setGeneratedInternships(dummyGeneratedInternships);
+    setShowGeneratedInternships(true);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -415,6 +541,7 @@ const InternshipsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <HeaderWhite />
+      <Menu />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -492,6 +619,24 @@ const InternshipsPage = () => {
                 <span>More Filters</span>
                 <ChevronDown size={16} />
               </button>
+
+              <button
+                onClick={generateInternships}
+                disabled={isGenerating}
+                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-lg hover:shadow-xl"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>✨</span>
+                    <span>Generate</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
@@ -544,6 +689,142 @@ const InternshipsPage = () => {
             </div>
           )}
         </div>
+
+        {/* Generated Internships Section */}
+        {showGeneratedInternships && (
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 p-6 mb-8">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+                  <span>✨</span>
+                  <span>Generated Internships</span>
+                </h2>
+                <p className="text-gray-600 mt-1">AI-powered recommendations based on your search criteria</p>
+              </div>
+              <button
+                onClick={() => setShowGeneratedInternships(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {generatedInternships.map((internship) => (
+                <div
+                  key={internship.id}
+                  className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-purple-300 group relative overflow-hidden"
+                >
+                  {/* Generated Badge */}
+                  <div className="absolute top-3 right-3">
+                    <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-medium rounded-full">
+                      AI Generated
+                    </span>
+                  </div>
+
+                  {/* Company Logo and Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
+                        <Building2 className="w-6 h-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+                          {internship.title}
+                        </h3>
+                        <p className="text-sm text-gray-600">{internship.company}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                      <span className="text-sm font-medium text-gray-700">{internship.rating}</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                    {internship.description}
+                  </p>
+
+                  {/* Details */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <MapPin className="w-4 h-4" />
+                      <span>{internship.location}</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                        {internship.type}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Clock className="w-4 h-4" />
+                      <span>{internship.duration}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <DollarSign className="w-4 h-4" />
+                      <span>₹{internship.stipend.toLocaleString()}/month</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                        {internship.stipendType}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Skills */}
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-1">
+                      {internship.skills.slice(0, 3).map((skill, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {internship.skills.length > 3 && (
+                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                          +{internship.skills.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center space-x-4 text-xs text-gray-500">
+                      <div className="flex items-center space-x-1">
+                        <Users className="w-3 h-3" />
+                        <span>{internship.applicants} applicants</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="w-3 h-3" />
+                        <span>Apply by {new Date(internship.deadline).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                        <Heart className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors">
+                        <Bookmark className="w-4 h-4" />
+                      </button>
+                      <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors text-sm font-medium">
+                        Apply Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            <div className="text-center mt-8">
+              <button className="px-6 py-3 bg-white border border-purple-300 rounded-lg hover:bg-purple-50 transition-colors text-sm font-medium text-purple-700">
+                Generate More Internships
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Results Header */}
         <div className="flex justify-between items-center mb-6">

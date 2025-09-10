@@ -2,7 +2,7 @@ import os
 import json
 import numpy as np
 import faiss
-from sentence_transformers import SentenceTransformer
+from .sentence_transformers import SentenceTransformer
 
 # Change working directory to the script's own folder
 script_dir = os.path.dirname(os.path.abspath(__file__))

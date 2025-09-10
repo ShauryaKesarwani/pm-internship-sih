@@ -25,7 +25,7 @@ const InternshipCard = ({
 }: InternshipCardProps) => {
   return (
     <div
-      className="w-full rounded-xl  overflow-hidden p-3 bg-white shadow-[0px_2px_6px_0px_#FF8F7644]
+      className="w-[70%] rounded-xl overflow-hidden p-3 bg-white shadow-[0px_2px_6px_0px_#FF8F7644]
                     transform transition-transform duration-300 hover:scale-105"
     >
       {/* Image */}
@@ -40,7 +40,9 @@ const InternshipCard = ({
       {/* Header Section */}
       <div className="flex justify-between mb-4 gap-2">
         <div>
-          <div className="text-black font-semibold text-[1rem]">{productName}</div>
+          <div className="text-black font-semibold text-[1rem]">
+            {productName}
+          </div>
           <div className="text-[0.7rem] text-gray-500">- {companyName}</div>
           <div className="text-gray-500 text-[0.75rem]">{stipend}</div>
         </div>
@@ -51,25 +53,31 @@ const InternshipCard = ({
 
       {/* Details */}
       <div className="flex flex-col gap-2 text-gray-700 text-xs">
-
         <span>{mode}</span>
 
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-blue-700 px-1 py-0.5 rounded-md">{location}</span>
+          <span className="text-blue-700 px-1 py-0.5 rounded-md">
+            {location}
+          </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-green-700 px-1 py-0.5 rounded-md">⏳ Duration: {duration}</span>
+          <span className="text-green-700 px-1 py-0.5 rounded-md">
+            ⏳ Duration: {duration}
+          </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-blue-700 px-1 py-0.5 rounded-md">🗓️ Start Date: {startDate}</span>
+          <span className="text-blue-700 px-1 py-0.5 rounded-md">
+            🗓️ Start Date: {startDate}
+          </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-red-700 px-1 py-0.5 rounded-md">🗓️ Deadline: {deadline}</span>
+          <span className="text-red-700 px-1 py-0.5 rounded-md">
+            🗓️ Deadline: {deadline}
+          </span>
         </div>
-
       </div>
     </div>
   );
