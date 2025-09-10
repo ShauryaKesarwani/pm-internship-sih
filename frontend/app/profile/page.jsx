@@ -22,10 +22,12 @@ export default function ProfilePage() {
   const [internshipHistory, setInternshipHistory] = useState([]);
   const [openApplications, setOpenApplications] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setLoading(true);
       try {
         const response = await fetch("http://localhost:7470/user/profile", {
           credentials: "include",
@@ -48,6 +50,7 @@ export default function ProfilePage() {
     fetchUserProfile();
     // Your fetch logic goes here...
     const fetchCurrentInternship = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           "http://localhost:7470/user/internship/ongoing",
@@ -65,6 +68,7 @@ export default function ProfilePage() {
     fetchCurrentInternship();
 
     const fetchAppliedInternship = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           "http://localhost:7470/user/internship/applied",
