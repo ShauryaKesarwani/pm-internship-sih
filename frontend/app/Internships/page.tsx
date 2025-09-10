@@ -5,72 +5,16 @@ import InternshipCard from "../components/InternshipCard";
 import FilterSidebar from "../components/FilterSidebar";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
+import Menu from "../components/menu";
 
-interface InternshipLocation {
-  address?: string;
-  pinCode?: number;
-  city?: string;
-}
-
-interface InternshipDetails {
-  title: string;
-  department?: string;
-  responsibilities?: string[];
-  skillsRequired?: string[];
-  openings?: number;
-  duration?: string;
-  applicationDeadline?: string; // Dates are typically handled as ISO strings in JSON
-  startDate?: string;
-  location?: InternshipLocation;
-  stipend?: string;
-}
-
-interface Eligibility {
-  optional?: boolean;
-  highestLevelOfEducation?: string;
-  preferredDegrees?: string[];
-  graduationYearRange?: number[];
-}
-
-interface InternshipData {
-  _id: string; // MongoDB documents have a `_id` field
-  internshipDetails: InternshipDetails;
-  eligibility?: Eligibility;
-
-  assignments?: string[];
-  applications?: string[];
-  company: string; // This is a required reference to a Company document
-
-  status?: boolean;
-
-  createdAt: string;
-  updatedAt: string;
-}
-
-const Internship: React.FC = () => {
-  const [internships, setInternships] = useState<Internship[]>([]);
+const Internship = () => {
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchInternships = async () => {
-      try {
-        const response = await fetch("/api/internships"); // replace with your backend URL
-        const internshipData: InternshipData = data.Internship;
-        setInternships(data);
-      } catch (error) {
-        console.error("Error fetching internships:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInternships();
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#FAEFE9] m-0 p-0">
       <Navbar />
       <HeaderWhite />
+      <Menu />
       <main className="flex flex-col md:flex-row mt-4 px-4 md:px-8">
         <FilterSidebar />
 

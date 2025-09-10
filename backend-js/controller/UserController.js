@@ -195,10 +195,11 @@ async function uploadResume(req, res){
 
 
         const filePath = path.join(__dirname, "..", "uploads", "docs", req.file.filename);
-        sendFileToBackend(filePath, userId)
-            .then(response => updateResumeData(userId, response.data))
-            .catch(err => console.error("Error sending file and updating resume:", err));
-
+        const parsedResume = await sendFileToBackend(filePath, userId);
+        if (parsedResume) {
+            updateResumeData(userId, parsedResume)
+                .catch(err => console.error("Error updating resume:", err));
+        }
         return res.status(200).json({
             message: "Resume uploaded successfully",
             resumeDoc: user.resumeDoc
@@ -212,26 +213,24 @@ async function uploadResume(req, res){
 async function sendFileToBackend(filePath, userId) {
     try {
         const form = new FormData();
-        form.append("resume", fs.createReadStream(filePath));
-        form.append("userId", userId.toString());
 
-        const response = await axios.post("http://127.0.0.1/api/resumeupload", form, {
+        // "file" must match the FastAPI UploadFile parameter name
+        form.append("file", fs.createReadStream(filePath));  
+        form.append("userId", userId.toString()); // extra text field
+
+        const response = await axios.post("http://127.0.0.1:8000/parse-resume", form, {
             headers: {
                 ...form.getHeaders(),
             },
             maxBodyLength: Infinity,
         });
 
-        updateResumeData(userId, response.data);
-
-
-        console.log("File sent to other backend successfully:", response.data);
+        console.log("✅ File sent to FastAPI successfully:", response.data);
+        return response.data;
     } catch (err) {
-        console.error("Error sending file to other backend:", err.message);
+        console.error("❌ Error sending file to backend:", err.response?.data || err.message);
     }
 }
-
-
 
 async function updateResumeData(userId, parsedResume) {
     try {

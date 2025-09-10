@@ -1,21 +1,49 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { FaUser } from "react-icons/fa";
 
 export default function HeaderWhite() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+  };
+
   return (
     <header className="w-full flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
       <Link href="/" className="flex items-center space-x-4">
         <img src="/gov-logo.png" alt="Government Logo" className="w-29 h-12 " />
         <img src="/pmInternship.png" alt="Pm internship Logo" className="w-29 h-12 " />
       </Link>
-      <div className="flex space-x-4">
-        <button className="bg-orange-500 text-white px-5 py-2 rounded-md font-semibold hover:bg-orange-600">
-          Login/Sign-up
-        </button>
+      <div className="flex space-x-4 items-center">
+        {isLoggedIn ? (
+          <>
+            <Link href="/profile" className="flex items-center space-x-2 text-gray-700 hover:text-orange-600">
+              <FaUser className="text-xl" />
+              <span className="text-sm font-medium">User</span>
+            </Link>
+            <button 
+              onClick={handleLogout}
+              className="bg-gray-500 text-white px-5 py-2 rounded-md font-semibold hover:bg-gray-600"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link href="/login" className="bg-orange-500 text-white px-5 py-2 rounded-md font-semibold hover:bg-orange-600">
+            Login/Sign-up
+          </Link>
+        )}
         <Link href="/" className="flex items-center space-x-4">
-        <img src="/2047.png" alt="2047 goal Logo" className="w-12 h-12 " />
-      </Link>
+          <img src="/2047.png" alt="2047 goal Logo" className="w-12 h-12 " />
+        </Link>
       </div>
     </header>
   );

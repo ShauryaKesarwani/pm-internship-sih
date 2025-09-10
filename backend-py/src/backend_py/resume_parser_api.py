@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import JSONResponse
 import shutil
 import os
@@ -34,4 +34,9 @@ async def parse_resume_endpoint(file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/yoink")
+async def always_true_endpoint(request: Request):
+    data = await request.json()
+    return {"result":True}
 

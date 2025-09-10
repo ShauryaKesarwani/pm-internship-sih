@@ -20,7 +20,7 @@ const ResumePage = () => {
     formData.append("resume", file);
 
     try {
-      const response = await fetch("/user/resume/upload", {
+      const response = await fetch("http://localhost:7470/user/resume/upload", {
         method: "POST",
         body: formData,
         credentials: "include",

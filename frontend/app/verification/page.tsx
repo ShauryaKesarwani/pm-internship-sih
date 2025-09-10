@@ -1,9 +1,32 @@
-import React from "react";
+"use client"
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
-import ClientLogos from "../components/ClientLogos";
 
 const HomePage = () => {
+    const [mobile, setMobile] = useState("");
+
+  const handleSubmit = async () => {
+    if (!mobile) {
+      alert("Please enter your mobile number");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mobile }),
+      });
+
+      const data = await response.json();
+      console.log("Response:", data);
+    } catch (error) {
+      console.error("Error sending mobile number:", error);
+    }
+  };
   return (
     <div className="w-full min-h-screen bg-[#FAEFE9]">
 
@@ -12,14 +35,14 @@ const HomePage = () => {
       <div className="flex flex-col items-center justify-center mt-40">
         <div className="bg-white rounded-lg shadow-md p-8 w-[400px]">
           <div className="flex justify-center items-center ">
-            <img src="/emblem.png" className=" w-[40px] h-[60px]" />
+            <img src="/emblem.png" className=" w-[80px] h-[60px] pr-6 border-r-1" />
             <img src="/digilocker.png" className=" w-[200px] h-[120px]" />
-            <img src="/G20.jpg" className=" w-[120px] h-[80px]" />
+            <img src="/G20.jpg" className=" w-[100px] h-[80px]" />
           </div>
           <h2 className="text-xl font-bold text-center mb-6">Sign In to your account!</h2>
-          <div className="flex justify-center mb-6">
-            <button className="bg-blue-500 text-white px-6 py-2 rounded-l-md">Mobile</button>
-            <button className="bg-gray-200 text-gray-700 px-6 py-2 rounded-r-md">Aadhaar/Username</button>
+          <div className="flex w-full mb-6 border rounded-lg">
+            <button className="bg-blue-500 text-white px-9 py-2 rounded-l-md">Mobile</button>
+            <button className=" text-gray-700 px-10 py-2 rounded-r-md">Aadhaar/Username</button>
           </div>
           <div className="mb-4">
             <input

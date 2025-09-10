@@ -55,14 +55,11 @@ class ResumeParser:
                 type=genai.types.Type.OBJECT,
                 properties={
                     "skills": genai.types.Schema(
-                        type=genai.types.Type.ARRAY,
-                        items=genai.types.Schema(
-                            type=genai.types.Type.OBJECT,
-                            properties={
-                                "type": genai.types.Schema(type=genai.types.Type.STRING),
-                            },
+                            type = genai.types.Type.ARRAY,
+                            items = genai.types.Schema(
+                                type = genai.types.Type.STRING,
+                            ),
                         ),
-                    ),
                     "projects": genai.types.Schema(
                         type=genai.types.Type.ARRAY,
                         items=genai.types.Schema(type=genai.types.Type.STRING),  # store project ObjectId as string

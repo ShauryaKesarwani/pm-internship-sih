@@ -8,6 +8,7 @@ const { auth, requiresAuth } = require("express-openid-connect");
 const CompanyRouter = require("./routes/CompanyRouter");
 const UserRouter = require("./routes/UserRouter");
 const cors = require("cors");
+const axios = require('axios');
 require("dotenv").config();
 
 const PORT = process.env.PORT;
@@ -45,6 +46,21 @@ app.use(syncUser);
 
 app.use("/company", CompanyRouter);
 app.use("/user", UserRouter);
+
+
+app.get("/post", async (req, res) => {
+  try {
+    const response = await axios.post("http://127.0.0.1:8000/yoink", {
+      myString: "Hello from Node backend 🚀"
+    });
+
+    res.json(response.data);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 app.get("/health", (req, res) => {
   return res.json({ message: "Working jussss fine" });

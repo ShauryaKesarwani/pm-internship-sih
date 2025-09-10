@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import Button from "../components/buttons";
 import { fetchInternshipHistory, fetchOpenApplications } from "../lib/api";
+import Menu from "../components/menu";
 
 export default function ProfilePage() {
   const [currentTab, setCurrentTab] = useState("profile");
@@ -21,10 +22,12 @@ export default function ProfilePage() {
   const [internshipHistory, setInternshipHistory] = useState([]);
   const [openApplications, setOpenApplications] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setLoading(true);
       try {
         const response = await fetch("http://localhost:7470/user/profile", {
           credentials: "include",
@@ -47,6 +50,7 @@ export default function ProfilePage() {
     fetchUserProfile();
     // Your fetch logic goes here...
     const fetchCurrentInternship = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           "http://localhost:7470/user/internship/ongoing",
@@ -64,6 +68,7 @@ export default function ProfilePage() {
     fetchCurrentInternship();
 
     const fetchAppliedInternship = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           "http://localhost:7470/user/internship/applied",
@@ -132,6 +137,7 @@ export default function ProfilePage() {
       <>
         <Navbar />
         <HeaderWhite />
+        <Menu />
         <main className="mx-auto max-w-1xl px-4 py-6">
           <div>{status}</div>
         </main>
