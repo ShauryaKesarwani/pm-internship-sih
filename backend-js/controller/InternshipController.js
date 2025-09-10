@@ -164,6 +164,7 @@ async function getApplicantProfile(req, res) {
     }
 }
 
+
 async function internshipDetails(req, res) {
     try {
         const {internshipId} = req.params;

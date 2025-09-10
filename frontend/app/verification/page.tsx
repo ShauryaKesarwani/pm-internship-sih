@@ -13,13 +13,25 @@ const HomePage = () => {
     }
 
     try {
+      console.log(1)
       const response = await fetch("http://localhost:7470/user/verify", {
         method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ mobile }),
       });
 
       const data = await response.json();
       console.log("Response:", data);
+
+      if (response.ok) {
+        // Redirect to resume uploading page on your frontend
+        window.location.href = "http://localhost:3000/resumeUploading";
+      } else {
+        alert("Verification failed");
+      }
     } catch (error) {
       console.error("Error sending mobile number:", error);
     }
@@ -43,20 +55,28 @@ const HomePage = () => {
           </div>
           <div className="mb-4">
             <input
-              type="text"
-              placeholder="Mobile number*"
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="text"
+                placeholder="Mobile number*"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={mobile}               // <-- bind value to state
+                onChange={(e) => setMobile(e.target.value)}  // <-- update state on input
             />
             <p className="text-sm text-gray-500 mt-1">Enter your registered Mobile number</p>
           </div>
-          <button className="w-full bg-green-500 text-white py-2 rounded-md">Next</button>
+
+          <button
+              className="w-full bg-green-500 text-white py-2 rounded-md"
+              onClick={handleSubmit}       // <-- call your handler
+          >
+            Next
+          </button>
           <p className="text-center text-sm mt-4">
             Do not have an account?{" "}
             <a href="#" className="text-blue-600 hover:underline">Sign Up</a>
           </p>
         </div>
       </div>
-      </div>
-    )
+    </div>
+  )
 };
 export default HomePage;

@@ -1,6 +1,7 @@
 const User = require("../Model/User");
 const Internship = require("../Model/Internship");
 const Company = require("../Model/Company");
+const Application = require("../Model/Application");
 
 
 async function ongoingInternship(req, res) {
@@ -89,6 +90,11 @@ async function saveQuiz(req, res){
         res.status(500).json({ error: err.message });
     }
 }
+
+
+
+
+
 
 module.exports = {
     ongoingInternship,

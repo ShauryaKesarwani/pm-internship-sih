@@ -52,23 +52,44 @@ app.post("/user/verify", (req, res) => {
     return res.status(200).json({message : "verified Sucessfully"})
 })
 
-app.get("/post", async (req, res) => {
-  try {
-    const response = await axios.post("http://127.0.0.1:8000/yoink", {
-      myString: "Hello from Node backend 🚀"
-    });
-
-    res.json(response.data);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: err.message });
-  }
+app.get("/", (req, res) => {
+    if (req.oidc && req.oidc.isAuthenticated()) {
+        // send user back to frontend
+        return res.redirect("http://localhost:3000/");
+    }
+    res.redirect("http://localhost:3000/login?error=true");
 });
+
+app.get("/logout", (req, res) => {
+    if (req.oidc && req.oidc.isAuthenticated()) {
+        // send user back to frontend
+        res.redirect("http://localhost:7470/logout");
+    }
+
+    return res.redirect("http://localhost:3000/");
+});
+
+
+
+
+// app.get("/post", async (req, res) => {
+//   try {
+//     const response = await axios.post("http://127.0.0.1:8000/yoink", {
+//       myString: "Hello from Node backend"
+//     });
+//
+//     res.json(response.data);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 
 app.get("/health", (req, res) => {
   return res.json({ message: "Working jussss fine" });
 });
+
 
 app.get("/profile", requiresAuth(), (req, res) => {
   return res.json({ message: req.oidc.user });

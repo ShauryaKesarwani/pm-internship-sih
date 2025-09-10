@@ -29,7 +29,7 @@ router.get("/company/profile/:companyId", isUserAuthenticated, companyProfile); 
 router.get("/projects", isUserAuthenticated, getProjects); //
 router.post("/project/add", isUserAuthenticated, addProject); //
 router.post("/profile/edit", isUserAuthenticated, editProfile); //
-router.post("/resume/get", isUserAuthenticated, getResume);
+router.get("/resume/get", isUserAuthenticated, getResume);
 router.post("/resume/upload", isUserAuthenticated, upload.single("resume"), uploadResume);
 
 
