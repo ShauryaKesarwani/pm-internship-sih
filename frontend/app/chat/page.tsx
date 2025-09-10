@@ -156,6 +156,7 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-[#FAEFE9] p-2">
       <div className="flex h-[calc(100vh-3rem)] border border-orange-200 rounded-md overflow-hidden shadow-sm bg-white">
+      
       {/* Left: Companies list */}
       <aside className="w-full sm:w-72 md:w-80 border-r border-orange-200 flex flex-col bg-white">
         <div className="p-3 border-b border-orange-200">
