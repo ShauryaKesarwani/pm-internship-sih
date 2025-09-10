@@ -3,16 +3,18 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
-from fastapi import FastAPI
+from fastapi import APIRouter
 from models import CandidateRequest, RecommendationResponse, JobResponse
 from recommender import Recommender
 from user_service import get_user_candidate
 
-app = FastAPI(title="Internship Recommender API")
+# app = FastAPI(title="Internship Recommender API")
+router = APIRouter(prefix="/recommend", tags=["recommendations"])
 
 recommender = Recommender()
 
-@app.post("/recommend/{user_id}", response_model=RecommendationResponse)
+# @app.post("/recommend/{user_id}", response_model=RecommendationResponse)
+@router.post("/{user_id}", response_model=RecommendationResponse)
 def recommend(user_id: str, prompt: str = ""):
     # 1. Load candidate data from Mongo
     candidate = get_user_candidate(user_id, prompt)
