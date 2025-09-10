@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
-
 import Button from "../components/buttons";
 import { fetchInternshipHistory, fetchOpenApplications } from "../lib/api";
 import Menu from "../components/menu";
+import { Search, Filter, X, Clock, MapPin, Building2, Users, Star } from "lucide-react";
 
 export default function ProfilePage() {
   const [currentTab, setCurrentTab] = useState("profile");
@@ -25,6 +25,17 @@ export default function ProfilePage() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
+  
+  // Search functionality
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchFilters, setSearchFilters] = useState({
+    type: "all", // all, internships, companies, users
+    location: "all",
+    category: "all"
+  });
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -133,6 +144,144 @@ export default function ProfilePage() {
     loadInternshipData();
   }, [currentTab, internshipHistory.length, openApplications.length]);
 
+  // Search functionality
+  const performSearch = async (query, filters = {}) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      // Backend API call for search
+      const searchParams = new URLSearchParams({
+        q: query,
+        type: filters.type || searchFilters.type,
+        location: filters.location || searchFilters.location,
+        category: filters.category || searchFilters.category,
+        limit: "20"
+      });
+
+      const response = await fetch(`http://localhost:7470/search?${searchParams}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data.results || []);
+        setShowSearchResults(true);
+      } else {
+        console.error("Search failed:", response.status);
+        // Fallback to local search if backend fails
+        performLocalSearch(query);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      // Fallback to local search
+      performLocalSearch(query);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Local search fallback
+  const performLocalSearch = (query) => {
+    const localResults = [];
+    
+    // Search in internship history
+    if (internshipHistory.length > 0) {
+      const historyMatches = internshipHistory.filter(internship =>
+        internship.company.toLowerCase().includes(query.toLowerCase()) ||
+        internship.position.toLowerCase().includes(query.toLowerCase()) ||
+        internship.description.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      historyMatches.forEach(match => {
+        localResults.push({
+          id: `history_${match.id}`,
+          type: "internship_history",
+          title: match.position,
+          company: match.company,
+          description: match.description,
+          status: match.status,
+          duration: match.duration,
+          location: match.location
+        });
+      });
+    }
+
+    // Search in open applications
+    if (openApplications.length > 0) {
+      const applicationMatches = openApplications.filter(application =>
+        application.company.toLowerCase().includes(query.toLowerCase()) ||
+        application.position.toLowerCase().includes(query.toLowerCase()) ||
+        application.description.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      applicationMatches.forEach(match => {
+        localResults.push({
+          id: `application_${match.id}`,
+          type: "open_application",
+          title: match.position,
+          company: match.company,
+          description: match.description,
+          status: match.status,
+          deadline: match.deadline,
+          location: match.location
+        });
+      });
+    }
+
+    setSearchResults(localResults);
+    setShowSearchResults(true);
+  };
+
+  // Debounced search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.trim()) {
+        performSearch(searchQuery, searchFilters);
+      } else {
+        setSearchResults([]);
+        setShowSearchResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, searchFilters]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      performSearch(searchQuery, searchFilters);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setShowSearchResults(false);
+  };
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showSearchResults && !event.target.closest('.search-container')) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSearchResults]);
+
   if (!user) {
     return (
       <>
@@ -150,6 +299,151 @@ export default function ProfilePage() {
     <>
       <Navbar />
       <HeaderWhite />
+      
+      {/* Search Bar */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="relative search-container">
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <div className="flex items-center space-x-4">
+                {/* Search Input */}
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    placeholder="Search internships, companies, or skills..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF9982] focus:border-transparent text-sm"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X size={20} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Search Filters */}
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={searchFilters.type}
+                    onChange={(e) => setSearchFilters(prev => ({ ...prev, type: e.target.value }))}
+                    className="px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF9982] focus:border-transparent text-sm"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="internships">Internships</option>
+                    <option value="companies">Companies</option>
+                    <option value="users">Users</option>
+                  </select>
+
+                  <button
+                    type="submit"
+                    disabled={isSearching || !searchQuery.trim()}
+                    className="px-6 py-3 bg-[#FF9982] text-white rounded-lg hover:bg-[#FF876A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                  >
+                    {isSearching ? "Searching..." : "Search"}
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Search Results Dropdown */}
+            {showSearchResults && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                {searchResults.length > 0 ? (
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="text-sm font-medium text-gray-900">
+                        {searchResults.length} results found
+                      </h3>
+                      <button
+                        onClick={clearSearch}
+                        className="text-xs text-gray-500 hover:text-gray-700"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {searchResults.map((result) => (
+                        <div
+                          key={result.id}
+                          className="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                          onClick={() => {
+                            // Handle result click - could navigate to specific page or show details
+                            console.log("Clicked result:", result);
+                          }}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <h4 className="text-sm font-medium text-gray-900">
+                                  {result.title}
+                                </h4>
+                                <span className={`px-2 py-1 text-xs rounded-full ${
+                                  result.type === 'internship_history' 
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-green-100 text-green-800'
+                                }`}>
+                                  {result.type === 'internship_history' ? 'History' : 'Application'}
+                                </span>
+                              </div>
+                              
+                              <p className="text-sm text-gray-600 mb-2">
+                                {result.company}
+                              </p>
+                              
+                              <p className="text-xs text-gray-500 line-clamp-2">
+                                {result.description}
+                              </p>
+                              
+                              <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                                {result.location && (
+                                  <div className="flex items-center space-x-1">
+                                    <MapPin size={12} />
+                                    <span>{result.location}</span>
+                                  </div>
+                                )}
+                                {result.duration && (
+                                  <div className="flex items-center space-x-1">
+                                    <Clock size={12} />
+                                    <span>{result.duration}</span>
+                                  </div>
+                                )}
+                                {result.status && (
+                                  <span className={`px-2 py-1 rounded-full text-xs ${
+                                    result.status === 'Completed' 
+                                      ? 'bg-green-100 text-green-800'
+                                      : result.status === 'Rejected'
+                                      ? 'bg-red-100 text-red-800'
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  }`}>
+                                    {result.status}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-gray-500">
+                    <p className="text-sm">No results found for "{searchQuery}"</p>
+                    <p className="text-xs mt-1">Try different keywords or check your spelling</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <Menu />
       <main className="w-full px-4 py-6 min-h-screen bg-[#FFF5F2]">
         <section className="grid grid-cols-1 grid-rows-2 gap-6 md:grid-cols-3">
