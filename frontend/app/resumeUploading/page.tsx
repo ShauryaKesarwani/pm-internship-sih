@@ -44,16 +44,24 @@ const ResumePage = () => {
       <div className="flex items-center justify-center p-4">
         <div className="max-w-4xl w-full flex flex-col items-center space-y-8 mt-48">
           <div className="w-full flex justify-center">
-            <h1 className="text-3xl font-bold text-center text-black">Resume uploader</h1>
+            <h1 className="text-3xl font-bold text-center text-black">
+              Resume uploader
+            </h1>
           </div>
           <div className="w-full flex justify-center">
             <form
               onSubmit={handleSubmit}
               className="bg-white rounded-2xl shadow-lg max-w-xl w-full p-8 flex flex-col items-center "
             >
-              <img src="/uploadIcon.png" alt="Upload Icon" className="w-16 h-16 mb-4" />
+              <img
+                src="/uploadIcon.png"
+                alt="Upload Icon"
+                className="w-16 h-16 mb-4"
+              />
               <p className="text-gray-700 mb-1">choose resume to upload</p>
-              <p className="text-gray-500 mb-6 text-sm">the file size should be lesser than 10 mb</p>
+              <p className="text-gray-500 mb-6 text-sm">
+                the file size should be lesser than 10 mb
+              </p>
 
               <input
                 type="file"
