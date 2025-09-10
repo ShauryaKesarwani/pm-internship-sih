@@ -1,6 +1,10 @@
 "use client";
+// Import global styles to override Google Translate banner
+import "../globals.css";
+
 import React, { useEffect } from "react";
 import Image from "next/image";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Header() {
   useEffect(() => {
@@ -75,17 +79,7 @@ export default function Header() {
           <p>भारत सरकार / Government Of India</p>
         </div>
         <div className="flex gap-4 justify-end align-items-center">
-          <span className="language01">
-            <form id="langForm" method="POST">
-              <i className="fal fa-globe"></i>
-              <select name="language" id="changeLang">
-                <option value="" disabled>
-                  Language
-                </option>
-                <option value="en">English</option>
-              </select>
-            </form>
-          </span>
+          <LanguageSwitcher />
           <div>
             <button>Screen Reader</button>
           </div>
