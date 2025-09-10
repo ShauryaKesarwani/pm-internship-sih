@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from backend_py.quiz import AdaptiveQuiz  # absolute import
+from .quiz import AdaptiveQuiz  # absolute import
 import httpx
 
 quiz: AdaptiveQuiz | None = None  # global handle
