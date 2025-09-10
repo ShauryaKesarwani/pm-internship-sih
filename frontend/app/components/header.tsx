@@ -5,15 +5,46 @@ import { FaUser } from "react-icons/fa";
 
 export default function HeaderWhite() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("User");
 
   useEffect(() => {
     const user = localStorage.getItem('user');
     setIsLoggedIn(!!user);
+    
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        setUserName(userData.name || "User");
+      } catch (e) {
+        setUserName("User");
+      }
+    }
+  }, []);
+
+  // Listen for storage changes to update login state
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const user = localStorage.getItem('user');
+      setIsLoggedIn(!!user);
+      
+      if (user) {
+        try {
+          const userData = JSON.parse(user);
+          setUserName(userData.name || "User");
+        } catch (e) {
+          setUserName("User");
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     setIsLoggedIn(false);
+    setUserName("User");
     window.location.href = "http://localhost:7470/logout";
     setTimeout(() => {
       window.location.href = "/";
@@ -31,7 +62,7 @@ export default function HeaderWhite() {
           <>
             <Link href="/profile" className="flex items-center space-x-2 text-gray-700 hover:text-orange-600">
               <FaUser className="text-xl" />
-              <span className="text-sm font-medium">User</span>
+              <span className="text-sm font-medium">{userName}</span>
             </Link>
             <button 
               onClick={handleLogout}

@@ -7,11 +7,9 @@ import HeaderWhite from "../components/header";
 import Button from "../components/buttons";
 
 const LoginPage = () => {
-  const handleLogin = () => {
-    // Simple login - just set a flag in localStorage
-    localStorage.setItem('user', 'logged-in');
-    // Refresh the page to update the header http:7470/login
-    window.location.reload();
+  const handleEmployerLogin = () => {
+    // Redirect to business login page
+    window.location.href = 'http://localhost:3000/businesLogin';
   };
 
   const handleCandidateLogin = () => {
@@ -35,7 +33,7 @@ const LoginPage = () => {
               Companies willing to put up internship information for the public click on the business login below
             </p>
             <div className="mt-6 flex justify-center">
-              <Button onClick={handleLogin}>Business Login</Button>
+              <Button onClick={handleEmployerLogin}>Business Login</Button>
             </div>
           </div>
         </section>

@@ -9,23 +9,18 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-      const data = await response.json();
-      console.log("Login success:", data);
-      // handle success (e.g., redirect, store token)
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    
+    // Store employer data in localStorage
+    const employerData = {
+      name: username || "Business User",
+      email: username,
+      type: "employer"
+    };
+    
+    localStorage.setItem('user', JSON.stringify(employerData));
+    
+    // Redirect to home page to show logged in state
+    window.location.href = '/';
   };
 
   return (
