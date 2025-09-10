@@ -48,6 +48,10 @@ interface Internship {
   isBookmarked?: boolean;
   isLiked?: boolean;
   imageUrl?: string;
+  // Additional fields from recommendation API
+  combinedScore?: number;
+  simScore?: number;
+  metaScore?: number;
 }
 
 const InternshipsPage = () => {
@@ -69,10 +73,13 @@ const InternshipsPage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
-  
+
   // Generate functionality
-  const [showGeneratedInternships, setShowGeneratedInternships] = useState(false);
-  const [generatedInternships, setGeneratedInternships] = useState<Internship[]>([]);
+  const [showGeneratedInternships, setShowGeneratedInternships] =
+    useState(false);
+  const [generatedInternships, setGeneratedInternships] = useState<
+    Internship[]
+  >([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Dummy data for demonstration
@@ -406,30 +413,68 @@ const InternshipsPage = () => {
   const generateInternships = async () => {
     setIsGenerating(true);
     try {
+      console.log("Attempting to fetch recommendations...");
       // Backend API call for generating internships
-      const response = await fetch(`http://localhost:7470/internships/generate`, {
+      const response = await fetch(`http://127.0.0.1:8000/recommend/`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          searchTerm: searchTerm,
-          filters: {
-            category: selectedCategory,
-            location: selectedLocation,
-            type: selectedType,
-            duration: selectedDuration,
-            minStipend: minStipend,
-            maxStipend: maxStipend
-          }
-        })
+          user_id: "68c07211acffea4d6b24fa9f  ", // You can replace this with dynamic user ID
+        }),
       });
+
+      console.log("Response status:", response.status);
 
       if (response.ok) {
         const data = await response.json();
-        setGeneratedInternships(data.internships || []);
-        setShowGeneratedInternships(true);
+        console.log("Received data:", data);
+
+        // Check if recommendations exist
+        if (data.recommendations && data.recommendations.length > 0) {
+          // Transform the recommendation data to match our Internship interface
+          const transformedInternships = data.recommendations.map(
+            (rec: any) => ({
+              id: rec.job_id,
+              title: rec.title,
+              company: rec.company,
+              companyLogo: "/api/placeholder/40/40",
+              location: "Remote", // Default since not provided in API
+              type: "Remote" as const,
+              duration: "3 months", // Default since not provided in API
+              stipend: 3000, // Default since not provided in API
+              stipendType: "Fixed" as const,
+              startDate: new Date().toISOString().split("T")[0],
+              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split("T")[0], // 30 days from now
+              description: `Join ${rec.company} as a ${
+                rec.title
+              }. This role focuses on ${rec.tags.join(", ")} technologies.`,
+              requirements: rec.requirements,
+              skills: rec.tags,
+              category: rec.tags[0] || "Technology",
+              postedDate: new Date().toISOString().split("T")[0],
+              applicants: Math.floor(Math.random() * 50) + 10, // Random number between 10-60
+              rating: Math.round(rec.combined_score * 5 * 10) / 10, // Convert score to 5-star rating
+              isBookmarked: false,
+              isLiked: false,
+              imageUrl: "/api/placeholder/300/200",
+              // Additional fields from API
+              combinedScore: rec.combined_score,
+              simScore: rec.sim_score,
+              metaScore: rec.meta_score,
+            })
+          );
+
+          setGeneratedInternships(transformedInternships);
+          setShowGeneratedInternships(true);
+        } else {
+          console.log("No recommendations found, using dummy data");
+          generateDummyInternships();
+        }
       } else {
         console.error("Generate failed:", response.status);
         // Fallback to dummy data
@@ -437,6 +482,7 @@ const InternshipsPage = () => {
       }
     } catch (error) {
       console.error("Generate error:", error);
+      console.log("Network error - using dummy data as fallback");
       // Fallback to dummy data
       generateDummyInternships();
     } finally {
@@ -459,7 +505,8 @@ const InternshipsPage = () => {
         stipendType: "Performance-based",
         startDate: "2024-03-01",
         deadline: "2024-02-15",
-        description: "Work on cutting-edge AI projects including machine learning models, natural language processing, and computer vision applications.",
+        description:
+          "Work on cutting-edge AI projects including machine learning models, natural language processing, and computer vision applications.",
         requirements: ["Python", "TensorFlow", "PyTorch", "SQL"],
         skills: ["Machine Learning", "Deep Learning", "Data Science", "Python"],
         category: "Technology",
@@ -468,7 +515,7 @@ const InternshipsPage = () => {
         rating: 4.9,
         isBookmarked: false,
         isLiked: false,
-        imageUrl: "/api/placeholder/300/200"
+        imageUrl: "/api/placeholder/300/200",
       },
       {
         id: "gen_2",
@@ -482,16 +529,21 @@ const InternshipsPage = () => {
         stipendType: "Fixed",
         startDate: "2024-02-15",
         deadline: "2024-01-30",
-        description: "Build scalable web applications using modern technologies like React, Node.js, and cloud platforms.",
+        description:
+          "Build scalable web applications using modern technologies like React, Node.js, and cloud platforms.",
         requirements: ["React", "Node.js", "JavaScript", "MongoDB"],
-        skills: ["Frontend Development", "Backend Development", "Database Design"],
+        skills: [
+          "Frontend Development",
+          "Backend Development",
+          "Database Design",
+        ],
         category: "Technology",
         postedDate: "2024-01-20",
         applicants: 89,
         rating: 4.7,
         isBookmarked: false,
         isLiked: false,
-        imageUrl: "/api/placeholder/300/200"
+        imageUrl: "/api/placeholder/300/200",
       },
       {
         id: "gen_3",
@@ -505,8 +557,13 @@ const InternshipsPage = () => {
         stipendType: "Fixed",
         startDate: "2024-02-01",
         deadline: "2024-01-25",
-        description: "Manage social media campaigns, create engaging content, and analyze marketing performance metrics.",
-        requirements: ["Social Media Marketing", "Content Creation", "Analytics"],
+        description:
+          "Manage social media campaigns, create engaging content, and analyze marketing performance metrics.",
+        requirements: [
+          "Social Media Marketing",
+          "Content Creation",
+          "Analytics",
+        ],
         skills: ["Digital Marketing", "Social Media", "Content Strategy"],
         category: "Marketing",
         postedDate: "2024-01-18",
@@ -514,8 +571,8 @@ const InternshipsPage = () => {
         rating: 4.5,
         isBookmarked: false,
         isLiked: false,
-        imageUrl: "/api/placeholder/300/200"
-      }
+        imageUrl: "/api/placeholder/300/200",
+      },
     ];
 
     setGeneratedInternships(dummyGeneratedInternships);
@@ -699,14 +756,26 @@ const InternshipsPage = () => {
                   <span>✨</span>
                   <span>Generated Internships</span>
                 </h2>
-                <p className="text-gray-600 mt-1">AI-powered recommendations based on your search criteria</p>
+                <p className="text-gray-600 mt-1">
+                  AI-powered recommendations based on your search criteria
+                </p>
               </div>
               <button
                 onClick={() => setShowGeneratedInternships(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -717,11 +786,16 @@ const InternshipsPage = () => {
                   key={internship.id}
                   className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-purple-300 group relative overflow-hidden"
                 >
-                  {/* Generated Badge */}
-                  <div className="absolute top-3 right-3">
+                  {/* Generated Badge and Score */}
+                  <div className="absolute top-3 right-3 flex flex-col items-end space-y-1">
                     <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-medium rounded-full">
                       AI Generated
                     </span>
+                    {internship.combinedScore && (
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                        Match: {Math.round(internship.combinedScore * 100)}%
+                      </span>
+                    )}
                   </div>
 
                   {/* Company Logo and Header */}
@@ -734,12 +808,16 @@ const InternshipsPage = () => {
                         <h3 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
                           {internship.title}
                         </h3>
-                        <p className="text-sm text-gray-600">{internship.company}</p>
+                        <p className="text-sm text-gray-600">
+                          {internship.company}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm font-medium text-gray-700">{internship.rating}</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        {internship.rating}
+                      </span>
                     </div>
                   </div>
 
@@ -789,6 +867,35 @@ const InternshipsPage = () => {
                     </div>
                   </div>
 
+                  {/* Score Breakdown */}
+                  {internship.combinedScore && (
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                      <div className="text-xs text-gray-600 mb-2 font-medium">
+                        Recommendation Scores:
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="text-center">
+                          <div className="font-medium text-blue-600">
+                            {Math.round((internship.simScore || 0) * 100)}%
+                          </div>
+                          <div className="text-gray-500">Similarity</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-green-600">
+                            {Math.round((internship.metaScore || 0) * 100)}%
+                          </div>
+                          <div className="text-gray-500">Metadata</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-purple-600">
+                            {Math.round(internship.combinedScore * 100)}%
+                          </div>
+                          <div className="text-gray-500">Combined</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Footer */}
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
@@ -798,7 +905,10 @@ const InternshipsPage = () => {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3 h-3" />
-                        <span>Apply by {new Date(internship.deadline).toLocaleDateString()}</span>
+                        <span>
+                          Apply by{" "}
+                          {new Date(internship.deadline).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
