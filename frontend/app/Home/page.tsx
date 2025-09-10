@@ -13,7 +13,7 @@ const HomePage = () => {
       <Menu />
 
       {/* Hero Section */}
-      <section className="w-600px bg-white py-6 px-6 flex flex-col md:flex-row items-center justify-between ml-10 mr-10 mt-10 mb-10 rounded-lg">
+      <section className="w-600px bg-white py-6 px-6 flex flex-col md:flex-row items-center justify-between ml-10 mr-10 mt-4 mb-10 rounded-lg">
         <div className="md:w-1/2 space-y-6 pl-39">
           <h2 className="text-4xl font-bold text-gray-900">Stay Protected</h2>
           <p className="text-gray-700 text-lg max-w-md">

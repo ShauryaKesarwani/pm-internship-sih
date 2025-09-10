@@ -14,6 +14,10 @@ export default function HeaderWhite() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     setIsLoggedIn(false);
+    window.location.href = "http://localhost:7470/logout";
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 20000);
   };
 
   return (

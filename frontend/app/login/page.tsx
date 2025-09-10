@@ -10,8 +10,12 @@ const LoginPage = () => {
   const handleLogin = () => {
     // Simple login - just set a flag in localStorage
     localStorage.setItem('user', 'logged-in');
-    // Refresh the page to update the header
+    // Refresh the page to update the header http:7470/login
     window.location.reload();
+  };
+
+  const handleCandidateLogin = () => {
+    window.location.href = "http://localhost:7470/login";
   };
 
   return (
@@ -47,7 +51,7 @@ const LoginPage = () => {
               Candidates interested in applying for internships click on the apply button.
             </div>
             <div className="mt-6 flex justify-center">
-              <Button onClick={handleLogin}>Candidate Login</Button>
+              <Button onClick={handleCandidateLogin}>Candidate Login</Button>
             </div>
           </div>
         </section>
