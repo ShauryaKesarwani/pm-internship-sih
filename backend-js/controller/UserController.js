@@ -213,19 +213,22 @@ async function uploadResume(req, res){
 async function sendFileToBackend(filePath, userId) {
     try {
         const form = new FormData();
-        form.append("resume", fs.createReadStream(filePath));
-        form.append("userId", userId.toString());
 
-        const response = await axios.post("http://127.0.0.1/api/resumeupload", form, {
-            headers: { ...form.getHeaders() },
+        // "file" must match the FastAPI UploadFile parameter name
+        form.append("file", fs.createReadStream(filePath));  
+        form.append("userId", userId.toString()); // extra text field
+
+        const response = await axios.post("http://127.0.0.1:8000/parse-resume", form, {
+            headers: {
+                ...form.getHeaders(),
+            },
             maxBodyLength: Infinity,
         });
 
-        console.log("File sent to other backend successfully:", response.data);
-        return response.data; // return so calling function can use it
+        console.log("✅ File sent to FastAPI successfully:", response.data);
+        return response.data;
     } catch (err) {
-        console.error("Error sending file to other backend:", err.message);
-        return null; // prevent calling code from crashing
+        console.error("❌ Error sending file to backend:", err.response?.data || err.message);
     }
 }
 
