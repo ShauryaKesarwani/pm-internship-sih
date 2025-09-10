@@ -5,6 +5,7 @@ import InternshipCard from "../components/InternshipCard";
 import FilterSidebar from "../components/FilterSidebar";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
+import Menu from "../components/menu";
 
 const Internship = () => {
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const Internship = () => {
     <div className="min-h-screen bg-[#FAEFE9] m-0 p-0">
       <Navbar />
       <HeaderWhite />
+      <Menu />
       <main className="flex flex-col md:flex-row mt-4 px-4 md:px-8">
         <FilterSidebar />
 

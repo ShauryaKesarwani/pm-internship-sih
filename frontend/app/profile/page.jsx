@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import Button from "../components/buttons";
 import { fetchInternshipHistory, fetchOpenApplications } from "../lib/api";
+import Menu from "../components/menu";
 
 export default function ProfilePage() {
   const [currentTab, setCurrentTab] = useState("profile");
@@ -132,6 +133,7 @@ export default function ProfilePage() {
       <>
         <Navbar />
         <HeaderWhite />
+        <Menu />
         <main className="mx-auto max-w-1xl px-4 py-6">
           <div>{status}</div>
         </main>
