@@ -48,6 +48,10 @@ app.use("/company", CompanyRouter);
 app.use("/user", UserRouter);
 
 
+app.post("/user/verify", (req, res) => {
+    return res.status(200).json({message : "verified Sucessfully"})
+})
+
 app.get("/post", async (req, res) => {
   try {
     const response = await axios.post("http://127.0.0.1:8000/yoink", {

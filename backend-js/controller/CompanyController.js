@@ -7,9 +7,7 @@ require('dotenv').config();
 async function signUp(req, res) {
     try {
         const body = req.body;
-        console.log(body)
         const email = body.email;
-        console.log(email)
 
         if(!email) {
             return res.status(400).json({ message: 'All fields are required' });
