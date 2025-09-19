@@ -32,6 +32,7 @@ const ResumePage = () => {
       } else {
         alert("Resume uploaded successfully.");
         setFile(null);
+        window.location.href = "http://localhost:3000/profile";
       }
     } catch (error) {
       alert("An error occurred while uploading.");

@@ -19,23 +19,26 @@ const {
     ongoingInternship,
     appliedInternships,
     internshipDetails,
-    saveQuiz } = require('../controller/UserInternshipController');
+    saveQuiz,
+    getPastInternships } = require('../controller/UserInternshipController');
 
 const router = express.Router();
 
-router.get("/profile", isUserAuthenticated, profile); //
-router.get("/experience", isUserAuthenticated, experience); //
+router.get("/profile", isUserAuthenticated, profile); // --//everything except, resume.experience.intenrships
+router.get("/experience", isUserAuthenticated, experience); // --
 router.get("/company/profile/:companyId", isUserAuthenticated, companyProfile); //
-router.get("/projects", isUserAuthenticated, getProjects); //
+router.get("/projects", isUserAuthenticated, getProjects); // ---
 router.post("/project/add", isUserAuthenticated, addProject); //
 router.post("/profile/edit", isUserAuthenticated, editProfile); //
-router.post("/resume/get", isUserAuthenticated, getResume);
-router.post("/resume/upload", isUserAuthenticated, upload.single("resume"), uploadResume);
+router.get("/resume/get", isUserAuthenticated, getResume);
+router.post("/resume/upload", isUserAuthenticated, upload.single("resume"), uploadResume); //works
 
 
-router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); //
-router.get("/internship/applied",isUserAuthenticated, appliedInternships); //
+router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); // --
+router.get("/internship/applied",isUserAuthenticated, appliedInternships); // --
 router.get("/internship/details/:internshipId", isUserAuthenticated, internshipDetails); //
+router.get("/internship/past",isUserAuthenticated, getPastInternships); // -- prolly ?
 
 router.post("/:id/quiz", isUserAuthenticated, saveQuiz)
+
 module.exports = router;
