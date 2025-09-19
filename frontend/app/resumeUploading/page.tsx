@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
+import Menu from "../components/menu";
 
 const ResumePage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -41,6 +42,7 @@ const ResumePage = () => {
     <div className="bg-[#FAEFE9] min-h-screen">
       <Navbar />
       <HeaderWhite />
+      <Menu />
       <div className="flex items-center justify-center p-4">
         <div className="max-w-4xl w-full flex flex-col items-center space-y-8 mt-48">
           <div className="w-full flex justify-center">
