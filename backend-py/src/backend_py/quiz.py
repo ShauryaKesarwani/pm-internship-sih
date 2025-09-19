@@ -119,11 +119,6 @@ class AdaptiveQuiz:
             if not q:
                 print("Failed to fetch question...")
                 continue
-        for i in range(num_questions):
-            q = self.generateQuestion(current_difficulty)
-            if not q:
-                print("Failed to fetch question...")
-                continue
         
             print(f"\nQ{i+1}: {q['question']}")
             for opt in q["options"]:
@@ -196,7 +191,7 @@ if __name__ == "__main__":
         "answer": "SQL",
         "difficulty": "easy"
     }
-]
+    ]
     weighted_samples = quiz.assignWeight(samples)
     print("Weighted recruiter samples loaded")
     quiz.runQuiz(num_questions=10)

@@ -1,5 +1,5 @@
-from db import users_collection
-from models import CandidateRequest
+from .db import users_collection
+from .models import CandidateRequest
 from bson import ObjectId
 
 def get_user_candidate(user_id: str, prompt: str) -> CandidateRequest:

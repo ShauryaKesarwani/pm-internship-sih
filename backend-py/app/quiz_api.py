@@ -77,8 +77,12 @@ def start_quiz(difficulty: float = 0.5):
     quiz_history.clear()  # reset old history
     quiz_history.append({
         "question": q["question"],
+        "options": q["options"],
+        "correct_answer": q["answer"],   # ✅ store correct answer
+        "difficulty": q["difficulty"],
+        "weight": q["weight"],
         "user_answer": None,
-        "correct_answer": None,
+        "answered": False
     })
 
     return {
