@@ -44,8 +44,8 @@ const ResumePage = () => {
       <Navbar />
       <HeaderWhite />
       <Menu />
-      <div className="flex items-center justify-center p-4">
-        <div className="max-w-4xl w-full flex flex-col items-center space-y-8 mt-48">
+      <div className="flex items-center justify-center p-4 min-h-[75vh]">
+        <div className="max-w-4xl w-full flex flex-col items-center space-y-8">
           <div className="w-full flex justify-center">
             <h1 className="text-3xl font-bold text-center text-black">
               Resume uploader
