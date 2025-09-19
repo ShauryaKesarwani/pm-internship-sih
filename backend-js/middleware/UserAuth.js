@@ -3,16 +3,17 @@ const User = require("../Model/User");
 
 async function isUserAuthenticated(req, res, next) {
     try {
+        console.log("Auth middleware");
         if(!req.oidc || !req.oidc.user) {
             return res.status(401).json({message: "Unauthorized"});
         }
-        const user =await User.findOne({email: req.oidc.user.email}).select("-password");
-        // if(!user) {
-        //     return res.status(404).json({message: "user not Found"});
-        // }
-        // if(user.auth0Id !== req.oidc.user.sub) {
-        //     return res.status(404).json({message: "Invalid Credentials"});
-        // }
+        const user =await User.findOne({email: req.oidc.user.email}).select("-password -resume -experience -internships -resumeDoc");
+        if(!user) {
+            return res.status(404).json({message: "user not Found"});
+        }
+        if(user.auth0Id !== req.oidc.user.sub) {
+            return res.status(404).json({message: "Invalid Credentials"});
+        }
         req.user = user;
         next();
     } catch (err) {

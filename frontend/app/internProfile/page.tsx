@@ -16,7 +16,7 @@ const InternProfile = () => {
   useEffect(() => {
     // Uncomment this to fetch from backend
 
-    fetch("https://your-backend.com/api/intern/123")
+    fetch("http://localhost:7470/user/")
       .then((res) => res.json())
       .then((data) => {
         setData(data);

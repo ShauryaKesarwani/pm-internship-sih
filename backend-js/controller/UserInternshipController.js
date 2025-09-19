@@ -92,6 +92,27 @@ async function saveQuiz(req, res){
 }
 
 
+async function getPastInternships(req, res) {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const freshUser = await User.findById(user._id).populate(
+            "internships"
+        );
+
+        return res.json({
+            success: true,
+            user: freshUser,
+        });
+    } catch (err) {
+        console.error(" user Profile Internships:");
+        console.log(err);
+        return res.status(500).json({ error: "Server Error" });
+    }
+}
 
 
 
@@ -100,5 +121,6 @@ module.exports = {
     ongoingInternship,
     appliedInternships,
     internshipDetails,
-    saveQuiz
+    saveQuiz,
+    getPastInternships
 }
