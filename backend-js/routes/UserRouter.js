@@ -13,6 +13,7 @@ const {
     getProjects,
     editProfile,
     addProject,
+    getProfileResume
         } = require('../controller/UserController');
 
 const {
@@ -29,8 +30,9 @@ router.get("/experience", isUserAuthenticated, experience); // --
 router.get("/company/profile/:companyId", isUserAuthenticated, companyProfile); //
 router.get("/projects", isUserAuthenticated, getProjects); // ---
 router.post("/project/add", isUserAuthenticated, addProject); //
-router.post("/profile/edit", isUserAuthenticated, editProfile); //
+router.patch("/profile/edit", isUserAuthenticated, editProfile); //
 router.get("/resume/get", isUserAuthenticated, getResume);
+router.get("/profile/resume", isUserAuthenticated, getProfileResume); //
 router.post("/resume/upload", isUserAuthenticated, upload.single("resume"), uploadResume); //works
 
 

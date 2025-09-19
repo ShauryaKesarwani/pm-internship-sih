@@ -5,11 +5,11 @@ import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import Menu from "../components/menu";
 import Button from "../components/buttons";
-import { fetchInternshipHistory, fetchOpenApplications } from "../lib/api";
 
 export default function ProfilePage() {
   const [currentTab, setCurrentTab] = useState("profile");
   const [user, setUser] = useState(null);
+  const [resume, setResume] = useState([]);
   const [currentInternship, setCurrentInternship] = useState(null);
   const [pastInternships, setPastInternships] = useState([]);
   const [openApplications, setOpenApplications] = useState([]);
@@ -27,11 +27,12 @@ export default function ProfilePage() {
     setLoading(true);
     setLoadingInternships(true);
     try {
-      const [profileRes, ongoingRes, pastRes, appliedRes] = await Promise.all([
+      const [profileRes, ongoingRes, pastRes, appliedRes, resumeRes] = await Promise.all([
         fetch("http://localhost:7470/user/profile", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/ongoing", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/past", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/applied", { credentials: "include" }),
+        fetch("http://localhost:7470/user/profile/resume", { credentials: "include" }),
       ]);
 
       if (!profileRes.ok) throw new Error("Failed to fetch profile");
@@ -40,15 +41,14 @@ export default function ProfilePage() {
       const ongoingData = await ongoingRes.json();
       const pastData = await pastRes.json();
       const appliedData = await appliedRes.json();
+      const resumeData = await resumeRes.json();
 
       setUser(profileData.user || null);
       setCurrentInternship(ongoingData.currentInternship || null);
       setPastInternships(pastData.pastInternships || []);
       setOpenApplications(appliedData.applications || []);
+      setResume(resumeData.resume || []);
 
-      console.log("Current Internship:", ongoingData.currentInternship);
-      console.log("Past Internships:", pastData.pastInternships);
-      console.log("Open Applications:", appliedData.applications);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -169,7 +169,7 @@ export default function ProfilePage() {
                 </a>
                 <div className="mt-4 flex items-center gap-3">
                   <a
-                    href={user.links?.linkedin || "#"}
+                    href={resume.socialLinks?.linkedin || "#"}
                     target="_blank"
                     rel="noreferrer"
                     className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                     LinkedIn
                   </a>
                   <a
-                    href={user.links?.github || "#"}
+                    href={resume.socialLinks?.github || "#"}
                     target="_blank"
                     rel="noreferrer"
                     className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
@@ -185,7 +185,7 @@ export default function ProfilePage() {
                     GitHub
                   </a>
                   <a
-                    href={user.links?.website || "#"}
+                    href={resume.socialLinks?.website || "#"}
                     target="_blank"
                     rel="noreferrer"
                     className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
@@ -212,7 +212,7 @@ export default function ProfilePage() {
                       Skills
                     </h3>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {user.resume?.skills?.map((skill) => (
+                      {resume?.skills?.map((skill) => (
                         <span
                           key={skill}
                           className="rounded-full border px-3 py-1 text-xs text-neutral-700 text-neutral-700"
@@ -260,7 +260,7 @@ export default function ProfilePage() {
                           residenceCity: user?.residence?.city || "",
                           residenceState: user?.residence?.state || "",
                           about: user?.about || "",
-                          skillsCSV: (user?.resume?.skills || []).join(", "),
+                          skillsCSV: (resume?.skills || []).join(", "),
                           socialLinksCSV: (
                             user?.resume?.socialLinks || []
                           ).join(", "),
