@@ -74,6 +74,10 @@ const internshipSchema = new mongoose.Schema({
         default: true
     },
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
+    sampleQuestions : [{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Question"
+    }]
 }, { timestamps: true });
 
 const Internship = mongoose.model("Internship", internshipSchema);

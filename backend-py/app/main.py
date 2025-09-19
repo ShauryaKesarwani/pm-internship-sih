@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import os
+from fastapi.middleware.cors import CORSMiddleware
 # Change working directory to the script's own folder
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
@@ -10,6 +11,14 @@ from quiz_api import router as quiz_router
 from distance_route import router as distance_router
 
 app = FastAPI(title="Internship Platform API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(recommend_router)
 app.include_router(resume_router)
