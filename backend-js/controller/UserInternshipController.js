@@ -6,6 +6,7 @@ const Application = require("../Model/Application");
 
 async function ongoingInternship(req, res) {
     try {
+        console.log("ongoing internship")
         const userId = req.user._id;
         const user = await User.findById(userId)
             .populate({
@@ -17,6 +18,7 @@ async function ongoingInternship(req, res) {
             return res.status(404).json({ message: "No Internships Found" });
         }
         const currentInternship = user.internships.currentInternship;
+        console.log(currentInternship)
         return res.status(200).json({
             currentInternship,
         });
@@ -30,6 +32,7 @@ async function ongoingInternship(req, res) {
 
 async function appliedInternships(req, res) {
     try {
+        console.log("applied internships")
         const userId = req.user._id;
         const user = await User.findById(userId).populate("internships.applications");
 
@@ -41,6 +44,8 @@ async function appliedInternships(req, res) {
         if (!appliedInternships || appliedInternships.length === 0) {
             return res.status(404).json({ message: "No Applications Found" });
         }
+
+        console.log(appliedInternships)
 
         return res.status(200).json({
             applications: appliedInternships,
@@ -94,18 +99,25 @@ async function saveQuiz(req, res){
 
 async function getPastInternships(req, res) {
     try {
+        console.log("past internship")
         const user = req.user;
         if (!user) {
-            return res.status(401).json({ message: "Unauthorized" });
+            return res.status(404).json({ message: "Unauthorized" });
         }
 
         const freshUser = await User.findById(user._id).populate(
             "internships"
         );
+        const data = freshUser.internships.pastInternships;
 
+        if (!user) {
+            return res.status(404).json({ message: "No Past Internships Found" });
+        }
+
+        console.log(data)
         return res.json({
             success: true,
-            user: freshUser,
+            user: data,
         });
     } catch (err) {
         console.error(" user Profile Internships:");

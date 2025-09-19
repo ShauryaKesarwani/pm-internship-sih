@@ -9,7 +9,6 @@ const FormData = require("form-data");
 
 async function profile(req, res) {
   try {
-    console.log("profile hit");
     const user = req.user;
     if (!user) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -19,7 +18,6 @@ async function profile(req, res) {
       "-auth0Id -password -resume -experience -internships -resumeDoc"
     );
 
-    console.log(freshUser)
     return res.json({
       success: true,
       user: freshUser,

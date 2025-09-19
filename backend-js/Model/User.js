@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     phoneNumber: {
         type : String,
     },
+    about: {
+        type: String,
+        default: "",
+    },
     residence: {
         pin : {
             type : Number,
@@ -62,7 +66,11 @@ const userSchema = new mongoose.Schema({
         }],
         projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
         certifications: [String],
-        socialLinks: [String],
+        socialLinks: {
+            linkedin: { type: String },
+            github: { type: String },
+            website: { type: String },
+        },
         docResume : {
 
         }
