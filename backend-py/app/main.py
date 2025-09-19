@@ -8,9 +8,16 @@ from .distance_route import router as distance_router
 
 app = FastAPI(title="Internship Platform API")
 
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:7470",
+    "http://127.0.0.1:7470",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=origins, 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

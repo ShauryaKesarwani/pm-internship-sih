@@ -1,4 +1,4 @@
-from .db import users_collection
+from .db import users_collection, projects_collection
 from .models import CandidateRequest
 from bson import ObjectId
 
@@ -19,11 +19,22 @@ def get_user_candidate(user_id: str, prompt: str) -> CandidateRequest:
     if prompt:
         interests.append(prompt.lower())
 
+    # add projects
+    projects_list = []
+    for pid in user_doc.get("resume", {}).get("projects", []):
+        # pid might be an ObjectId
+        if isinstance(pid, ObjectId):
+            proj_doc = projects_collection.find_one({"_id": pid})
+            if proj_doc:
+                projects_list.append(proj_doc)  # now a dict, valid for Pydantic
+        elif isinstance(pid, dict):
+            projects_list.append(pid)  # already a dict
+
     return CandidateRequest(
         id=str(user_doc["_id"]),   # convert ObjectId → string for API
         name=user_doc.get("name"),
         skills=user_doc.get("resume", {}).get("skills", []),
-        projects=user_doc.get("resume", {}).get("projects", []),
+        projects=projects_list,
         education=None,   # optional: fill from user_doc if you add later
         bio=None,
         interests=interests

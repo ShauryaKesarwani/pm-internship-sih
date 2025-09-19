@@ -1,0 +1,89 @@
+[
+  {
+    "id": "651234abcd1234abcd567894",
+    "title": "UI/UX Design Intern",
+    "company": "651234abcd1234abcd567895",
+    "requirements": [
+      "Figma",
+      "Adobe XD",
+      "Sketch",
+      "User Research",
+      "Wireframing",
+      "Prototyping"
+    ],
+    "description": "Create wireframes and prototypes Design user interfaces for web and mobile apps Collaborate with product and frontend teams Conduct usability testing and iterate designs",
+    "tags": [
+      "Design"
+    ],
+    "location": "Bangalore"
+  },
+  {
+    "id": "651234abcd1234abcd567896",
+    "title": "Mobile App Development Intern",
+    "company": "651234abcd1234abcd567897",
+    "requirements": [
+      "React Native",
+      "Flutter",
+      "JavaScript",
+      "Dart",
+      "Git",
+      "REST APIs"
+    ],
+    "description": "Develop Android and iOS applications Integrate APIs and backend services Test and debug mobile apps Collaborate with UI/UX and backend teams",
+    "tags": [
+      "Mobile Development"
+    ],
+    "location": "Hyderabad"
+  },
+  {
+    "id": "651234abcd1234abcd567892",
+    "title": "Data Science Intern",
+    "company": "651234abcd1234abcd567893",
+    "requirements": [
+      "Python",
+      "Pandas",
+      "NumPy",
+      "Scikit-learn",
+      "Matplotlib",
+      "SQL"
+    ],
+    "description": "Analyze datasets and extract insights Build machine learning models Prepare data visualizations for stakeholders Collaborate with backend team to integrate models",
+    "tags": [
+      "AI & Analytics"
+    ],
+    "location": null
+  },
+  {
+    "id": "651234abcd1234abcd567890",
+    "title": "Full Stack Developer Intern",
+    "company": "651234abcd1234abcd567891",
+    "requirements": [
+      "JavaScript",
+      "Node.js",
+      "Express",
+      "React",
+      "MongoDB",
+      "Git"
+    ],
+    "description": "Develop REST APIs using Node.js and Express Create responsive frontend interfaces using React Write unit and integration tests Collaborate with the design and product teams",
+    "tags": [
+      "Software Development"
+    ],
+    "location": "Mumbai"
+  },
+  {
+    "id": "650c2f3e1c4a5b0012345678",
+    "title": "Software Engineering Intern",
+    "company": "650c2f3e1c4a5b0012345685",
+    "requirements": [
+      "Node.js",
+      "MongoDB",
+      "REST APIs"
+    ],
+    "description": "Develop backend APIs Write unit tests Collaborate with frontend team",
+    "tags": [
+      "Engineering"
+    ],
+    "location": "Mumbai"
+  }
+]

@@ -219,15 +219,15 @@ const InternshipsPage = () => {
     try {
       console.log("Attempting to fetch recommendations...");
       // Backend API call for generating internships
-      const response = await fetch(`http://127.0.0.1:8000/recommend/`, {
+      const response = await fetch(`http://127.0.0.1:8000/recommend/68cdccd0b579f1880f671f01`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user_id: "68c07211acffea4d6b24fa9f  ", // You can replace this with dynamic user ID
-        }),
+        // body: JSON.stringify({
+        //   user_id: "68c07211acffea4d6b24fa9f  ", // You can replace this with dynamic user ID
+        // }),
       });
 
       console.log("Response status:", response.status);
@@ -295,90 +295,9 @@ const InternshipsPage = () => {
 
   // Generate dummy internships as fallback
   const generateDummyInternships = () => {
-    const dummyGeneratedInternships: Internship[] = [
-      {
-        id: "gen_1",
-        title: "AI/ML Development Intern",
-        company: "TechInnovate Labs",
-        companyLogo: "/api/placeholder/40/40",
-        location: "Bangalore, India",
-        type: "Hybrid",
-        duration: "6 months",
-        stipend: 4500,
-        stipendType: "Performance-based",
-        startDate: "2024-03-01",
-        deadline: "2024-02-15",
-        description:
-          "Work on cutting-edge AI projects including machine learning models, natural language processing, and computer vision applications.",
-        requirements: ["Python", "TensorFlow", "PyTorch", "SQL"],
-        skills: ["Machine Learning", "Deep Learning", "Data Science", "Python"],
-        category: "Technology",
-        postedDate: "2024-01-15",
-        applicants: 67,
-        rating: 4.9,
-        isBookmarked: false,
-        isLiked: false,
-        imageUrl: "/api/placeholder/300/200",
-      },
-      {
-        id: "gen_2",
-        title: "Full Stack Development Intern",
-        company: "StartupHub Technologies",
-        companyLogo: "/api/placeholder/40/40",
-        location: "Mumbai, India",
-        type: "Remote",
-        duration: "4 months",
-        stipend: 3500,
-        stipendType: "Fixed",
-        startDate: "2024-02-15",
-        deadline: "2024-01-30",
-        description:
-          "Build scalable web applications using modern technologies like React, Node.js, and cloud platforms.",
-        requirements: ["React", "Node.js", "JavaScript", "MongoDB"],
-        skills: [
-          "Frontend Development",
-          "Backend Development",
-          "Database Design",
-        ],
-        category: "Technology",
-        postedDate: "2024-01-20",
-        applicants: 89,
-        rating: 4.7,
-        isBookmarked: false,
-        isLiked: false,
-        imageUrl: "/api/placeholder/300/200",
-      },
-      {
-        id: "gen_3",
-        title: "Digital Marketing Intern",
-        company: "GrowthMax Agency",
-        companyLogo: "/api/placeholder/40/40",
-        location: "Delhi, India",
-        type: "On-site",
-        duration: "3 months",
-        stipend: 2800,
-        stipendType: "Fixed",
-        startDate: "2024-02-01",
-        deadline: "2024-01-25",
-        description:
-          "Manage social media campaigns, create engaging content, and analyze marketing performance metrics.",
-        requirements: [
-          "Social Media Marketing",
-          "Content Creation",
-          "Analytics",
-        ],
-        skills: ["Digital Marketing", "Social Media", "Content Strategy"],
-        category: "Marketing",
-        postedDate: "2024-01-18",
-        applicants: 45,
-        rating: 4.5,
-        isBookmarked: false,
-        isLiked: false,
-        imageUrl: "/api/placeholder/300/200",
-      },
-    ];
+    // const dummyGeneratedInternships: Internship[] = dummyInternships
 
-    setGeneratedInternships(dummyGeneratedInternships);
+    setGeneratedInternships(dummyInternships);
     setShowGeneratedInternships(true);
   };
 

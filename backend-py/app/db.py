@@ -9,6 +9,7 @@ client = MongoClient(MONGO_URI)
 # db = client["don-tByteMe"]   # database local
 db = client["test"]   # database online
 users_collection = db["users"] # collection
+projects_collection = db["projects"]
 internships_collection = db["internships"]
 
 def load_jobs_from_db():
