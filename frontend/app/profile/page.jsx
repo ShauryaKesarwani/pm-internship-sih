@@ -80,12 +80,7 @@ export default function ProfilePage() {
           city: formData.residenceCity,
           state: formData.residenceState,
         },
-        resume: {
-          ...user?.resume,
-          skills: (formData.skillsCSV || "").split(",").map(s => s.trim()).filter(Boolean),
-          socialLinks: (formData.socialLinksCSV || "").split(",").map(s => s.trim()).filter(Boolean),
-          certifications: (formData.certificationsCSV || "").split(",").map(s => s.trim()).filter(Boolean),
-        },
+        resume:resume,
       };
 
 
@@ -186,6 +181,7 @@ export default function ProfilePage() {
                   </a>
                   <a
                     href={resume.socialLinks?.website || "#"}
+                    target="_blank"
                     target="_blank"
                     rel="noreferrer"
                     className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"

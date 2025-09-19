@@ -97,6 +97,7 @@ async function editProfile(req, res) {
     const updates = req.body;
     const userId = req.user._id;
 
+    console.log("11111111")
     const updatedUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
       runValidators: true,
