@@ -8,6 +8,7 @@ import { MapPin, Clock, DollarSign, Building2, Users, Star, Bookmark, Heart } fr
 
 // Types
 import { Internship } from "../data/Internship";
+import { useRouter } from "next/navigation";
 
 interface GeneratedInternshipsSectionProps {
     generatedInternships: Internship[];
@@ -24,6 +25,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
     // If you need to regenerate, uncomment the following line
     // generateInternships,
 }) => {
+    const router = useRouter();
     if (!showGeneratedInternships) {
         return null;
     }
@@ -199,7 +201,9 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                                 <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors">
                                     <Bookmark className="w-4 h-4" />
                                 </button>
-                                <button className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
+                                <button 
+                                onClick={()=> router.push(`/proficiencyTest/${internship.id}`)}
+                                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
                                     Apply Now
                                 </button>
                             </div>
