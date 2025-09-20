@@ -19,6 +19,7 @@ import HeaderWhite from "../components/header";
 import ResumeTemplate from "../components/ResumeTemplate";
 import { generateResumePDF, generateResumeText } from "../utils/resumePdfGenerator";
 import { generateLatexResumePDF } from "../utils/latexPdfGenerator";
+import Menu from "../components/menu";
 
 interface PersonalInfo {
   fullName: string;
@@ -1043,6 +1044,7 @@ export default function ResumeBuilderPage() {
     <div className="min-h-screen bg-[#FAEFE9]">
       <Navbar />
       <HeaderWhite />
+      <Menu />
       
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Progress Bar */}

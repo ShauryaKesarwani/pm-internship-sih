@@ -23,7 +23,6 @@ import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import Menu from "../components/menu";
 import Loading from "./components/loading"; //Loading Screen
-import InternshipCard from "./components/InternshipCard/InternshipCard";
 import SearchAndFilterBar from "./components/SearchAndFilterBar/searchAndFilter";
 import ResultsHeader from "./components/ResultsHeader";
 import GeneratedInternshipsSection from "./components/GeneratedInternshipsSection";
@@ -59,13 +58,11 @@ const InternshipsPage = () => {
   >([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-
   useEffect(() => {
     // Simulate API call
     const fetchInternships = async () => {
       setIsLoading(true);
       try {
-        // In real implementation, this would be an API call
         setTimeout(() => {
           setInternships(dummyInternships);
           setFilteredInternships(dummyInternships);
@@ -194,32 +191,12 @@ const InternshipsPage = () => {
     return dur;
   }, [internships]);
 
-  const toggleBookmark = (id: string) => {
-    setInternships((prev) =>
-      prev.map((internship) =>
-        internship.id === id
-          ? { ...internship, isBookmarked: !internship.isBookmarked }
-          : internship
-      )
-    );
-  };
-
-  const toggleLike = (id: string) => {
-    setInternships((prev) =>
-      prev.map((internship) =>
-        internship.id === id
-          ? { ...internship, isLiked: !internship.isLiked }
-          : internship
-      )
-    );
-  };
-
   // Generate internships function
   const generateInternships = async () => {
     setIsGenerating(true);
     try {
       console.log("Attempting to fetch recommendations...");
-      
+
       // Fetch current user's profile to get _id
       const profileRes = await fetch("http://localhost:7470/user/profile", {
         method: "GET",
@@ -230,36 +207,31 @@ const InternshipsPage = () => {
       });
       const profileData = await profileRes.json();
       const userId = profileData.user._id;
-      console.log(profileData);
-      
-      // Backend API call for generating internships
-      const response = await fetch(`http://127.0.0.1:8000/recommend/${userId}`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
 
-      console.log("Response status:", response.status);
+      // Backend API call for generating internships
+      const response = await fetch(
+        `http://127.0.0.1:8000/recommend/${userId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Received data:", data);
 
-        // Check if recommendations exist
         if (data.recommendations && data.recommendations.length > 0) {
-          // Transform the recommendation data to match our Internship interface
           const transformedInternships = await Promise.all(
             data.recommendations.map(async (rec: any) => {
-              // Fetch full internship details
               const detailRes = await fetch(
                 `http://127.0.0.1:7470/user/internship/details/${rec.job_id}`
               );
               const detailData = await detailRes.json();
               const internship = detailData.internship;
 
-              // Safely extract details
               const d = internship.internshipDetails;
               const location =
                 d?.location?.city && d?.location?.address
@@ -272,21 +244,31 @@ const InternshipsPage = () => {
                 company: internship.company || rec.company,
                 companyLogo: "/api/placeholder/40/40",
                 location: location,
-                type: location === "Remote" ? "Remote" as const : "On-site" as const,
+                type:
+                  location === "Remote"
+                    ? ("Remote" as const)
+                    : ("On-site" as const),
                 duration: d.duration || "N/A",
                 stipend: d.stipend || "N/A",
                 stipendType: "Fixed" as const,
-                startDate: d.startDate || new Date().toISOString().split("T")[0],
+                startDate:
+                  d.startDate || new Date().toISOString().split("T")[0],
                 deadline: d.applicationDeadline
-                  ? new Date(d.applicationDeadline).toISOString().split("T")[0]
+                  ? new Date(d.applicationDeadline)
+                      .toISOString()
+                      .split("T")[0]
                   : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                       .toISOString()
                       .split("T")[0],
-                description: `Join ${rec.company} as a ${d.title}. Responsibilities include ${d.responsibilities?.join(", ")}.`,
+                description: `Join ${rec.company} as a ${d.title}. Responsibilities include ${d.responsibilities?.join(
+                  ", "
+                )}.`,
                 requirements: d.skillsRequired || rec.requirements,
                 skills: rec.tags,
                 category: rec.tags[0] || "Technology",
-                postedDate: new Date(internship.createdAt).toISOString().split("T")[0],
+                postedDate: new Date(internship.createdAt)
+                  .toISOString()
+                  .split("T")[0],
                 applicants: Math.floor(Math.random() * 50) + 10,
                 rating: Math.round(rec.combined_score * 5 * 10) / 10,
                 isBookmarked: false,
@@ -302,18 +284,13 @@ const InternshipsPage = () => {
           setGeneratedInternships(transformedInternships);
           setShowGeneratedInternships(true);
         } else {
-          console.log("No recommendations found, using dummy data");
           generateDummyInternships();
         }
       } else {
-        console.error("Generate failed:", response.status);
-        // Fallback to dummy data
         generateDummyInternships();
       }
     } catch (error) {
       console.error("Generate error:", error);
-      console.log("Network error - using dummy data as fallback");
-      // Fallback to dummy data
       generateDummyInternships();
     } finally {
       setIsGenerating(false);
@@ -322,13 +299,11 @@ const InternshipsPage = () => {
 
   // Generate dummy internships as fallback
   const generateDummyInternships = () => {
-    // const dummyGeneratedInternships: Internship[] = dummyInternships
-
     setGeneratedInternships(dummyInternships);
     setShowGeneratedInternships(true);
   };
 
-  if (isLoading) return <Loading />
+  if (isLoading) return <Loading />;
 
   return (
     <div className="min-h-screen bg-[#FAEFE9]">
@@ -399,13 +374,101 @@ const InternshipsPage = () => {
           }
         >
           {currentInternships.map((internship) => (
-            <InternshipCard
+            <div
               key={internship.id}
-              internship={internship}
-              viewMode={viewMode}
-              onBookmark={() => toggleBookmark(internship.id)}
-              onLike={() => toggleLike(internship.id)}
-            />
+              className={`bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex ${
+                viewMode === "list" ? "flex-row gap-6 items-start" : "flex-col"
+              }`}
+            >
+              {/* Company Logo and Header */}
+              <div
+                className={`flex items-start justify-between ${
+                  viewMode === "list" ? "flex-1" : "mb-4"
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
+                      {internship.title}
+                    </h3>
+                    <p className="text-sm text-gray-600">{internship.company}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {internship.rating}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p
+                className={`text-sm text-gray-600 ${
+                  viewMode === "list"
+                    ? "flex-1 line-clamp-2"
+                    : "mb-4 line-clamp-3 flex-grow"
+                }`}
+              >
+                {internship.description}
+              </p>
+
+              {/* Details */}
+              <div className={`space-y-2 ${viewMode === "list" ? "flex-1" : "mb-4"}`}>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <MapPin className="w-4 h-4" />
+                  <span>{internship.location}</span>
+                  <span className="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                    {internship.type}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Clock className="w-4 h-4" />
+                  <span>{internship.duration}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <DollarSign className="w-4 h-4" />
+                  <span>₹{Number(internship.stipend).toLocaleString()}/month</span>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                    {internship.stipendType}
+                  </span>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div
+                className={`flex ${
+                  viewMode === "list"
+                    ? "flex-col sm:flex-row sm:items-center sm:justify-between flex-1"
+                    : "flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100"
+                } gap-2`}
+              >
+                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                  <div className="flex items-center space-x-1 whitespace-nowrap">
+                    <Users className="w-3 h-3" />
+                    <span>{internship.applicants} applicants</span>
+                  </div>
+                  <div className="flex items-center space-x-1 whitespace-nowrap">
+                    <Clock className="w-3 h-3" />
+                    <span>Apply by {new Date(internship.deadline).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 whitespace-nowrap">
+                    <Clock className="w-3 h-3" />
+                    <span>listed on {new Date(internship.postedDate).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
+                  <button
+                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap"
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
@@ -425,10 +488,11 @@ const InternshipsPage = () => {
                 <button
                   key={i + 1}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-2 border rounded-md ${currentPage === i + 1
-                    ? "bg-[#FF9982] text-white border-[#FF9982]"
-                    : "border-gray-300 hover:bg-gray-50"
-                    }`}
+                  className={`px-3 py-2 border rounded-md ${
+                    currentPage === i + 1
+                      ? "bg-[#FF9982] text-white border-[#FF9982]"
+                      : "border-gray-300 hover:bg-gray-50"
+                  }`}
                 >
                   {i + 1}
                 </button>

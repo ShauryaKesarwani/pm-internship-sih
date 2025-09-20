@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
+import Menu from "../components/menu";
 
 const HomePage = () => {
     const [mobile, setMobile] = useState("");
@@ -43,6 +44,7 @@ const HomePage = () => {
 
       <Navbar />
       <HeaderWhite />
+      <Menu />
       <div className="flex flex-col items-center justify-center mt-40">
         <div className="bg-white rounded-lg shadow-md p-8 w-[400px]">
           <div className="flex justify-center items-center ">

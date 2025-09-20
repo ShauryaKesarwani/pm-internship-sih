@@ -174,7 +174,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                             </div>
                         )}
 
-                        {/* Footer - Made responsive */}
+                        {/* Footer  */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100 gap-2">
                             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
                                 <div className="flex items-center space-x-1 whitespace-nowrap">
@@ -184,6 +184,10 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                                 <div className="flex items-center space-x-1 whitespace-nowrap">
                                     <Clock className="w-3 h-3" />
                                     <span>Apply by {new Date(internship.deadline).toLocaleDateString()}</span>
+                                </div>
+                                <div className="flex items-center space-x-1 whitespace-nowrap">
+                                    <Clock className="w-3 h-3" />
+                                    <span>listed on {new Date(internship.postedDate).toLocaleDateString()}</span>
                                 </div>
                             </div>
                             <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
