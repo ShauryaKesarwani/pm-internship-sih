@@ -37,10 +37,6 @@ export default function HeaderWhite() {
     };
 
     fetchProfile();
-
-    // recheck every 30s in case login/logout happens in another tab
-    const interval = setInterval(fetchProfile, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {
