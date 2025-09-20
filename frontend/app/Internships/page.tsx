@@ -229,7 +229,7 @@ const InternshipsPage = () => {
         },
       });
       const profileData = await profileRes.json();
-      const userId = profileData._id;
+      const userId = profileData.user._id;
       console.log(profileData);
       
       // Backend API call for generating internships
