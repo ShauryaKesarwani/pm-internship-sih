@@ -4,6 +4,7 @@ import Menu from "../components/menu";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import { div } from "framer-motion/client";
+import { log } from "console";
 
 interface Question {
   question: string;
@@ -53,11 +54,13 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
   useEffect(() => {
     const fetchFirst = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/quiz/prepare-quiz/${internshipId}`);
+        const res = await fetch(`http://127.0.0.1:8000/quiz/start-quiz/68cea5c2663cb8f365924065`);
+        console.log(res);
         const data = await res.json();
         setCurrentQuestion(data);
         setTimeLeft(data.timer);
       } catch (error) {
+        console.log(1);
         console.error("Failed to fetch questions:", error);
       }
     };
@@ -95,6 +98,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
         score,
       })
     })
+    console.log(res);
     const result = await res.json();
     setScore(result.score);
 
@@ -109,6 +113,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
         score: result.score,
       }),
     })
+    console.log(next);
 
     const nextData = await next.json();
     setCurrentQuestion(nextData);

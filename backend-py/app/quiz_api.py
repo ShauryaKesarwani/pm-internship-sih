@@ -41,6 +41,32 @@ class AnswerRequest(BaseModel):
     difficulty: float
     score: float
 
+@router.post("/prepare-quiz/{internship_id}")
+async def prepare_quiz(internship_id: str):
+    if not quiz:
+        return {"error": "Quiz engine not initialized"}
+
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.get(f"http://localhost:7470/internships/{internship_id}/samples")
+            res.raise_for_status()
+            samples = res.json().get("samples", [])
+    except Exception as e:
+        return {"error": f"Failed to fetch recruiter samples: {str(e)}"}
+
+    if not samples:
+        return {"error": "No recruiter samples found for this internship"}
+
+    # Assign weights
+    weighted = quiz.assignWeight(samples)
+    quiz.samples = weighted
+
+    return {
+        "message": f"Quiz prepared for internship {internship_id}",
+        "weighted": weighted
+    }
+
+
 @router.post("/recruiter-samples")
 def set_recruiter_samples(application_id:str, data: RecruiterSamplesRequest):
     if not quiz:
@@ -83,14 +109,25 @@ def get_question(data: AnswerRequest):
     }
 
 
-@router.get("/start-quiz")
-def start_quiz(difficulty: float = 0.5):
+@router.get("/start-quiz/{internship_id}")
+async def start_quiz(internship_id:str, difficulty: float = 0.5):
     """Start quiz and return the first question"""
-    if not quiz or not quiz.samples:
+    if not quiz:
         return {"error":"No recruiter samples set yet. "}
+    print(1)
+    print(quiz)
+    if not getattr(quiz, "samples", None):
+        prep = await prepare_quiz(internship_id)
+        if "error" in prep:
+            return prep
+        
+    print(2)
+
     q = quiz.generateQuestion(difficulty)
+    print(3)
     if not q:
         return {"error": "Failed to generate first question"}
+    print(4)
 
     # set timer by difficulty
     timers = {"easy": 10, "medium": 15, "hard": 20}
@@ -106,6 +143,7 @@ def start_quiz(difficulty: float = 0.5):
         "user_answer": None,
         "answered": False
     })
+    print(q)
 
     return {
         "question": q["question"],
