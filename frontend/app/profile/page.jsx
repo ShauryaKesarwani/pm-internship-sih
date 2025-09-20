@@ -36,14 +36,12 @@ export default function ProfilePage() {
         fetch("http://localhost:7470/user/internship/past", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/applied", { credentials: "include" }),
         fetch("http://localhost:7470/user/profile/resume", { credentials: "include" }),
-        fetch("http://localhost:7470/user/experience", { credentials: "include" }), // 👈 NEW
+        fetch("http://localhost:7470/user/experience", { credentials: "include" }),
       ]);
 
 
       if (!profileRes.ok) throw new Error("Failed to fetch profile");
 
-      console.log("resume re s????")
-      console.log(resumeRes)
       const profileData = await profileRes.json();
       const ongoingData = await ongoingRes.json();
       const pastData = await pastRes.json();
@@ -54,11 +52,12 @@ export default function ProfilePage() {
       setUser(profileData.user || null);
       setCurrentInternship(ongoingData.currentInternship || null);
       setPastInternships(pastData.pastInternships || []);
-      setOpenApplications(appliedData.applications || []);
+      setOpenApplications(appliedData.appliedInternships || []);
       setResume(resumeData.resume || []);
-      setExperience(experienceData?.internships || []);
+      setExperience(experienceData?.experience.internships || []);
 
 
+      console.log(ongoingData.currentInternship.currentInternship.internshipDetails)
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -281,27 +280,75 @@ export default function ProfilePage() {
                         <p className="text-neutral-600 mt-4">No internship data available.</p>
                       ) : (
                         <>
-                          {currentInternship && (
-                            <div className="rounded-lg border p-4 bg-white mb-2">
-                              <p><strong>{currentInternship.title || "No title"}</strong>{currentInternship.company ? ` at ${currentInternship.company}` : ""}</p>
-                              <p>Status: Ongoing</p>
-                            </div>
-                          )}
-                          {pastInternships && pastInternships.length > 0 && pastInternships.map((internship) => (
-                            internship && (internship.title || internship.company) ? (
-                              <div key={internship.id} className="rounded-lg border p-4 bg-white mb-2">
-                                <p>
-                                  {internship.title && internship.company
-                                    ? <><strong>{internship.title}</strong> at {internship.company}</>
-                                    : internship.title
-                                      ? <strong>{internship.title}</strong>
-                                      : internship.company
-                                        ? <>Internship at {internship.company}</>
-                                        : null}
+                          {currentInternship && currentInternship.currentInternship?.internshipDetails && (
+                              <div className="rounded-lg border p-4 bg-white mb-2">
+                                <p className="font-semibold text-neutral-900 text-lg">
+                                  {currentInternship.currentInternship.internshipDetails.title || "No title"}
+                                  {currentInternship.company ? ` at ${currentInternship.company.name}` : ""}
                                 </p>
-                                <p>Status: Completed</p>
+                                {currentInternship.currentInternship.internshipDetails.department && (
+                                    <p className="text-sm text-neutral-600">
+                                      Department: {currentInternship.currentInternship.internshipDetails.department}
+                                    </p>
+                                )}
+                                {currentInternship.currentInternship.internshipDetails.duration && (
+                                    <p className="text-sm text-neutral-600">
+                                      Duration: {currentInternship.currentInternship.internshipDetails.duration}
+                                    </p>
+                                )}
+                                {currentInternship.currentInternship.internshipDetails.stipend && (
+                                    <p className="text-sm text-neutral-600">
+                                      Stipend: {currentInternship.currentInternship.internshipDetails.stipend}
+                                    </p>
+                                )}
+                                {currentInternship.currentInternship.internshipDetails.location && (
+                                    <p className="text-sm text-neutral-600">
+                                      Location: {currentInternship.currentInternship.internshipDetails.location.address}, {currentInternship.currentInternship.internshipDetails.location.city} - {currentInternship.currentInternship.internshipDetails.location.pinCode}
+                                    </p>
+                                )}
+
+                                {currentInternship.currentInternship.internshipDetails.responsibilities?.length > 0 && (
+                                    <div className="mt-2">
+                                      <p className="text-sm font-semibold text-neutral-900">Responsibilities:</p>
+                                      <ul className="list-disc ml-5 text-sm text-neutral-700">
+                                        {currentInternship.currentInternship.internshipDetails.responsibilities.map((res, idx) => (
+                                            <li key={idx}>{res}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                )}
+
+                                {currentInternship.currentInternship.internshipDetails.skillsRequired?.length > 0 && (
+                                    <div className="mt-2">
+                                      <p className="text-sm font-semibold text-neutral-900">Skills Required:</p>
+                                      <div className="flex flex-wrap gap-2 mt-1">
+                                        {currentInternship.currentInternship.internshipDetails.skillsRequired.map((skill, idx) => (
+                                            <span key={idx} className="rounded-full border px-2 py-1 text-xs text-neutral-700">
+              {skill}
+            </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                )}
+
+                                <p className="mt-2 text-sm text-neutral-700">
+                                  Status: {currentInternship.currentInternship.status ? "Ongoing" : "Pending"}
+                                </p>
                               </div>
-                            ) : null
+                          )}
+                          {pastInternships && pastInternships.length > 0 && pastInternships.map((internship, index) => (
+                              internship && internship.title ? (
+                                  <div key={index} className="rounded-lg border p-4 bg-white mb-2">
+                                    <p>
+                                      <strong>{internship.title || "No title"}</strong>
+                                      {internship.department ? ` - ${internship.department}` : ""}
+                                    </p>
+                                    {internship.company && <p>Company: {internship.company}</p>}
+                                    <p>Duration: {internship.duration || "N/A"}</p>
+                                    <p>Stipend: {internship.stipend || "N/A"}</p>
+                                    <p>Status: Completed</p>
+                                  </div>
+                              ) : null
                           ))}
                         </>
                       )}
@@ -332,10 +379,18 @@ export default function ProfilePage() {
                           <p className="text-neutral-600 mt-4">No internships found.</p>
                       ) : (
                           openApplications.map((application) => (
-                              <div key={application.id} className="rounded-lg border border-[#FFC7B8] p-4 bg-white">
-                                ...
-                              </div>
-                          ))
+                                <div key={application._id} className="rounded-lg border border-[#FFC7B8] p-4 bg-white">
+                                  <p className="font-semibold text-neutral-900">
+                                    {application.internship.title} at {application.internship.company}
+                                  </p>
+                                  <p className="text-sm text-neutral-600">
+                                    Duration: {application.internship.duration} | Stipend: {application.internship.stipend}
+                                  </p>
+                                  <p className="text-sm text-neutral-700 mt-1">
+                                    Status: {application.applicationStatus}
+                                  </p>
+                                </div>
+                            ))
                       )}
                     </div>
                   )}
@@ -407,7 +462,7 @@ export default function ProfilePage() {
                             : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
                     }`}
                 >
-                  Internship History
+                  Current Internship
                 </button>
                 <button
                     onClick={() => setCurrentTab("applications")}

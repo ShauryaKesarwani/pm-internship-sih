@@ -6,7 +6,6 @@ const Application = require("../Model/Application");
 
 async function ongoingInternship(req, res) {
     try {
-        console.log("ongoing internship")
         const userId = req.user._id;
         const user = await User.findById(userId)
             .populate({
@@ -18,9 +17,13 @@ async function ongoingInternship(req, res) {
             return res.status(404).json({ message: "No Internships Found" });
         }
         const currentInternship = user.internships.currentInternship;
-        console.log(currentInternship)
+        const company = await Company.findOne(currentInternship.company);
+
         return res.status(200).json({
-            currentInternship,
+            currentInternship : {
+                currentInternship,
+                company
+            }
         });
     } catch (err) {
         console.log("error in ongoingInternship users");
@@ -32,23 +35,49 @@ async function ongoingInternship(req, res) {
 
 async function appliedInternships(req, res) {
     try {
-        console.log("applied internships")
         const userId = req.user._id;
-        const user = await User.findById(userId).populate("internships.applications");
+
+        // Populate applications → internship → company
+        const user = await User.findById(userId).populate({
+            path: "internships.applications",
+            populate: {
+                path: "internship",
+                model: "Internship",
+                select: "internshipDetails company duration location stipend",
+                populate: {
+                    path: "company",
+                    model: "Company",
+                    select: "name"
+                }
+            }
+        });
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const appliedInternships = user.internships.applications;
+        const appliedInternships = user.internships.applications.map(app => ({
+            _id: app._id,
+            applicationStatus: app.status,
+            internship: {
+                _id: app.internship._id,
+                title: app.internship.internshipDetails.title,
+                company: app.internship.company.name,
+                duration: app.internship.internshipDetails.duration,
+                location: app.internship.internshipDetails.location,
+                stipend: app.internship.internshipDetails.stipend
+            },
+            documents: app.documents,
+            appliedAt: app.appliedAt
+        }));
+
         if (!appliedInternships || appliedInternships.length === 0) {
             return res.status(404).json({ message: "No Applications Found" });
         }
 
-        console.log(appliedInternships)
-
+        // console.log(appliedInternships)
         return res.status(200).json({
-            applications: appliedInternships,
+            appliedInternships,
         });
     } catch (err) {
         console.error("user applied internship error:", err);
@@ -78,6 +107,7 @@ async function internshipDetails(req, res) {
     }
 }
 
+
 async function saveQuiz(req, res){
     try{
         const {id} = req.params
@@ -99,33 +129,34 @@ async function saveQuiz(req, res){
 
 async function getPastInternships(req, res) {
     try {
-        console.log("past internship")
         const user = req.user;
         if (!user) {
             return res.status(404).json({ message: "Unauthorized" });
         }
 
         const freshUser = await User.findById(user._id).populate(
-            "internships"
+            "internships.pastInternships"
         );
-        const data = freshUser.internships.pastInternships;
 
-        if (!user) {
+        const pastInternships = freshUser.internships.pastInternships;
+
+        if (!pastInternships || pastInternships.length === 0) {
             return res.status(404).json({ message: "No Past Internships Found" });
         }
 
-        console.log(data)
+        // Only send internshipDetails
+        const internshipDetails = pastInternships.map(i => i.internshipDetails);
+
+        console.log(internshipDetails)
         return res.json({
             success: true,
-            user: data,
+            internships: internshipDetails,
         });
     } catch (err) {
-        console.error(" user Profile Internships:");
-        console.log(err);
+        console.error("Error fetching past internships:", err);
         return res.status(500).json({ error: "Server Error" });
     }
 }
-
 
 
 

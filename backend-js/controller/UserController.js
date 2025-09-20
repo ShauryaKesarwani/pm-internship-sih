@@ -36,8 +36,8 @@ async function experience(req, res) {
     if (!experience) {
       return res.status(404).json({ message: "No experience Found" });
     }
-    console.log("experience")
-    console.log(experience)
+    // console.log("experience")
+    // console.log(experience)
     res.status(200).json({
       success: true,
       experience: experience,
@@ -142,7 +142,6 @@ async function editProfile(req, res) {
 
     const updatedUser = await user.save();
 
-    console.log(updatedUser)
     return res.status(200).json({
       message: "Profile updated successfully",
       user: updatedUser,
@@ -195,7 +194,7 @@ async function getProfileResume(req, res) {
 
     const resume = user.resume;
 
-    console.log(resume)
+    // console.log(resume)
     return res.status(200).json({
       resume : resume,
     });
