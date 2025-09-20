@@ -59,6 +59,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
         const data = await res.json();
         setCurrentQuestion(data);
         setTimeLeft(data.timer);
+        console.log(data);
       } catch (error) {
         console.log(1);
         console.error("Failed to fetch questions:", error);

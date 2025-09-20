@@ -14,7 +14,6 @@ const {
     editProfile,
     addProject,
     getProfileResume,
-    sampleQuestions
         } = require('../controller/UserController');
 
 const {
@@ -23,7 +22,8 @@ const {
     internshipDetails,
     saveQuiz,
     getPastInternships,
-    registerInternship } = require('../controller/UserInternshipController');
+    registerInternship,
+    sampleQuestions } = require('../controller/UserInternshipController');
 
 const router = express.Router();
 
@@ -44,7 +44,7 @@ router.get("/internship/details/:internshipId", internshipDetails); //
 router.get("/internship/past",isUserAuthenticated, getPastInternships); // -- integrated
 router.post("/internship/register",isUserAuthenticated, registerInternship); // --
 router.post("/internship/register",isUserAuthenticated, registerInternship); // --
-
+router.get("/internship/:internshipId/samples", sampleQuestions); 
 router.post("/:id/quiz", isUserAuthenticated, saveQuiz)
 
 module.exports = router;

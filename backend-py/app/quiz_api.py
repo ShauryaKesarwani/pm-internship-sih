@@ -29,7 +29,8 @@ router.lifespan_context = lifespan
 class SampleQuestion(BaseModel):
     question:str
     answer: str
-    difficulty: float
+    difficulty: str
+    weight: float
 
 class RecruiterSamplesRequest(BaseModel):
     samples:List[SampleQuestion]
@@ -48,9 +49,12 @@ async def prepare_quiz(internship_id: str):
 
     try:
         async with httpx.AsyncClient() as client:
-            res = await client.get(f"http://localhost:7470/internships/{internship_id}/samples")
+            print("a")
+            res = await client.get(f"http://localhost:7470/user/internship/{internship_id}/samples")
+            print(res)
             res.raise_for_status()
-            samples = res.json().get("samples", [])
+            samples = res.json()
+            print(samples)
     except Exception as e:
         return {"error": f"Failed to fetch recruiter samples: {str(e)}"}
 
@@ -166,7 +170,7 @@ def submit_answer(data: AnswerRequest):
     new_score = data.score + last_q.get("weight", 1) if correct else data.score
 
     # update difficulty adaptively
-    old_difficulty = last_q.get("difficulty", 0.5)
+    old_difficulty = float(last_q.get("weight", 0.5))
     if correct:
         new_difficulty = old_difficulty + (1 - old_difficulty) / 5
     else:

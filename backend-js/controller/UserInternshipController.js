@@ -204,19 +204,24 @@ async function registerInternship(req, res) {
 
 async function sampleQuestions(req, res) {
     try {
+        console.log(0);
+
         const {internshipId} = req.params;
 
         if (!internshipId) {
             return res.status(404).json({ message: "No Valid Internship Id" });
         }
 
-        const internship = await Company.findById(internshipId)
+        const internship = await Internship.findById(internshipId)
             .populate("sampleQuestions");
+        console.log(1);
 
         if (!internship) {
             return res.status(404).json({ message: "No Internship Found" });
         }
         const sq = internship?.sampleQuestions;
+        console.log(2);
+
 
         if (!sq) {
             return res.status(404).json({ message: "No Internship Found" });
