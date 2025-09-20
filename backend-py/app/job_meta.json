@@ -16,22 +16,6 @@
     "location": "Bengaluru"
   },
   {
-    "id": "68cea5c2663cb8f365924065",
-    "title": "Data Science Intern",
-    "company": "68cdf727f65f1cbe4dc26c30",
-    "requirements": [
-      "Python",
-      "Pandas",
-      "Scikit-learn",
-      "SQL"
-    ],
-    "description": "Collect and clean large datasets Build predictive models using Python Prepare visual reports for stakeholders",
-    "tags": [
-      "Analytics"
-    ],
-    "location": "New Delhi"
-  },
-  {
     "id": "68cea5c8663cb8f365924067",
     "title": "Mobile App Development Intern",
     "company": "68cdf727f65f1cbe4dc26c30",
@@ -150,5 +134,55 @@
       "HVAC"
     ],
     "location": "Noida"
+  },
+  {
+    "id": "68cea5c2663cb8f365924065",
+    "title": "Data Science Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
+      "Python",
+      "Pandas",
+      "Scikit-learn",
+      "SQL"
+    ],
+    "description": "Collect and clean large datasets Build predictive models using Python Prepare visual reports for stakeholders",
+    "tags": [
+      "Analytics"
+    ],
+    "location": "New Delhi"
+  },
+  {
+    "id": "68cf1afa69809c7d6313291d",
+    "title": "Backend Developer Intern",
+    "company": "68cf121101ac1f708698ad3c",
+    "requirements": [
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Git",
+      "Unit Testing"
+    ],
+    "description": "Build REST APIs with Node.js and Express Write unit tests for backend logic Collaborate with frontend team to integrate features",
+    "tags": [
+      "Software Development"
+    ],
+    "location": ""
+  },
+  {
+    "id": "68cf1c68bca11e9f5d563e88",
+    "title": "Backend Engineer",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
+      "Proficiency in Python or Node.js",
+      "Experience with frameworks like Django, FastAPI, or Express.js",
+      "Knowledge of SQL and NoSQL databases (e.g., PostgreSQL, MongoDB)",
+      "Understanding of containerization (Docker/Kubernetes)",
+      "Familiarity with CI/CD pipelines and cloud platforms (AWS/GCP/Azure)"
+    ],
+    "description": "Design and implement RESTful and GraphQL APIs Optimize database queries for high performance Collaborate with frontend and mobile teams to define API contracts Write unit and integration tests to ensure code quality Maintain and scale microservices in a cloud environment",
+    "tags": [
+      "Software Development"
+    ],
+    "location": "Bengaluru"
   }
 ]
