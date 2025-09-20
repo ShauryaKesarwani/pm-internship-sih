@@ -127,7 +127,6 @@ export default function ProfilePage() {
                 </h1>
                 <p className="text-sm text-neutral-500">
                   {user.title || "No title provided"}
-                  {user.title || "No title provided"}
                 </p>
                 <p className="mt-1 text-sm text-neutral-600">
                   {(user.residence?.city ? user.residence.city : "No city") + " - "}
@@ -716,32 +715,31 @@ export default function ProfilePage() {
                     placeholder="Tell us about yourself"
                   />
                 </div>
-
-                {/* CSV fields */}
+                  {/* fields */}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-neutral-900">
                       Skills (comma-separated)
                     </label>
                     <textarea
-                      value={formData?.skillsCSV || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, skillsCSV: e.target.value })
-                      }
-                      className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                      rows={4}
-                      placeholder="sql, a/b testing, wireframing"
+                        value={formData?.skillsCSV || ""}
+                        onChange={(e) =>
+                            setFormData({...formData, skillsCSV: e.target.value})
+                        }
+                        className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                        rows={4}
+                        placeholder="sql, a/b testing, wireframing"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-900">
-                      Certifications (comma-separated)
-                    </label>
-                    <textarea
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-900">
+                    Certifications (comma-separated)
+                  </label>
+                  <textarea
                       value={formData?.certificationsCSV || ""}
                       onChange={(e) =>
-                        setFormData({
-                          ...formData,
+                          setFormData({
+                            ...formData,
                           certificationsCSV: e.target.value,
                         })
                       }
