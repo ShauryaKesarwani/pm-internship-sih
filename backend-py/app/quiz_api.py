@@ -26,6 +26,14 @@ async def lifespan(app):
 # Attach lifespan to router
 router.lifespan_context = lifespan
 
+class SampleQuestion(BaseModel):
+    question:str
+    answer: str
+    difficulty: float
+
+class RecruiterSamplesRequest(BaseModel):
+    samples:List[SampleQuestion]
+
 class AnswerRequest(BaseModel):
     question: str
     answer: str
@@ -33,8 +41,20 @@ class AnswerRequest(BaseModel):
     difficulty: float
     score: float
 
+@router.post("/recruiter-samples")
+def set_recruiter_samples(application_id:str, data: RecruiterSamplesRequest):
+    if not quiz:
+        return {"error":"Quiz engine not initialized"}
+    
+    sample_dicts = [s.dict() for s in data.samples]
+    weighted = quiz.assignWeight(sample_dicts)
+    quiz.samples = weighted
+    return {"message":"Recruiter samples processed", "weighted":weighted}
+
 @router.post("/next-question")
 def get_question(data: AnswerRequest):
+    if not quiz or not quiz.samples:
+        return {"error":"No recruiter samples set yet. "}
     difficulty = data.difficulty
     q = quiz.generateQuestion(difficulty)
     if not q:
@@ -66,6 +86,8 @@ def get_question(data: AnswerRequest):
 @router.get("/start-quiz")
 def start_quiz(difficulty: float = 0.5):
     """Start quiz and return the first question"""
+    if not quiz or not quiz.samples:
+        return {"error":"No recruiter samples set yet. "}
     q = quiz.generateQuestion(difficulty)
     if not q:
         return {"error": "Failed to generate first question"}
@@ -150,6 +172,7 @@ async def end_quiz(application_id:str):
         )
 
     return {"message": "Quiz ended", "data": response.json()}
+
 
 
 # import json

@@ -1,10 +1,11 @@
+"use client";
 
 import { Internship } from "../../data/Internship";
 
 import { InternshipCardActions } from "./InternshipCardActions";
 import { InternshipCardDetails } from "./InternshipCardDetails";
 import { InternshipCardSkills } from "./InternshipCardSkills";
-
+import { useRouter } from "next/navigation";
 
 import {
     Star,
@@ -16,7 +17,10 @@ export const InternshipCardList = ({ internship, daysLeft, onLike, onBookmark }:
     daysLeft: number;
     onLike: () => void;
     onBookmark: () => void;
-}) => (
+}) => {
+    const router = useRouter();
+    return(
+    
     <div className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
         <div className="flex items-start space-x-4">
             <img
@@ -56,7 +60,9 @@ export const InternshipCardList = ({ internship, daysLeft, onLike, onBookmark }:
                         >
                             {daysLeft > 0 ? `${daysLeft} days left` : "10"}
                         </span>
-                        <button className="px-4 py-2 bg-[#FF9982] text-white rounded-lg hover:bg-[#FF876A] transition-colors">
+                        <button 
+                        onClick={()=> router.push(`/proficiencyTest/${internship.id}`)}
+                        className="px-4 py-2 bg-[#FF9982] text-white rounded-lg hover:bg-[#FF876A] transition-colors">
                             Apply Now
                         </button>
                     </div>
@@ -64,4 +70,4 @@ export const InternshipCardList = ({ internship, daysLeft, onLike, onBookmark }:
             </div>
         </div>
     </div>
-);
+)};

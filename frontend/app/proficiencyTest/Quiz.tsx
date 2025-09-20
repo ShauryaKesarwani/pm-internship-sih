@@ -53,7 +53,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
   useEffect(() => {
     const fetchFirst = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/quiz/start-quiz");
+        const res = await fetch(`http://127.0.0.1:8000/quiz/prepare-quiz/${internshipId}`);
         const data = await res.json();
         setCurrentQuestion(data);
         setTimeLeft(data.timer);

@@ -1,10 +1,12 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import Quiz from "../Quiz";
 
-export default function QuizPage(){
-    const {id} = useParams();
+interface PageProps {
+  params: { id: string };
+}
+
+export default function QuizPage({params}:PageProps){
+    const {id} = params;
 
     if(!id){
         return <div className="p-6 text-red-500">Invalid quiz ID</div>;
@@ -17,4 +19,12 @@ export default function QuizPage(){
             </div>
         </div>
     );
+}
+
+export async function generateStaticParams() {
+  return [
+    { id: "68cea4dd663cb8f365924063" },
+    { id: "651234abcd1234abcd567890" },
+    // Add all possible quiz IDs here
+  ];
 }

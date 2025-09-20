@@ -11,6 +11,9 @@ class AdaptiveQuiz:
         self.samples=[]
         self.score=0.0
 
+    def setRecruiterSamples(self, samples:list[dict]):
+        self.samples = self.assignWeight(samples)
+
     def assignWeight(self, samples:list[dict])->list[dict]:
         prompt=f""" 
         You are a quiz evaluator.
