@@ -89,6 +89,18 @@ const ResumePage = () => {
                 >
                   Upload
                 </button>
+                <a
+                  href="http://localhost:3000/resume-builder"
+                  className="text-gray-500 text-sm mt-2 hover:underline pt-4"
+                >
+                  Don't have one? Create Instead
+                </a>
+                <a
+                  href="http://localhost:3000/profile"
+                  className="text-gray-500 text-sm mt-2 hover:underline"
+                >
+                  Skip this step
+                </a>
               </div>
             </form>
           </div>
