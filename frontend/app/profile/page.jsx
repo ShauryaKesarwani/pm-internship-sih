@@ -326,10 +326,10 @@ export default function ProfilePage() {
                                             <span key={idx} className="rounded-full border px-2 py-1 text-xs text-neutral-700">
               {skill}
             </span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                )}
+        ))}
+      </div>
+    </div>
+)}
 
                                 <p className="mt-2 text-sm text-neutral-700">
                                   Status: {currentInternship.currentInternship.status ? "Ongoing" : "Pending"}

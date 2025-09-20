@@ -47,7 +47,7 @@ async function uploadResume(req, res){
         const filePath = path.join(__dirname, "..", "uploads", "docs", req.file.filename);
         const parsedResume = await sendFileToBackend(filePath, userId);
         if (parsedResume) {
-            updateResumeData(userId, JSON.parse(parsedResume))
+            updateResumeData(userId, JSON.parse(parsedResume), req, res)
                 .catch(err => console.error("Error updating resume:", err));
         }
         return res.status(200).json({
@@ -76,13 +76,14 @@ async function sendFileToBackend(filePath, userId) {
         });
 
         console.log("File sent to FastAPI successfully:");
+        console.log(response)
         return response.data;
     } catch (err) {
         console.error("Error sending file to backend:", err.response?.data || err.message);
     }
 }
 
-async function updateResumeData(userId, parsedResume) {
+async function updateResumeData(userId, parsedResume, req, res) {
     try {
         console.log(parsedResume)
         const user = await User.findById(userId).populate("resume.projects");
@@ -101,19 +102,20 @@ async function updateResumeData(userId, parsedResume) {
             );
         }
 
-        // --- Social Links ---
-        if (parsedResume.resume?.socialLinks?.length) {
-            user.resume.socialLinks = Array.from(
-                new Set([...user.resume.socialLinks, ...parsedResume.resume.socialLinks])
-            );
-        }
+        // // --- Social Links ---
+        // if (parsedResume.resume?.socialLinks?.length) {
+        //     user.resume.socialLinks = Array.from(
+        //         new Set([...user.resume.socialLinks, ...parsedResume.resume.socialLinks])
+        //     );
+        // }
 
         // --- Projects ---
         if (parsedResume.resume?.projects?.length) {
             for (const projectStr of parsedResume.resume.projects) {
                 const exists = user.resume.projects.some(p => p.title === projectStr);
                 if (!exists) {
-                    const newProject = await Project.create({ title: projectStr });
+                    const newProject = await Project.create({ title: projectStr, owner: req.user._id });
+
                     user.resume.projects.push(newProject._id);
                 }
             }

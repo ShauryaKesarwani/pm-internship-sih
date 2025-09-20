@@ -147,7 +147,6 @@ async function getPastInternships(req, res) {
         // Only send internshipDetails
         const internshipDetails = pastInternships.map(i => i.internshipDetails);
 
-        console.log(internshipDetails)
         return res.json({
             success: true,
             internships: internshipDetails,
@@ -159,11 +158,56 @@ async function getPastInternships(req, res) {
 }
 
 
+async function registerInternship(req, res) {
+    try {
+        const { internshipId } = req.body;
+        const userId = req.user._id;
+
+        if (!userId || !internshipId) {
+            return res.status(400).json({ error: "Missing userId or internshipId" });
+        }
+
+        const user = await User.findById(userId);
+        const internship = await Internship.findById(internshipId);
+
+        if (!user || !internship) {
+            return res.status(404).json({ error: "User or Internship not found" });
+        }
+
+        // Check if user already has a placeholder application
+        let application = await Application.findOne({ applicant: userId, internship: internshipId });
+        if (application) {
+            return res.status(400).json({ error: "User already registered for this internship" });
+        }
+
+        application = await Application.create({
+            applicant: user._id,
+            internship: internship._id,
+            status: "Registered",
+            quiz: [],
+        });
+
+        user.internships.applications.push(application._id);
+        await user.save();
+
+        internship.applications.push(application._id);
+        await internship.save();
+
+        return res.status(200).json({ message: "Registered successfully", application });
+    } catch (err) {
+        console.error("Error registering for internship:", err);
+        return res.status(500).json({ error: "Server Error" });
+    }
+}
+//update the status to submitted when quiz is submitted
+
+
 
 module.exports = {
     ongoingInternship,
     appliedInternships,
     internshipDetails,
     saveQuiz,
-    getPastInternships
+    getPastInternships,
+    registerInternship
 }
