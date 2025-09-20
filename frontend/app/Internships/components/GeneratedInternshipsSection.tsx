@@ -119,7 +119,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                             </div>
                             <div className="flex items-center space-x-2 text-sm text-gray-600">
                                 <DollarSign className="w-4 h-4" />
-                                <span>₹{internship.stipend.toLocaleString()}/month</span>
+                                <span>{internship.stipend.toLocaleString()}</span>
                                 <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                                     {internship.stipendType}
                                 </span>
@@ -187,7 +187,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                                 </div>
                                 <div className="flex items-center space-x-1 whitespace-nowrap">
                                     <Clock className="w-3 h-3" />
-                                    <span>listed on {new Date(internship.postedDate).toLocaleDateString()}</span>
+                                    <span>Listed on {new Date(internship.postedDate).toLocaleDateString()}</span>
                                 </div>
                             </div>
                             <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
