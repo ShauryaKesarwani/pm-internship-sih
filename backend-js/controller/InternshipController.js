@@ -6,7 +6,6 @@ require('dotenv').config();
 
 async function createInternship(req, res) {
     try {
-        console.log(0)
         const {
             title,
             department,

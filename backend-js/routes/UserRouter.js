@@ -13,7 +13,8 @@ const {
     getProjects,
     editProfile,
     addProject,
-    getProfileResume
+    getProfileResume,
+    sampleQuestions
         } = require('../controller/UserController');
 
 const {
@@ -41,6 +42,7 @@ router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); // --
 router.get("/internship/applied",isUserAuthenticated, appliedInternships); // --integrated
 router.get("/internship/details/:internshipId", internshipDetails); //
 router.get("/internship/past",isUserAuthenticated, getPastInternships); // -- integrated
+router.post("/internship/register",isUserAuthenticated, registerInternship); // --
 router.post("/internship/register",isUserAuthenticated, registerInternship); // --
 
 router.post("/:id/quiz", isUserAuthenticated, saveQuiz)

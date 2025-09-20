@@ -202,6 +202,35 @@ async function registerInternship(req, res) {
 //update the status to submitted when quiz is submitted
 
 
+async function sampleQuestions(req, res) {
+    try {
+        const {internshipId} = req.params;
+
+        if (!internshipId) {
+            return res.status(404).json({ message: "No Valid Internship Id" });
+        }
+
+        const internship = await Company.findById(internshipId)
+            .populate("sampleQuestions");
+
+        if (!internship) {
+            return res.status(404).json({ message: "No Internship Found" });
+        }
+        const sq = internship?.sampleQuestions;
+
+        if (!sq) {
+            return res.status(404).json({ message: "No Internship Found" });
+        }
+        return res.status(200).json(
+            {sq}
+        )
+
+    } catch (err) {
+        console.error("Error fetching sample internship Questions:", err);
+        return res.status(500).json({ error: "Server Error" });
+    }
+}
+
 
 module.exports = {
     ongoingInternship,
@@ -209,5 +238,6 @@ module.exports = {
     internshipDetails,
     saveQuiz,
     getPastInternships,
-    registerInternship
+    registerInternship,
+    sampleQuestions
 }
