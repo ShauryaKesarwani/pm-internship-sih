@@ -9,7 +9,7 @@ import Button from "../components/buttons";
 export default function ProfilePage() {
   const [currentTab, setCurrentTab] = useState("profile");
   const [user, setUser] = useState(null);
-  const [resume, setResume] = useState([]);
+  const [resume, setResume] = useState(null);
   const [currentInternship, setCurrentInternship] = useState(null);
   const [pastInternships, setPastInternships] = useState([]);
   const [openApplications, setOpenApplications] = useState([]);
@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [formData, setFormData] = useState({});
+
 
   // Unified function to fetch user and internships
   const fetchUserData = async () => {
@@ -35,8 +36,11 @@ export default function ProfilePage() {
         fetch("http://localhost:7470/user/profile/resume", { credentials: "include" }),
       ]);
 
+
       if (!profileRes.ok) throw new Error("Failed to fetch profile");
 
+      console.log("resume re s????")
+      console.log(resumeRes)
       const profileData = await profileRes.json();
       const ongoingData = await ongoingRes.json();
       const pastData = await pastRes.json();
@@ -58,6 +62,7 @@ export default function ProfilePage() {
   };
   useEffect(() => {
     fetchUserData();
+    console.log(resume)
   }, []);
 
   // Fetch history or open applications based on tab
@@ -80,23 +85,32 @@ export default function ProfilePage() {
           city: formData.residenceCity,
           state: formData.residenceState,
         },
-        resume:resume,
+        resume: {
+          ...user?.resume,
+          skills: (formData.skillsCSV || "").split(",").map(s => s.trim()).filter(Boolean),
+          socialLinks: (formData.socialLinksCSV || "").split(",").map(s => s.trim()).filter(Boolean),
+          certifications: (formData.certificationsCSV || "").split(",").map(s => s.trim()).filter(Boolean),
+        },
       };
 
 
       const res = await fetch("http://localhost:7470/user/profile/edit", {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(updated),
       });
 
+
       const data = await res.json();
+      console.log(data)
+
       if (data?.user) setUser(data.user);
       setIsEditProfileOpen(false);
 
     } catch (err) {
       console.error("Failed to update profile:", err);
+      console.log("error 1")
       setUploadError(err.message || "Failed to update profile");
     }
   };
@@ -150,6 +164,7 @@ export default function ProfilePage() {
                 </h1>
                 <p className="text-sm text-neutral-500">
                   {user.title || "No title provided"}
+                  {user.title || "No title provided"}
                 </p>
                 <p className="mt-1 text-sm text-neutral-600">
                   {(user.residence?.city ? user.residence.city : "No city") + " - "}
@@ -181,7 +196,6 @@ export default function ProfilePage() {
                   </a>
                   <a
                     href={resume.socialLinks?.website || "#"}
-                    target="_blank"
                     target="_blank"
                     rel="noreferrer"
                     className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
@@ -236,8 +250,8 @@ export default function ProfilePage() {
                       </h4>
                       <ul className="mt-2 space-y-2 text-sm text-neutral-700">
                         <li>Email: {user.email}</li>
-                        <li>LinkedIn: {user.links?.linkedin || "N/A"}</li>
-                        <li>Website: {user.links?.website || "N/A"}</li>
+                        <li>LinkedIn: {resume.socialLinks?.linkedin || "N/A"}</li>
+                        <li>Website: {resume.socialLinks?.website || "N/A"}</li>
                       </ul>
                     </div>
                   </div>
@@ -256,7 +270,7 @@ export default function ProfilePage() {
                           residenceCity: user?.residence?.city || "",
                           residenceState: user?.residence?.state || "",
                           about: user?.about || "",
-                          skillsCSV: (resume?.skills || []).join(", "),
+                          skillsCSV: (user?.resume?.skills || []).join(", "),
                           socialLinksCSV: (
                             user?.resume?.socialLinks || []
                           ).join(", "),

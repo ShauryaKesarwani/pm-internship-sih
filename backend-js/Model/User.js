@@ -66,14 +66,14 @@ const userSchema = new mongoose.Schema({
         }],
         projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
         certifications: [String],
+        docResume : {
+
+        },
         socialLinks: {
             linkedin: { type: String },
             github: { type: String },
             website: { type: String },
         },
-        docResume : {
-
-        }
     },
 
     internships: {

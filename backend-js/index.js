@@ -20,6 +20,7 @@ app.use(
   cors({
     origin: 3000,
     credentials: true,
+      methods: ["GET", "POST", "PATCH", "DELETE"]
   })
 );
 

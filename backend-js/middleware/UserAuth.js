@@ -3,8 +3,8 @@ const User = require("../Model/User");
 
 async function isUserAuthenticated(req, res, next) {
     try {
-        console.log("Auth middleware");
         if(!req.oidc || !req.oidc.user) {
+            console.log("Shaurya")
             return res.status(401).json({message: "Unauthorized"});
         }
         const user =await User.findOne({email: req.oidc.user.email}).select("-password -resume -experience -internships -resumeDoc");
