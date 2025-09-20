@@ -36,6 +36,8 @@ async function experience(req, res) {
     if (!experience) {
       return res.status(404).json({ message: "No experience Found" });
     }
+    console.log("experience")
+    console.log(experience)
     res.status(200).json({
       success: true,
       experience: experience,

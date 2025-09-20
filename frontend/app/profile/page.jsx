@@ -21,6 +21,8 @@ export default function ProfilePage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [formData, setFormData] = useState({});
+  const [experience, setExperience] = useState([]);
+  const [loadingExperience, setLoadingExperience] = useState(false);
 
 
   // Unified function to fetch user and internships
@@ -28,12 +30,13 @@ export default function ProfilePage() {
     setLoading(true);
     setLoadingInternships(true);
     try {
-      const [profileRes, ongoingRes, pastRes, appliedRes, resumeRes] = await Promise.all([
+      const [profileRes, ongoingRes, pastRes, appliedRes, resumeRes, experienceRes] = await Promise.all([
         fetch("http://localhost:7470/user/profile", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/ongoing", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/past", { credentials: "include" }),
         fetch("http://localhost:7470/user/internship/applied", { credentials: "include" }),
         fetch("http://localhost:7470/user/profile/resume", { credentials: "include" }),
+        fetch("http://localhost:7470/user/experience", { credentials: "include" }), // 👈 NEW
       ]);
 
 
@@ -46,12 +49,15 @@ export default function ProfilePage() {
       const pastData = await pastRes.json();
       const appliedData = await appliedRes.json();
       const resumeData = await resumeRes.json();
+      const experienceData = await experienceRes.json();
 
       setUser(profileData.user || null);
       setCurrentInternship(ongoingData.currentInternship || null);
       setPastInternships(pastData.pastInternships || []);
       setOpenApplications(appliedData.applications || []);
       setResume(resumeData.resume || []);
+      setExperience(experienceData?.internships || []);
+
 
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -335,6 +341,46 @@ export default function ProfilePage() {
                   )}
                 </div>
               )}
+              {currentTab === "experience" && (
+                  <div>
+                    <h2 className="text-lg font-semibold text-neutral-900">
+                      Experience
+                    </h2>
+                    <p className="mt-2 text-sm text-neutral-700 mb-6">
+                      Here’s your professional experience history.
+                    </p>
+
+                    {loadingExperience ? (
+                        <div className="flex justify-center items-center py-8">
+                          <div className="text-sm text-neutral-600">
+                            Loading experience...
+                          </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                          {!experience || experience.length === 0 ? (
+                              <p className="text-neutral-600 mt-4">
+                                No experience data available.
+                              </p>
+                          ) : (
+                              experience.map((exp, index) => (
+                                  <div
+                                      key={index}
+                                      className="rounded-lg border border-[#FFC7B8] p-4 bg-white"
+                                  >
+                                    <p className="font-semibold text-neutral-900">
+                                      {exp.title || "No title"}
+                                      {exp.company ? ` at ${exp.company}` : ""}
+                                    </p>
+                                    <p className="text-sm text-neutral-600">{exp.duration}</p>
+                                    <p className="mt-2 text-sm text-neutral-700">{exp.description}</p>
+                                  </div>
+                              ))
+                          )}
+                        </div>
+                    )}
+                  </div>
+              )}
             </div>
           </div>
 
@@ -342,49 +388,60 @@ export default function ProfilePage() {
             <div className="rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_48px_#FFD1C4]">
               <div className="flex flex-col space-y-3">
                 <button
-                  onClick={() => setCurrentTab("profile")}
-                  aria-pressed={currentTab === "profile"}
-                  className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
-                    currentTab === "profile"
-                      ? "bg-[#FF9982] text-white"
-                      : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
-                  }`}
+                    onClick={() => setCurrentTab("profile")}
+                    aria-pressed={currentTab === "profile"}
+                    className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
+                        currentTab === "profile"
+                            ? "bg-[#FF9982] text-white"
+                            : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
+                    }`}
                 >
                   Profile
                 </button>
                 <button
-                  onClick={() => setCurrentTab("history")}
-                  aria-pressed={currentTab === "history"}
-                  className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
-                    currentTab === "history"
-                      ? "bg-[#FF9982] text-white"
-                      : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
-                  }`}
+                    onClick={() => setCurrentTab("history")}
+                    aria-pressed={currentTab === "history"}
+                    className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
+                        currentTab === "history"
+                            ? "bg-[#FF9982] text-white"
+                            : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
+                    }`}
                 >
                   Internship History
                 </button>
                 <button
-                  onClick={() => setCurrentTab("applications")}
-                  aria-pressed={currentTab === "applications"}
-                  className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
-                    currentTab === "applications"
-                      ? "bg-[#FF9982] text-white"
-                      : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
-                  }`}
+                    onClick={() => setCurrentTab("applications")}
+                    aria-pressed={currentTab === "applications"}
+                    className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
+                        currentTab === "applications"
+                            ? "bg-[#FF9982] text-white"
+                            : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
+                    }`}
                 >
                   Open Application
+                </button>
+                <button
+                    onClick={() => setCurrentTab("experience")}
+                    aria-pressed={currentTab === "experience"}
+                    className={`text-xl rounded-lg p-3 flex items-center justify-center gap-2 ${
+                        currentTab === "experience"
+                            ? "bg-[#FF9982] text-white"
+                            : "bg-[#FFE1D7] hover:bg-[#FFC7B8] text-neutral-900"
+                    }`}
+                >
+                  Experience
                 </button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Edit Profile Modal */}
-        {isEditProfileOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div
-              className="absolute inset-0 bg-black/50"
-              onClick={() => setIsEditProfileOpen(false)}
+          {/* Edit Profile Modal */}
+          {isEditProfileOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div
+                    className="absolute inset-0 bg-black/50"
+                    onClick={() => setIsEditProfileOpen(false)}
             />
             <div className="relative z-10 w-full max-w-2xl rounded-xl border border-[#FFC7B8] bg-[#FCFCFC] p-6 shadow-[0_0_72px_#FFD1C4] max-h-[85vh] overflow-y-auto">
               <h3 className="text-lg font-semibold text-neutral-900">
