@@ -19,9 +19,11 @@ const HomePage = () => {
           <p className="text-gray-700 text-lg max-w-md">
             Ensure your safety and security with our comprehensive protection plans tailored for you.
           </p>
-          <button className="bg-orange-500 text-white px-8 py-3 rounded-md font-semibold hover:bg-orange-600">
-            Complete Process
-          </button>
+          <a href="../verification">
+            <button className="bg-orange-500 text-white px-8 py-3 rounded-md font-semibold hover:bg-orange-600">
+              Complete Process
+            </button>
+          </a>
         </div>
         <div className="md:w-1/2 flex justify-center mt-10 md:mt-0">
           <img

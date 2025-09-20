@@ -35,10 +35,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-sm">✨</span>
-                        </div>
-                        <span>Generated Internships</span>
+                        <span>Personalised Internships</span>
                     </h2>
                     <p className="text-gray-600 mt-1">
                         AI-powered recommendations based on your search criteria
@@ -68,13 +65,10 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                 {generatedInternships.map((internship) => (
                     <div
                         key={internship.id}
-                        className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden"
+                        className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex flex-col"
                     >
                         {/* Generated Badge and Score */}
                         <div className="absolute top-3 right-3 flex flex-col items-end space-y-1">
-                            <span className="px-2 py-1 bg-orange-500 text-white text-xs font-medium rounded-full">
-                                AI Generated
-                            </span>
                             {internship.combinedScore && (
                                 <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                                     Match: {Math.round(internship.combinedScore * 100)}%
@@ -106,7 +100,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                         </div>
 
                         {/* Description */}
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                        <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
                             {internship.description}
                         </p>
 
@@ -180,46 +174,29 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                             </div>
                         )}
 
-                        {/* Footer */}
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div className="flex items-center space-x-4 text-xs text-gray-500">
-                                <div className="flex items-center space-x-1">
+                        {/* Footer - Made responsive */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100 gap-2">
+                            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                <div className="flex items-center space-x-1 whitespace-nowrap">
                                     <Users className="w-3 h-3" />
                                     <span>{internship.applicants} applicants</span>
                                 </div>
-                                <div className="flex items-center space-x-1">
-                                    <span className="flex items-center">
-                                        <Clock className="w-3 h-3 mr-1" />
-                                        Apply by {new Date(internship.deadline).toLocaleDateString()}
-                                    </span>
+                                <div className="flex items-center space-x-1 whitespace-nowrap">
+                                    <Clock className="w-3 h-3" />
+                                    <span>Apply by {new Date(internship.deadline).toLocaleDateString()}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                                    <Heart className="w-4 h-4" />
-                                </button>
-                                <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors">
-                                    <Bookmark className="w-4 h-4" />
-                                </button>
+                            <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
+
                                 <button 
                                 onClick={()=> router.push(`/proficiencyTest/${internship.id}`)}
-                                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
+                                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap">
                                     Apply Now
                                 </button>
                             </div>
                         </div>
                     </div>
                 ))}
-            </div>
-
-            {/* Load More Button */}
-            <div className="text-center mt-8">
-                <button
-                    className="px-6 py-3 bg-white border border-orange-300 rounded-lg hover:bg-orange-50 transition-colors text-sm font-medium text-orange-700"
-                // onClick={generateInternships} // Uncomment if you want to enable this button's functionality
-                >
-                    Generate More Internships
-                </button>
             </div>
         </div>
     );

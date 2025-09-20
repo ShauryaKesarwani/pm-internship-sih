@@ -27,7 +27,7 @@ const QuickFilterSelect: React.FC<QuickFilterSelectProps> = ({
       id={`${label.toLowerCase()}-select`}
       value={value}
       onChange={onChange}
-      className={`${commonSelectClasses} appearance-none`}
+      className={`${commonSelectClasses} appearance-none pr-10`}
     >
       <option value='all'>{allOptionLabel}</option>
       {options.map(option => (

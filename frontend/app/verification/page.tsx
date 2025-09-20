@@ -5,6 +5,8 @@ import HeaderWhite from "../components/header";
 
 const HomePage = () => {
     const [mobile, setMobile] = useState("");
+    const [loginMethod, setLoginMethod] = useState<"mobile" | "aadhaar">("mobile");
+    const [aadhaar, setAadhaar] = useState("");
 
   const handleSubmit = async () => {
     if (!mobile) {
@@ -50,30 +52,51 @@ const HomePage = () => {
           </div>
           <h2 className="text-xl font-bold text-center mb-6">Sign In to your account!</h2>
           <div className="flex w-full mb-6 border rounded-lg">
-            <button className="bg-blue-500 text-white px-9 py-2 rounded-l-md">Mobile</button>
-            <button className=" text-gray-700 px-10 py-2 rounded-r-md">Aadhaar/Username</button>
+            <button
+              className={`${loginMethod === "mobile" ? "bg-blue-500 text-white" : "text-gray-700"} px-14 py-2 rounded-l-md`}
+              onClick={() => setLoginMethod("mobile")}
+            >
+              Mobile
+            </button>
+            <button
+              className={`${loginMethod === "aadhaar" ? "bg-blue-500 text-white" : "text-gray-700"} ml-1 px-14 py-2 rounded-r-md`}
+              onClick={() => setLoginMethod("aadhaar")}
+            >
+              Aadhaar
+            </button>
           </div>
           <div className="mb-4">
-            <input
-                type="text"
-                placeholder="Mobile number*"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={mobile}               // <-- bind value to state
-                onChange={(e) => setMobile(e.target.value)}  // <-- update state on input
-            />
-            <p className="text-sm text-gray-500 mt-1">Enter your registered Mobile number</p>
+            {loginMethod === "mobile" ? (
+              <>
+                <input
+                  type="text"
+                  placeholder="Mobile number*"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                />
+                <p className="text-sm text-gray-500 mt-1">Enter your registered Mobile number</p>
+              </>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  placeholder="Aadhaar number*"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={aadhaar}
+                  onChange={(e) => setAadhaar(e.target.value)}
+                />
+                <p className="text-sm text-gray-500 mt-1">Enter your Aadhaar number</p>
+              </>
+            )}
           </div>
 
           <button
               className="w-full bg-green-500 text-white py-2 rounded-md"
-              onClick={handleSubmit}       // <-- call your handler
+              onClick={handleSubmit} 
           >
             Next
           </button>
-          <p className="text-center text-sm mt-4">
-            Do not have an account?{" "}
-            <a href="#" className="text-blue-600 hover:underline">Sign Up</a>
-          </p>
         </div>
       </div>
     </div>

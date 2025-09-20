@@ -193,7 +193,7 @@ export default function ProfilePage() {
                       {resume?.skills?.map((skill) => (
                         <span
                           key={skill}
-                          className="rounded-full border px-3 py-1 text-xs text-neutral-700 text-neutral-700"
+                          className="rounded-full border px-3 py-1 text-xs text-neutral-700"
                         >
                           {skill}
                         </span>

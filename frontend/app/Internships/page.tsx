@@ -219,21 +219,8 @@ const InternshipsPage = () => {
     setIsGenerating(true);
     try {
       console.log("Attempting to fetch recommendations...");
-      
-      // Fetch current user's profile to get _id
-      const profileRes = await fetch("http://localhost:7470/user/profile", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const profileData = await profileRes.json();
-      const userId = profileData.user._id;
-      console.log(profileData);
-      
       // Backend API call for generating internships
-      const response = await fetch(`http://127.0.0.1:8000/recommend/${userId}`, {
+      const response = await fetch(`http://127.0.0.1:8000/recommend/68cdccd0b579f1880f671f01`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -318,7 +305,7 @@ const InternshipsPage = () => {
   if (isLoading) return <Loading />
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAEFE9]">
       <Navbar />
       <HeaderWhite />
       <Menu />
@@ -364,9 +351,7 @@ const InternshipsPage = () => {
           generatedInternships={generatedInternships}
           showGeneratedInternships={showGeneratedInternships}
           setShowGeneratedInternships={setShowGeneratedInternships}
-          // generateInternships={generateInternships} // Uncomment if needed
         />
-
 
         {/* Results Header */}
         <ResultsHeader

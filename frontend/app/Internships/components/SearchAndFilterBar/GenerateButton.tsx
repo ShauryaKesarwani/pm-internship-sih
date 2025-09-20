@@ -1,4 +1,3 @@
-// React
 import React from 'react';
 
 interface GenerateButtonProps {
@@ -23,8 +22,7 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
         </>
       ) : (
         <>
-          <span>✨</span>
-          <span>Generate</span>
+          <span>AI recomendation</span>
         </>
       )}
     </button>
