@@ -18,6 +18,7 @@ async function createInternship(req, res) {
             stipend,
             eligibility
         } = req.body;
+        console.log(req.body)
 
         console.log(1)
         if (!title || !responsibilities || !duration) {
@@ -27,19 +28,23 @@ async function createInternship(req, res) {
         console.log(2)
         const newInternship = await Internship.create({
             internshipDetails: {
-                title,
-                department,
-                responsibilities,
-                skillsRequired,
-                openings,
-                duration,
-                applicationDeadline,
-                location,
-                stipend,
+                title: title || "",
+                department: department || "",
+                responsibilities: responsibilities || [],
+                skillsRequired: skillsRequired || [],
+                openings: openings || 0,
+                duration: duration || "",
+                applicationDeadline: applicationDeadline || null,
+                location: {
+                    address: location?.address || "",
+                    pinCode: location?.pinCode || 0,
+                    city: location?.city || ""
+                },
+                stipend: stipend || ""
             },
-            eligibility,
-            company: req.session.companyId,
-        })
+            eligibility: eligibility || [],
+            company: req.session.companyId
+        });
 
         console.log(3)
         return res.status(201).json({
@@ -48,6 +53,7 @@ async function createInternship(req, res) {
         });
     } catch (err) {
         console.log("error in post Internship");
+        console.log(err);
         return res.status(500).json({ error: "Server Error!!" });
     }
 }
@@ -61,6 +67,8 @@ async function getPostedInternships(req, res) {
             .populate("assignments");
 
 
+        console.log(internships)
+        console.log("hehe")
         console.log(2)
         if(!internships) {
             return res.status(401).json({ message: "No Internship Found" });

@@ -20,8 +20,8 @@ const {
 
 const router = express.Router();
 
-router.post("/login", loginCompany);
-router.post("/signup", signUp);
+router.post("/login", loginCompany); //
+router.post("/signup", signUp); //
 router.get("/profile", requireCompanyLogin, getCompanyProfile); //
 router.patch("/profile/update", requireCompanyLogin, updateCompanyProfile); //
 

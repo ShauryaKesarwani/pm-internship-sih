@@ -8,21 +8,33 @@ async function signUp(req, res) {
     try {
         const body = req.body;
         const email = body.email;
-        console.log(body.password)
+        const uniqueName = body.uniqueName;
 
-        if(!email) {
+        if(!email || !uniqueName) {
             return res.status(400).json({ message: 'All fields are required' });
         }
         const userInDb = await Company.findOne({
           email: email
         });
 
-        userInDb.password = await bcrypt.hash(body.password, 10);
-        console.log(userInDb.password);
-        await userInDb.save()
+        if(userInDb)  return res.status(400).json({ message: 'Company credentials already exists' });
+
+        const password = await bcrypt.hash(body.password, 10);
+
+        const user = await Company.create({
+            name : body.companyName,
+            password : password,
+            uniqueName : uniqueName,
+            email : email,
+            description : body.description || "",
+            industry : body.industry || "",
+            website : body.website || "",
+            location : body.location || "",
+        })
 
         return res.status(201).json({
             message: "User SignUp Sucessful",
+            user,
         });
     } catch (signup_error) {
         console.log(signup_error);
@@ -30,24 +42,24 @@ async function signUp(req, res) {
     }
 }
 
-
-
-
 async function loginCompany(req, res) {
     try {
-        const {uniqueName, email, password} = req.body;
-        if(!email && !password) {
+        const {uniqueId, email, password} = req.body;
+        if((!email || !uniqueId) && !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
-        const companyInDb = await Company.findOne({$or: [{email}]});
-        // const isPassValid = await bcrypt.compare(password, companyInDb.password);
+        let query = {};
+        if (email) query.email = email;
+        if (uniqueId) query.uniqueId = uniqueId;
 
-        // if(!companyInDb || !isPassValid) {
-        //     return res.status(400).json({ message: 'Invalid Credentials' });
-        // }
+        const companyInDb = await Company.findOne(query);
+        const isPassValid = await bcrypt.compare(password, companyInDb.password);
+
+        if(!companyInDb || !isPassValid) {
+            return res.status(400).json({ message: 'Invalid Credentials' });
+        }
         req.session.companyId = companyInDb._id;
-        req.session.companyName = companyInDb.uniqueName;
-
+        req.session.uniqueName = companyInDb.uniqueName;
 
         return res.json({
             message : "Login Successful",
@@ -63,7 +75,6 @@ async function loginCompany(req, res) {
         return res.status(500).json({ error: 'Server Error' });
     }
 }
-
 
 async function getCompanyProfile(req, res) {
     try {
