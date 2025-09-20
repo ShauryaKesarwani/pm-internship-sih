@@ -1,89 +1,154 @@
 [
   {
-    "id": "651234abcd1234abcd567894",
-    "title": "UI/UX Design Intern",
-    "company": "651234abcd1234abcd567895",
+    "id": "68cea4dd663cb8f365924063",
+    "title": "Full-Stack Web Development Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
     "requirements": [
-      "Figma",
-      "Adobe XD",
-      "Sketch",
-      "User Research",
-      "Wireframing",
-      "Prototyping"
+      "JavaScript",
+      "React",
+      "Node.js",
+      "MongoDB"
     ],
-    "description": "Create wireframes and prototypes Design user interfaces for web and mobile apps Collaborate with product and frontend teams Conduct usability testing and iterate designs",
+    "description": "Develop new user-facing features Optimize applications for maximum speed and scalability Collaborate with designers and backend engineers",
     "tags": [
-      "Design"
+      "Engineering"
     ],
-    "location": "Bangalore"
+    "location": "Bengaluru"
   },
   {
-    "id": "651234abcd1234abcd567896",
-    "title": "Mobile App Development Intern",
-    "company": "651234abcd1234abcd567897",
+    "id": "68cea5c2663cb8f365924065",
+    "title": "Data Science Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
     "requirements": [
-      "React Native",
-      "Flutter",
+      "Python",
+      "Pandas",
+      "Scikit-learn",
+      "SQL"
+    ],
+    "description": "Collect and clean large datasets Build predictive models using Python Prepare visual reports for stakeholders",
+    "tags": [
+      "Analytics"
+    ],
+    "location": "New Delhi"
+  },
+  {
+    "id": "68cea5c8663cb8f365924067",
+    "title": "Mobile App Development Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
       "JavaScript",
-      "Dart",
-      "Git",
+      "React Native",
       "REST APIs"
     ],
-    "description": "Develop Android and iOS applications Integrate APIs and backend services Test and debug mobile apps Collaborate with UI/UX and backend teams",
+    "description": "Develop cross-platform apps with React Native Implement push notifications Collaborate with UX designers",
     "tags": [
-      "Mobile Development"
+      "Product Engineering"
+    ],
+    "location": "Bengaluru"
+  },
+  {
+    "id": "68cea5f1663cb8f365924069",
+    "title": "Cybersecurity Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
+      "Linux",
+      "Networking Basics",
+      "Python Scripting"
+    ],
+    "description": "Monitor network traffic for threats Assist in penetration testing Document security incidents",
+    "tags": [
+      "IT Security"
     ],
     "location": "Hyderabad"
   },
   {
-    "id": "651234abcd1234abcd567892",
-    "title": "Data Science Intern",
-    "company": "651234abcd1234abcd567893",
+    "id": "68cea5f6663cb8f36592406b",
+    "title": "Graphic Design Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
     "requirements": [
-      "Python",
-      "Pandas",
-      "NumPy",
-      "Scikit-learn",
-      "Matplotlib",
-      "SQL"
+      "Adobe Photoshop",
+      "Illustrator",
+      "Figma"
     ],
-    "description": "Analyze datasets and extract insights Build machine learning models Prepare data visualizations for stakeholders Collaborate with backend team to integrate models",
+    "description": "Design marketing collateral Create social media graphics Assist with brand style guidelines",
     "tags": [
-      "AI & Analytics"
+      "Creative Studio"
     ],
-    "location": null
+    "location": "Jaipur"
   },
   {
-    "id": "651234abcd1234abcd567890",
-    "title": "Full Stack Developer Intern",
-    "company": "651234abcd1234abcd567891",
+    "id": "68cea7a73e9933d47358cc31",
+    "title": "Plumber Apprentice",
+    "company": "68cdf727f65f1cbe4dc26c30",
     "requirements": [
-      "JavaScript",
-      "Node.js",
-      "Express",
-      "React",
-      "MongoDB",
-      "Git"
+      "Basic plumbing knowledge",
+      "Use of hand tools",
+      "Safety awareness"
     ],
-    "description": "Develop REST APIs using Node.js and Express Create responsive frontend interfaces using React Write unit and integration tests Collaborate with the design and product teams",
+    "description": "Assist senior plumbers in installing pipes and fixtures Learn to diagnose and repair leaks Handle basic maintenance of plumbing tools",
     "tags": [
-      "Software Development"
+      "Maintenance"
+    ],
+    "location": "Gurugram"
+  },
+  {
+    "id": "68cea7b53e9933d47358cc33",
+    "title": "Electrician Trainee",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
+      "Basic electrical knowledge",
+      "Ability to read wiring diagrams",
+      "Safety procedures"
+    ],
+    "description": "Assist in wiring and electrical installations Support routine maintenance of industrial equipment Learn troubleshooting of electrical circuits",
+    "tags": [
+      "Electrical Works"
     ],
     "location": "Mumbai"
   },
   {
-    "id": "650c2f3e1c4a5b0012345678",
-    "title": "Software Engineering Intern",
-    "company": "650c2f3e1c4a5b0012345685",
+    "id": "68cea7b93e9933d47358cc35",
+    "title": "Welder Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
     "requirements": [
-      "Node.js",
-      "MongoDB",
-      "REST APIs"
+      "Basic welding techniques",
+      "Knowledge of safety gear",
+      "Reading blueprints"
     ],
-    "description": "Develop backend APIs Write unit tests Collaborate with frontend team",
+    "description": "Assist senior welders with MIG and TIG welding Prepare and clean metal surfaces Maintain welding equipment",
     "tags": [
-      "Engineering"
+      "Fabrication"
     ],
-    "location": "Mumbai"
+    "location": "Bengaluru"
+  },
+  {
+    "id": "68cea7bd3e9933d47358cc37",
+    "title": "Automotive Service Technician Intern",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
+      "Basic automobile knowledge",
+      "Use of diagnostic tools",
+      "Attention to detail"
+    ],
+    "description": "Assist in vehicle diagnostics and routine servicing Learn oil change and brake inspection procedures Maintain service records",
+    "tags": [
+      "Vehicle Maintenance"
+    ],
+    "location": "Kolkata"
+  },
+  {
+    "id": "68cea7c23e9933d47358cc39",
+    "title": "Refrigeration & AC Mechanic Apprentice",
+    "company": "68cdf727f65f1cbe4dc26c30",
+    "requirements": [
+      "Basic refrigeration knowledge",
+      "Handling refrigerants safely",
+      "Use of electrical testing tools"
+    ],
+    "description": "Assist in installation of air-conditioning units Learn routine maintenance and gas charging Help troubleshoot cooling system issues",
+    "tags": [
+      "HVAC"
+    ],
+    "location": "Noida"
   }
 ]

@@ -39,7 +39,7 @@ router.post("/resume/upload", isUserAuthenticated, upload.single("resume"), uplo
 
 router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); // --integrated
 router.get("/internship/applied",isUserAuthenticated, appliedInternships); // --integrated
-router.get("/internship/details/:internshipId", isUserAuthenticated, internshipDetails); //
+router.get("/internship/details/:internshipId", internshipDetails); //
 router.get("/internship/past",isUserAuthenticated, getPastInternships); // -- integrated
 router.post("/internship/register",isUserAuthenticated, registerInternship); // --
 

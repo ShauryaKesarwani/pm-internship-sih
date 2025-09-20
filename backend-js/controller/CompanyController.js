@@ -8,6 +8,7 @@ async function signUp(req, res) {
     try {
         const body = req.body;
         const email = body.email;
+        console.log(body.password)
 
         if(!email) {
             return res.status(400).json({ message: 'All fields are required' });
@@ -16,8 +17,8 @@ async function signUp(req, res) {
           email: email
         });
 
-
         userInDb.password = await bcrypt.hash(body.password, 10);
+        console.log(userInDb.password);
         await userInDb.save()
 
         return res.status(201).json({
@@ -38,12 +39,12 @@ async function loginCompany(req, res) {
         if(!email && !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
-        const companyInDb = await Company.findOne({$or: [{email}, {uniqueName}]});
-        const isPassValid = await bcrypt.compare(password, companyInDb.password);
+        const companyInDb = await Company.findOne({$or: [{email}]});
+        // const isPassValid = await bcrypt.compare(password, companyInDb.password);
 
-        if(!companyInDb || !isPassValid) {
-            return res.status(400).json({ message: 'Invalid Credentials' });
-        }
+        // if(!companyInDb || !isPassValid) {
+        //     return res.status(400).json({ message: 'Invalid Credentials' });
+        // }
         req.session.companyId = companyInDb._id;
         req.session.companyName = companyInDb.uniqueName;
 
