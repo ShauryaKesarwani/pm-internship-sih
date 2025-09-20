@@ -68,7 +68,7 @@ export const generateResumePDF = async (resumeData: ResumeData): Promise<void> =
     tempContainer.style.top = '0';
     tempContainer.style.width = '794px'; // A4 width in pixels at 96 DPI
     tempContainer.style.backgroundColor = 'white';
-    tempContainer.style.fontFamily = 'Arial, sans-serif';
+    tempContainer.style.fontFamily = '"Times New Roman", Times, serif';
     
     // Generate the resume HTML content
     tempContainer.innerHTML = generatePrintableResumeHTML(resumeData);
@@ -133,7 +133,7 @@ export const generateResumePDF = async (resumeData: ResumeData): Promise<void> =
   }
 };
 
-// Generate HTML content optimized for PDF generation
+// Generate HTML content optimized for PDF generation with academic styling
 const generatePrintableResumeHTML = (data: ResumeData): string => {
   const formatDate = (date: string) => {
     if (!date) return '';
@@ -142,169 +142,129 @@ const generatePrintableResumeHTML = (data: ResumeData): string => {
     return `${monthNames[parseInt(month) - 1]} ${year}`;
   };
 
-  const getSkillLevelWidth = (level: string) => {
-    switch (level) {
-      case 'Expert': return '100%';
-      case 'Advanced': return '75%';
-      case 'Intermediate': return '50%';
-      case 'Beginner': return '25%';
-      default: return '25%';
-    }
-  };
-
-  const getSkillLevelColor = (level: string) => {
-    switch (level) {
-      case 'Expert': return '#10b981';
-      case 'Advanced': return '#3b82f6';
-      case 'Intermediate': return '#f59e0b';
-      case 'Beginner': return '#9ca3af';
-      default: return '#9ca3af';
-    }
-  };
-
   return `
     <div style="
       max-width: 794px;
       margin: 0;
-      padding: 32px;
+      padding: 40px;
       background: white;
-      color: #111827;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
+      color: #000000;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12px;
+      line-height: 1.4;
     ">
       <!-- Header -->
       <div style="
-        border-bottom: 2px solid #f97316;
-        padding-bottom: 24px;
-        margin-bottom: 32px;
+        text-align: center;
+        border-bottom: 2px solid #000000;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
       ">
         <h1 style="
-          font-size: 32px;
+          font-size: 24px;
           font-weight: bold;
-          color: #111827;
-          margin: 0 0 8px 0;
+          color: #000000;
+          margin: 0 0 10px 0;
+          letter-spacing: 1px;
+          text-transform: uppercase;
         ">${data.personalInfo.fullName}</h1>
         <div style="
-          display: flex;
-          flex-wrap: wrap;
-          gap: 16px;
-          color: #6b7280;
-          font-size: 13px;
+          font-size: 11px;
+          color: #333333;
+          line-height: 1.3;
         ">
-          ${data.personalInfo.email ? `
-            <span style="display: inline-flex; align-items: center; gap: 4px;">
-              📧 ${data.personalInfo.email}
-            </span>
-          ` : ''}
-          ${data.personalInfo.phone ? `
-            <span style="display: inline-flex; align-items: center; gap: 4px;">
-              📞 ${data.personalInfo.phone}
-            </span>
-          ` : ''}
-          ${data.personalInfo.location ? `
-            <span style="display: inline-flex; align-items: center; gap: 4px;">
-              📍 ${data.personalInfo.location}
-            </span>
-          ` : ''}
-          ${data.personalInfo.linkedin ? `
-            <span style="display: inline-flex; align-items: center; gap: 4px; color: #f97316;">
-              🔗 LinkedIn
-            </span>
-          ` : ''}
-          ${data.personalInfo.website ? `
-            <span style="display: inline-flex; align-items: center; gap: 4px; color: #f97316;">
-              🌐 Website
-            </span>
-          ` : ''}
+          ${[
+            data.personalInfo.email,
+            data.personalInfo.phone,
+            data.personalInfo.location,
+            data.personalInfo.linkedin ? 'LinkedIn Profile' : '',
+            data.personalInfo.website ? 'Personal Website' : ''
+          ].filter(Boolean).join(' • ')}
         </div>
       </div>
 
       ${data.personalInfo.summary ? `
         <!-- Summary -->
-        <div style="margin-bottom: 32px;">
+        <div style="margin-bottom: 25px;">
           <h2 style="
-            font-size: 20px;
-            font-weight: 600;
-            color: #f97316;
-            margin: 0 0 16px 0;
-            border-bottom: 1px solid #fed7aa;
-            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 3px;
           ">Professional Summary</h2>
           <p style="
-            color: #374151;
-            font-size: 15px;
-            line-height: 1.6;
+            color: #000000;
+            font-size: 12px;
+            line-height: 1.4;
             margin: 0;
+            text-align: justify;
           ">${data.personalInfo.summary}</p>
         </div>
       ` : ''}
 
       ${data.experiences.length > 0 ? `
         <!-- Experience -->
-        <div style="margin-bottom: 32px;">
+        <div style="margin-bottom: 25px;">
           <h2 style="
-            font-size: 20px;
-            font-weight: 600;
-            color: #f97316;
-            margin: 0 0 24px 0;
-            border-bottom: 1px solid #fed7aa;
-            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 3px;
           ">Professional Experience</h2>
           ${data.experiences.map(exp => `
-            <div style="margin-bottom: 32px;">
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 12px;
-              ">
-                <div>
-                  <h3 style="
-                    font-size: 17px;
-                    font-weight: 600;
-                    color: #111827;
-                    margin: 0 0 4px 0;
-                  ">${exp.position}</h3>
-                  <p style="
-                    font-size: 15px;
-                    color: #f97316;
-                    font-weight: 500;
-                    margin: 0 0 2px 0;
-                  ">${exp.company}</p>
-                  ${exp.location ? `
-                    <p style="
-                      color: #6b7280;
-                      font-size: 13px;
-                      margin: 0;
-                    ">${exp.location}</p>
-                  ` : ''}
-                </div>
+            <div style="margin-bottom: 20px;">
+              <div style="margin-bottom: 8px;">
                 <div style="
-                  text-align: right;
-                  color: #6b7280;
-                  font-size: 13px;
-                  font-weight: 500;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: baseline;
                 ">
-                  ${formatDate(exp.startDate)} - ${exp.current ? 'Present' : formatDate(exp.endDate)}
+                  <h3 style="
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: #000000;
+                    margin: 0;
+                  ">${exp.position}</h3>
+                  <span style="
+                    color: #000000;
+                    font-size: 11px;
+                    font-style: italic;
+                  ">${formatDate(exp.startDate)} - ${exp.current ? 'Present' : formatDate(exp.endDate)}</span>
                 </div>
+                <p style="
+                  font-size: 12px;
+                  color: #000000;
+                  margin: 2px 0;
+                  font-style: italic;
+                ">${exp.company}${exp.location ? `, ${exp.location}` : ''}</p>
               </div>
               ${exp.description ? `
                 <p style="
-                  color: #374151;
-                  margin: 0 0 12px 0;
-                  line-height: 1.5;
+                  color: #000000;
+                  margin: 0 0 8px 0;
+                  line-height: 1.4;
+                  font-size: 11px;
+                  text-align: justify;
                 ">${exp.description}</p>
               ` : ''}
               ${exp.achievements.filter(a => a.trim()).length > 0 ? `
                 <ul style="
-                  color: #374151;
+                  color: #000000;
                   margin: 0;
-                  padding-left: 20px;
-                  line-height: 1.4;
+                  padding-left: 15px;
+                  line-height: 1.3;
+                  font-size: 11px;
                 ">
                   ${exp.achievements.filter(a => a.trim()).map(achievement => `
-                    <li style="margin-bottom: 4px;">${achievement}</li>
+                    <li style="margin-bottom: 3px;">${achievement}</li>
                   `).join('')}
                 </ul>
               ` : ''}
@@ -315,59 +275,56 @@ const generatePrintableResumeHTML = (data: ResumeData): string => {
 
       ${data.educations.length > 0 ? `
         <!-- Education -->
-        <div style="margin-bottom: 32px;">
+        <div style="margin-bottom: 25px;">
           <h2 style="
-            font-size: 20px;
-            font-weight: 600;
-            color: #f97316;
-            margin: 0 0 24px 0;
-            border-bottom: 1px solid #fed7aa;
-            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 3px;
           ">Education</h2>
           ${data.educations.map(edu => `
-            <div style="margin-bottom: 24px;">
+            <div style="margin-bottom: 15px;">
               <div style="
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-start;
+                align-items: baseline;
+                margin-bottom: 5px;
               ">
-                <div>
-                  <h3 style="
-                    font-size: 17px;
-                    font-weight: 600;
-                    color: #111827;
-                    margin: 0 0 4px 0;
-                  ">${edu.degree}</h3>
-                  <p style="
-                    font-size: 15px;
-                    color: #f97316;
-                    font-weight: 500;
-                    margin: 0 0 2px 0;
-                  ">${edu.institution}</p>
-                  ${edu.field ? `
-                    <p style="
-                      color: #6b7280;
-                      font-size: 13px;
-                      margin: 0 0 2px 0;
-                    ">${edu.field}</p>
-                  ` : ''}
-                  ${edu.gpa ? `
-                    <p style="
-                      color: #6b7280;
-                      font-size: 13px;
-                      margin: 0;
-                    ">GPA: ${edu.gpa}</p>
-                  ` : ''}
-                </div>
-                <div style="
-                  text-align: right;
-                  color: #6b7280;
+                <h3 style="
                   font-size: 13px;
-                  font-weight: 500;
-                ">
-                  ${formatDate(edu.startDate)} - ${edu.current ? 'Present' : formatDate(edu.endDate)}
-                </div>
+                  font-weight: bold;
+                  color: #000000;
+                  margin: 0;
+                ">${edu.degree}${edu.field ? ` in ${edu.field}` : ''}</h3>
+                <span style="
+                  color: #000000;
+                  font-size: 11px;
+                  font-style: italic;
+                ">${formatDate(edu.startDate)} - ${edu.current ? 'Present' : formatDate(edu.endDate)}</span>
               </div>
+              <p style="
+                font-size: 12px;
+                color: #000000;
+                margin: 0;
+                font-style: italic;
+              ">${edu.institution}${edu.location ? `, ${edu.location}` : ''}${edu.gpa ? ` | GPA: ${edu.gpa}` : ''}</p>
+              ${edu.achievements.filter(a => a.trim()).length > 0 ? `
+                <ul style="
+                  color: #000000;
+                  margin: 5px 0 0 0;
+                  padding-left: 15px;
+                  line-height: 1.3;
+                  font-size: 11px;
+                ">
+                  ${edu.achievements.filter(a => a.trim()).map(achievement => `
+                    <li style="margin-bottom: 2px;">${achievement}</li>
+                  `).join('')}
+                </ul>
+              ` : ''}
             </div>
           `).join('')}
         </div>
@@ -375,73 +332,37 @@ const generatePrintableResumeHTML = (data: ResumeData): string => {
 
       ${data.skills.length > 0 ? `
         <!-- Skills -->
-        <div style="margin-bottom: 32px;">
+        <div style="margin-bottom: 25px;">
           <h2 style="
-            font-size: 20px;
-            font-weight: 600;
-            color: #f97316;
-            margin: 0 0 24px 0;
-            border-bottom: 1px solid #fed7aa;
-            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 3px;
           ">Skills</h2>
-          <div style="
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-          ">
+          <div>
             ${Object.entries(data.skills.reduce((acc, skill) => {
               const category = skill.category || 'Other';
               if (!acc[category]) acc[category] = [];
               acc[category].push(skill);
               return acc;
             }, {} as Record<string, typeof data.skills>)).map(([category, categorySkills]) => `
-              <div>
+              <div style="margin-bottom: 12px;">
                 <h3 style="
-                  font-size: 15px;
-                  font-weight: 600;
-                  color: #111827;
-                  margin: 0 0 12px 0;
-                ">${category}</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  ${categorySkills.map(skill => `
-                    <div style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: space-between;
-                    ">
-                      <span style="
-                        color: #374151;
-                        font-size: 13px;
-                      ">${skill.name}</span>
-                      <div style="
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                      ">
-                        <div style="
-                          width: 60px;
-                          height: 6px;
-                          background-color: #e5e7eb;
-                          border-radius: 3px;
-                          overflow: hidden;
-                        ">
-                          <div style="
-                            height: 100%;
-                            background-color: ${getSkillLevelColor(skill.level)};
-                            width: ${getSkillLevelWidth(skill.level)};
-                            border-radius: 3px;
-                          "></div>
-                        </div>
-                        <span style="
-                          font-size: 11px;
-                          color: #6b7280;
-                          width: 48px;
-                          text-align: right;
-                        ">${skill.level}</span>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
+                  font-size: 12px;
+                  font-weight: bold;
+                  color: #000000;
+                  margin: 0 0 6px 0;
+                ">${category}:</h3>
+                <p style="
+                  color: #000000;
+                  font-size: 11px;
+                  margin: 0;
+                  line-height: 1.3;
+                ">${categorySkills.map(skill => skill.name).join(', ')}</p>
               </div>
             `).join('')}
           </div>
@@ -450,63 +371,39 @@ const generatePrintableResumeHTML = (data: ResumeData): string => {
 
       ${data.projects.length > 0 ? `
         <!-- Projects -->
-        <div style="margin-bottom: 32px;">
+        <div style="margin-bottom: 25px;">
           <h2 style="
-            font-size: 20px;
-            font-weight: 600;
-            color: #f97316;
-            margin: 0 0 24px 0;
-            border-bottom: 1px solid #fed7aa;
-            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 3px;
           ">Projects</h2>
           ${data.projects.map(project => `
-            <div style="
-              margin-bottom: 24px;
-              padding: 16px;
-              border: 1px solid #e5e7eb;
-              border-radius: 8px;
-            ">
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 12px;
-              ">
-                <h3 style="
-                  font-size: 17px;
-                  font-weight: 600;
-                  color: #111827;
-                  margin: 0;
-                ">${project.name}</h3>
-                ${project.url ? `
-                  <span style="
-                    color: #f97316;
-                    font-weight: 500;
-                    font-size: 13px;
-                  ">View Project →</span>
-                ` : ''}
-              </div>
+            <div style="margin-bottom: 15px;">
+              <h3 style="
+                font-size: 13px;
+                font-weight: bold;
+                color: #000000;
+                margin: 0 0 5px 0;
+              ">${project.name}${project.url ? ' (Available Online)' : ''}</h3>
               <p style="
-                color: #374151;
-                margin: 0 0 12px 0;
-                line-height: 1.5;
+                color: #000000;
+                margin: 0 0 5px 0;
+                line-height: 1.4;
+                font-size: 11px;
+                text-align: justify;
               ">${project.description}</p>
               ${project.technologies.length > 0 ? `
-                <div style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 6px;
-                ">
-                  ${project.technologies.map(tech => `
-                    <span style="
-                      padding: 4px 12px;
-                      background-color: #fed7aa;
-                      color: #9a3412;
-                      font-size: 11px;
-                      border-radius: 12px;
-                    ">${tech}</span>
-                  `).join('')}
-                </div>
+                <p style="
+                  color: #000000;
+                  font-size: 11px;
+                  margin: 0;
+                  font-style: italic;
+                "><strong>Technologies:</strong> ${project.technologies.join(', ')}</p>
               ` : ''}
             </div>
           `).join('')}
@@ -515,45 +412,33 @@ const generatePrintableResumeHTML = (data: ResumeData): string => {
 
       ${data.certifications.length > 0 ? `
         <!-- Certifications -->
-        <div style="margin-bottom: 32px;">
+        <div style="margin-bottom: 25px;">
           <h2 style="
-            font-size: 20px;
-            font-weight: 600;
-            color: #f97316;
-            margin: 0 0 24px 0;
-            border-bottom: 1px solid #fed7aa;
-            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 3px;
           ">Certifications</h2>
-          <div style="
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-          ">
-            ${data.certifications.map(cert => `
-              <div style="
-                padding: 16px;
-                border: 1px solid #e5e7eb;
-                border-radius: 8px;
-              ">
-                <h3 style="
-                  font-size: 15px;
-                  font-weight: 600;
-                  color: #111827;
-                  margin: 0 0 4px 0;
-                ">${cert.name}</h3>
-                <p style="
-                  color: #6b7280;
-                  margin: 0 0 8px 0;
-                  font-size: 13px;
-                ">${cert.issuer}</p>
-                <p style="
-                  font-size: 12px;
-                  color: #6b7280;
-                  margin: 0;
-                ">${formatDate(cert.date)}</p>
-              </div>
-            `).join('')}
-          </div>
+          ${data.certifications.map(cert => `
+            <div style="margin-bottom: 10px;">
+              <h3 style="
+                font-size: 12px;
+                font-weight: bold;
+                color: #000000;
+                margin: 0 0 2px 0;
+              ">${cert.name}</h3>
+              <p style="
+                color: #000000;
+                margin: 0;
+                font-size: 11px;
+                font-style: italic;
+              ">${cert.issuer} | ${formatDate(cert.date)}</p>
+            </div>
+          `).join('')}
         </div>
       ` : ''}
     </div>
