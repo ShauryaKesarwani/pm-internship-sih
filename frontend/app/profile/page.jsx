@@ -62,7 +62,6 @@ export default function ProfilePage() {
   };
   useEffect(() => {
     fetchUserData();
-    console.log(resume)
   }, []);
 
   // Fetch history or open applications based on tab
@@ -73,47 +72,6 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Save updated profile
-  const saveProfileChanges = async () => {
-    setUploadError(null);
-    try {
-      const updated = {
-        ...user,
-        ...formData,
-        residence: {
-          pin: formData.residencePin ? Number(formData.residencePin) : undefined,
-          city: formData.residenceCity,
-          state: formData.residenceState,
-        },
-        resume: {
-          ...user?.resume,
-          skills: (formData.skillsCSV || "").split(",").map(s => s.trim()).filter(Boolean),
-          socialLinks: (formData.socialLinksCSV || "").split(",").map(s => s.trim()).filter(Boolean),
-          certifications: (formData.certificationsCSV || "").split(",").map(s => s.trim()).filter(Boolean),
-        },
-      };
-
-
-      const res = await fetch("http://localhost:7470/user/profile/edit", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(updated),
-      });
-
-
-      const data = await res.json();
-      console.log(data)
-
-      if (data?.user) setUser(data.user);
-      setIsEditProfileOpen(false);
-
-    } catch (err) {
-      console.error("Failed to update profile:", err);
-      console.log("error 1")
-      setUploadError(err.message || "Failed to update profile");
-    }
-  };
 
   // Upload PDF file (frontend only)
   const handleUploadPDF = () => {
@@ -178,30 +136,36 @@ export default function ProfilePage() {
                   {user.email}
                 </a>
                 <div className="mt-4 flex items-center gap-3">
-                  <a
-                    href={resume.socialLinks?.linkedin || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
-                  >
-                    LinkedIn
-                  </a>
-                  <a
-                    href={resume.socialLinks?.github || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
-                  >
-                    GitHub
-                  </a>
-                  <a
-                    href={resume.socialLinks?.website || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
-                  >
-                    Website
-                  </a>
+                  {resume?.socialLinks?.linkedin && (
+                    <a
+                      href={resume.socialLinks.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
+                    >
+                      LinkedIn
+                    </a>
+                  )}
+                  {resume?.socialLinks?.github && (
+                    <a
+                      href={resume.socialLinks.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
+                    >
+                      GitHub
+                    </a>
+                  )}
+                  {resume?.socialLinks?.website && (
+                    <a
+                      href={resume.socialLinks.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border px-3 py-1.5 text-sm text-neutral-700 hover:bg-[#FFE1D7]"
+                    >
+                      Website
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -458,10 +422,14 @@ export default function ProfilePage() {
                       .split(",")
                       .map((s) => s.trim())
                       .filter((s) => s.length > 0),
-                    socialLinks: (formData.socialLinksCSV || "")
-                      .split(",")
-                      .map((s) => s.trim())
-                      .filter((s) => s.length > 0),
+                    socialLinks: (() => {
+                      const arr = (formData.socialLinksCSV || "").split(",").map(s => s.trim());
+                      return {
+                        linkedin: arr[0] || "",
+                        github: arr[1] || "",
+                        website: arr[2] || "",
+                      };
+                    })(),
                     certifications: (formData.certificationsCSV || "")
                       .split(",")
                       .map((s) => s.trim())
@@ -470,7 +438,7 @@ export default function ProfilePage() {
 
                   // Send update to backend
                   fetch("http://localhost:7470/user/profile/edit", {
-                    method: "POST",
+                    method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
                     body: JSON.stringify(updated),

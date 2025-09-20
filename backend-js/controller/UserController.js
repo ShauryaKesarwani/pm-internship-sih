@@ -97,16 +97,50 @@ async function editProfile(req, res) {
     const updates = req.body;
     const userId = req.user._id;
 
-    console.log("11111111")
-    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
-      new: true,
-      runValidators: true,
-    }).select("-password -auth0Id");
-
-    if (!updatedUser) {
+    const user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (updates.username) user.username = updates.username;
+    if (updates.name) user.name = updates.name;
+    if (updates.gender) user.gender = updates.gender;
+    if (updates.email) user.email = updates.email;
+    if (updates.field) user.field = updates.field;
+    if (updates.phoneNumber) user.phoneNumber = updates.phoneNumber;
+
+    if (updates.residence) {
+      user.residence.pin = updates.residence.pin ?? user.residence.pin;
+      user.residence.city = updates.residence.city ?? user.residence.city;
+      user.residence.state = updates.residence.state ?? user.residence.state;
+    }
+
+    if (updates.about) user.about = updates.about;
+
+    if (updates.resume) {
+      if (updates.resume.skills && Array.isArray(updates.resume.skills)) {
+        user.resume.skills = Array.from(new Set([...user.resume.skills, ...updates.resume.skills]));
+      }
+
+      if (updates.resume.certifications && Array.isArray(updates.resume.certifications)) {
+        user.resume.certifications = Array.from(
+            new Set([...user.resume.certifications, ...updates.resume.certifications])
+        );
+      }
+
+      if (updates.resume.socialLinks) {
+        user.resume.socialLinks.linkedin =
+            updates.resume.socialLinks.linkedin || user.resume.socialLinks.linkedin;
+        user.resume.socialLinks.github =
+            updates.resume.socialLinks.github || user.resume.socialLinks.github;
+        user.resume.socialLinks.website =
+            updates.resume.socialLinks.website || user.resume.socialLinks.website;
+      }
+    }
+
+    const updatedUser = await user.save();
+
+    console.log(updatedUser)
     return res.status(200).json({
       message: "Profile updated successfully",
       user: updatedUser,
@@ -159,8 +193,9 @@ async function getProfileResume(req, res) {
 
     const resume = user.resume;
 
+    console.log(resume)
     return res.status(200).json({
-      resume,
+      resume : resume,
     });
   } catch (err) {
     console.error("Error in profile resume:", err);
