@@ -57,7 +57,7 @@ export default function ProfilePage() {
       setExperience(experienceData?.experience.internships || []);
 
 
-      console.log(ongoingData.currentInternship.currentInternship.internshipDetails)
+      // console.log(ongoingData.currentInternship.currentInternship.internshipDetails)
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {

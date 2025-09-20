@@ -381,12 +381,12 @@ export default function ResumeTemplate({
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-orange-600 mb-6 border-b border-orange-200 pb-2">Skills</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {skills.reduce((acc, skill) => {
+            {Object.entries(skills.reduce((acc, skill) => {
               const category = skill.category || 'Other';
               if (!acc[category]) acc[category] = [];
               acc[category].push(skill);
               return acc;
-            }, {} as Record<string, Skill[]>).map((categorySkills, category) => (
+            }, {} as Record<string, Skill[]>)).map(([category, categorySkills]) => (
               <div key={category}>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{category}</h3>
                 <div className="space-y-2">

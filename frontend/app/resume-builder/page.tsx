@@ -239,6 +239,7 @@ export default function ResumeBuilderPage() {
 
   const downloadResume = async () => {
     try {
+      // Show loading state (you could add a loading state to the component if desired)
       const resumeData = {
         personalInfo,
         experiences,
@@ -940,7 +941,7 @@ export default function ResumeBuilderPage() {
                     className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" />
-                    Download HTML
+                    Download PDF
                   </button>
                   <button
                     onClick={downloadTextResume}
@@ -1047,7 +1048,7 @@ export default function ResumeBuilderPage() {
                   className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Download HTML
+                  Download PDF
                 </button>
                 <button
                   onClick={downloadTextResume}
