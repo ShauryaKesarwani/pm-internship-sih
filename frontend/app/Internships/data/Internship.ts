@@ -1,7 +1,17 @@
+interface Company {
+  _id: string;
+  name: string;
+  uniqueName: string;
+  description: string;
+  industry: string;
+  website: string;
+  location: string;
+}
+
 export interface Internship {
   id: string;
   title: string;
-  company: string;
+  company: Company;
   companyLogo: string;
   location: string;
   type: "Remote" | "On-site" | "Hybrid";

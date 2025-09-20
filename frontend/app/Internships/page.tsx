@@ -226,9 +226,6 @@ const InternshipsPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        // body: JSON.stringify({
-        //   user_id: "68c07211acffea4d6b24fa9f  ", // You can replace this with dynamic user ID
-        // }),
       });
 
       console.log("Response status:", response.status);
@@ -240,38 +237,106 @@ const InternshipsPage = () => {
         // Check if recommendations exist
         if (data.recommendations && data.recommendations.length > 0) {
           // Transform the recommendation data to match our Internship interface
-          const transformedInternships = data.recommendations.map(
-            (rec: any) => ({
-              id: rec.job_id,
-              title: rec.title,
-              company: rec.company,
-              companyLogo: "/api/placeholder/40/40",
-              location: "Remote", // Default since not provided in API
-              type: "Remote" as const,
-              duration: "3 months", // Default since not provided in API
-              stipend: 3000, // Default since not provided in API
-              stipendType: "Fixed" as const,
-              startDate: new Date().toISOString().split("T")[0],
-              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split("T")[0], // 30 days from now
-              description: `Join ${rec.company} as a ${rec.title
-                }. This role focuses on ${rec.tags.join(", ")} technologies.`,
-              requirements: rec.requirements,
-              skills: rec.tags,
-              category: rec.tags[0] || "Technology",
-              postedDate: new Date().toISOString().split("T")[0],
-              applicants: Math.floor(Math.random() * 50) + 10, // Random number between 10-60
-              rating: Math.round(rec.combined_score * 5 * 10) / 10, // Convert score to 5-star rating
-              isBookmarked: false,
-              isLiked: false,
-              imageUrl: "/api/placeholder/300/200",
-              // Additional fields from API
-              combinedScore: rec.combined_score,
-              simScore: rec.sim_score,
-              metaScore: rec.meta_score,
+          const transformedInternships = await Promise.all(
+            data.recommendations.map(async (rec: any) => {
+              console.log(rec.job_id);
+              try {
+                const detailRes = await fetch(
+                  `http://127.0.0.1:7470/user/internship/details/${rec.job_id}`
+                );
+                console.log(detailRes);
+
+                if (!detailRes.ok) {
+                  console.warn(`Failed to fetch details for ${rec.job_id}`);
+                  return null; // skip this recommendation
+                }
+
+                const detailData = await detailRes.json();
+                const internship = detailData?.internship;
+
+                if (!internship || !internship.internshipDetails) {
+                  console.warn(`No internship details for ${rec.job_id}`);
+                  return null;
+                }
+
+                const d = internship.internshipDetails;
+                const location =
+                  d.location?.city && d.location?.address
+                    ? `${d.location.city}, ${d.location.address}`
+                    : "Remote";
+
+                return {
+                  id: rec.job_id,
+                  title: d.title,
+                  company: internship.company || rec.company,
+                  companyLogo: "/api/placeholder/40/40",
+                  location,
+                  type: location === "Remote" ? "Remote" as const : "On-site" as const,
+                  duration: d.duration || "N/A",
+                  stipend: d.stipend || "N/A",
+                  stipendType: "Fixed" as const,
+                  startDate: d.startDate || new Date().toISOString().split("T")[0],
+                  deadline: d.applicationDeadline
+                    ? new Date(d.applicationDeadline).toISOString().split("T")[0]
+                    : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                        .toISOString()
+                        .split("T")[0],
+                  description: `Join ${rec.company} as a ${d.title}. Responsibilities include ${d.responsibilities?.join(", ")}.`,
+                  requirements: d.skillsRequired || rec.requirements,
+                  skills: rec.tags,
+                  category: rec.tags[0] || "Technology",
+                  postedDate: new Date(internship.createdAt).toISOString().split("T")[0],
+                  applicants: Math.floor(Math.random() * 50) + 10,
+                  rating: Math.round(rec.combined_score * 5 * 10) / 10,
+                  isBookmarked: false,
+                  isLiked: false,
+                  imageUrl: "/api/placeholder/300/200",
+                  combinedScore: rec.combined_score,
+                  simScore: rec.sim_score,
+                  metaScore: rec.meta_score,
+                };
+              } catch (err) {
+                console.error(`Error fetching details for ${rec.job_id}:`, err);
+                return null;
+              }
             })
           );
+
+          // filter out any nulls
+          const filtered = transformedInternships.filter(Boolean);
+
+          // const transformedInternships = data.recommendations.map(
+          //   (rec: any) => ({
+          //     id: rec.job_id,
+          //     title: rec.title,
+          //     company: rec.company,
+          //     companyLogo: "/api/placeholder/40/40",
+          //     location: "Remote", // Default since not provided in API
+          //     type: "Remote" as const,
+          //     duration: "3 months", // Default since not provided in API
+          //     stipend: 3000, // Default since not provided in API
+          //     stipendType: "Fixed" as const,
+          //     startDate: new Date().toISOString().split("T")[0],
+          //     deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          //       .toISOString()
+          //       .split("T")[0], // 30 days from now
+          //     description: `Join ${rec.company} as a ${rec.title
+          //       }. This role focuses on ${rec.tags.join(", ")} technologies.`,
+          //     requirements: rec.requirements,
+          //     skills: rec.tags,
+          //     category: rec.tags[0] || "Technology",
+          //     postedDate: new Date().toISOString().split("T")[0],
+          //     applicants: Math.floor(Math.random() * 50) + 10, // Random number between 10-60
+          //     rating: Math.round(rec.combined_score * 5 * 10) / 10, // Convert score to 5-star rating
+          //     isBookmarked: false,
+          //     isLiked: false,
+          //     imageUrl: "/api/placeholder/300/200",
+          //     // Additional fields from API
+          //     combinedScore: rec.combined_score,
+          //     simScore: rec.sim_score,
+          //     metaScore: rec.meta_score,
+          //   })
+          // );
 
           setGeneratedInternships(transformedInternships);
           setShowGeneratedInternships(true);
