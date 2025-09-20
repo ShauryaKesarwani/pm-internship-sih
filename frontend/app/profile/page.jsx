@@ -638,25 +638,26 @@ export default function ProfilePage() {
                 </div>
 
                 {/* CSV fields */}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-neutral-900">
                       Skills (comma-separated)
                     </label>
-                    <input
+                    <textarea
                       value={formData?.skillsCSV || ""}
                       onChange={(e) =>
                         setFormData({ ...formData, skillsCSV: e.target.value })
                       }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                      placeholder="SQL, A/B Testing, Wireframing"
+                      rows={4}
+                      placeholder="sql, a/b testing, wireframing"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-neutral-900">
                       Certifications (comma-separated)
                     </label>
-                    <input
+                    <textarea
                       value={formData?.certificationsCSV || ""}
                       onChange={(e) =>
                         setFormData({
@@ -665,6 +666,7 @@ export default function ProfilePage() {
                         })
                       }
                       className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                      rows={4}
                       placeholder="Cert 1, Cert 2"
                     />
                   </div>
