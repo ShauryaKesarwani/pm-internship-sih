@@ -11,17 +11,17 @@ interface Company {
 export interface Internship {
   id: string;
   title: string;
-  company: Company;
+  company: Company | string; // Allow string for backward compatibility
   companyLogo: string;
   location: string;
   type: "Remote" | "On-site" | "Hybrid";
   duration: string;
-  stipend: number;
+  stipend: number | string;
   stipendType: "Fixed" | "Performance-based" | "Negotiable";
   startDate: string;
   deadline: string;
   description: string;
-  requirements: string[];
+  requirements: string[] | string;
   skills: string[];
   category: string;
   postedDate: string;
@@ -33,4 +33,19 @@ export interface Internship {
   combinedScore?: number;
   simScore?: number;
   metaScore?: number;
+  // New detailed fields
+  responsibilities?: string[];
+  department?: string;
+  companyDetails?: {
+    name: string;
+    industry: string;
+    website: string | null;
+    location: string;
+    _id: string;
+  };
+  fullLocation?: {
+    address: string | null;
+    city: string | null;
+    pinCode: number | null;
+  };
 }

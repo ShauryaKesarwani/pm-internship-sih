@@ -99,8 +99,7 @@ async function internshipDetails(req, res) {
         }
 
         console.log(i++);
-        // console.log(internship)
-        console.log(internship.internshipDetails.openings)
+        console.log(internship)
         return res.status(200).json({
             internship : internship,
         })

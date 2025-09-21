@@ -4,7 +4,7 @@
 import React from "react";
 
 // Icons
-import { MapPin, Clock, DollarSign, Building2, Users, Star, Bookmark, Heart } from "lucide-react";
+import { MapPin, Clock, DollarSign, Building2, Users, Star } from "lucide-react";
 
 // Types
 import { Internship } from "../data/Internship";
@@ -14,6 +14,7 @@ interface GeneratedInternshipsSectionProps {
     generatedInternships: Internship[];
     showGeneratedInternships: boolean;
     setShowGeneratedInternships: (show: boolean) => void;
+    onInternshipClick: (internship: Internship) => void;
     // If you need to regenerate, uncomment the following line
     // generateInternships: () => void;
 }
@@ -22,6 +23,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
     generatedInternships,
     showGeneratedInternships,
     setShowGeneratedInternships,
+    onInternshipClick,
     // If you need to regenerate, uncomment the following line
     // generateInternships,
 }) => {
@@ -65,7 +67,8 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                 {generatedInternships.map((internship) => (
                     <div
                         key={internship.id}
-                        className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex flex-col"
+                        onClick={() => onInternshipClick(internship)}
+                        className="cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex flex-col"
                     >
                         {/* Generated Badge and Score */}
                         <div className="absolute top-3 right-3 flex flex-col items-end space-y-1">
@@ -193,7 +196,10 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                             <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
 
                                 <button 
-                                onClick={()=> router.push(`/proficiencyTest/${internship.id}`)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    router.push(`/proficiencyTest/${internship.id}`);
+                                }}
                                 className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap">
                                     Apply Now
                                 </button>

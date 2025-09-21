@@ -2,7 +2,7 @@
 
 // React
 import React, { useState, useEffect, useMemo } from "react";
-
+import { useRouter } from "next/navigation";
 // Icons
 import {
   MapPin,
@@ -32,6 +32,8 @@ import { dummyInternships } from "./data/dummyInternships";
 import {log} from "console";
 
 const InternshipsPage = () => {
+  const router = useRouter();
+  const [selectedInternship, setSelectedInternship] = useState<Internship | null>(null);
   const [internships, setInternships] = useState<Internship[]>([]);
   const [filteredInternships, setFilteredInternships] = useState<Internship[]>(
     []
@@ -263,9 +265,7 @@ const InternshipsPage = () => {
                   : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                       .toISOString()
                       .split("T")[0],
-                description: `Join ${internship.company.name} as a ${d.title}. Responsibilities include ${d.responsibilities?.join(
-                  ", "
-                )}.`,
+                description: `Join ${internship.company.name} as a ${d.title}. ${d.responsibilities ? `Key responsibilities include ${d.responsibilities.slice(0, 2).join(", ")} and more.` : ""}`,
                 requirements: d.skillsRequired || rec.requirements,
                 skills: rec.tags,
                 category: rec.tags[0] || "Technology",
@@ -280,6 +280,21 @@ const InternshipsPage = () => {
                 combinedScore: rec.combined_score,
                 simScore: rec.sim_score,
                 metaScore: rec.meta_score,
+                // Additional detailed fields
+                responsibilities: d.responsibilities || [],
+                department: d.department || "N/A",
+                companyDetails: {
+                  name: internship.company.name,
+                  industry: internship.company.industry || "N/A",
+                  website: internship.company.website || null,
+                  location: internship.company.location || "N/A",
+                  _id: internship.company._id
+                },
+                fullLocation: {
+                  address: d.location?.address || null,
+                  city: d.location?.city || null,
+                  pinCode: d.location?.pinCode || null
+                }
               };
             })
           );
@@ -355,6 +370,7 @@ const InternshipsPage = () => {
           generatedInternships={generatedInternships}
           showGeneratedInternships={showGeneratedInternships}
           setShowGeneratedInternships={setShowGeneratedInternships}
+          onInternshipClick={(internship) => setSelectedInternship(internship)}
         />
 
         {/* Results Header */}
@@ -379,7 +395,8 @@ const InternshipsPage = () => {
           {currentInternships.map((internship) => (
             <div
               key={internship.id}
-              className={`bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex ${
+              onClick={() => setSelectedInternship(internship)}
+              className={`cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex ${
                 viewMode === "list" ? "flex-row gap-6 items-start" : "flex-col"
               }`}
             >
@@ -465,6 +482,7 @@ const InternshipsPage = () => {
                 </div>
                 <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
                   <button
+                    onClick={()=> router.push(`/proficiencyTest/${internship.id}`)}
                     className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap"
                   >
                     Apply Now
@@ -533,6 +551,299 @@ const InternshipsPage = () => {
             >
               Clear all filters
             </button>
+          </div>
+        )}
+
+        {/* Internship Modal Popup */}
+        {selectedInternship && (
+          <div
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-y-auto"
+            tabIndex={-1}
+            onClick={() => setSelectedInternship(null)}
+          >
+            <div className="min-h-screen p-4 flex items-start justify-center">
+              <div
+                className="w-full max-w-6xl bg-white rounded-xl shadow-2xl relative mt-8 mb-8"
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Close Button */}
+                <button
+                  className="absolute top-4 right-4 z-10 w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full flex items-center justify-center transition-colors"
+                  onClick={() => setSelectedInternship(null)}
+                  aria-label="Close"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                {/* Header Section */}
+                <div className="bg-[#FF9982] text-white p-6 rounded-t-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                        <Building2 className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <h1 className="text-2xl font-bold mb-1">{selectedInternship.title}</h1>
+                        <p className="text-orange-100 text-lg">
+                          {typeof selectedInternship.company === 'string' 
+                            ? selectedInternship.company 
+                            : selectedInternship.companyDetails?.name || selectedInternship.company}
+                        </p>
+                        <div className="flex items-center gap-3 mt-2">
+                          <span className="flex items-center text-orange-100">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {selectedInternship.location}
+                          </span>
+                          <span className="px-2 py-1 bg-white/20 rounded-full text-sm">
+                            {selectedInternship.type}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center justify-end mb-1">
+                        <Star className="w-5 h-5 text-yellow-300 fill-current mr-1" />
+                        <span className="text-xl font-bold">{selectedInternship.rating}</span>
+                      </div>
+                      <div className="text-orange-100 text-sm">Match Rating</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  
+                  {/* Left Column - Main Content */}
+                  <div className="lg:col-span-2 space-y-6">
+                    
+                    {/* Job Description */}
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">Job Description</h3>
+                      <p className="text-gray-700 leading-relaxed">{selectedInternship.description}</p>
+                    </div>
+
+                    {/* Responsibilities */}
+                    {selectedInternship.responsibilities && selectedInternship.responsibilities.length > 0 && (
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">Key Responsibilities</h3>
+                        <ul className="space-y-2">
+                          {selectedInternship.responsibilities.map((responsibility, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <div className="w-2 h-2 bg-[#FF9982] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                              <span className="text-gray-700">{responsibility}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Skills & Requirements */}
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">Skills & Requirements</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium text-gray-800 mb-2">Skills Needed</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedInternship.skills?.map((skill, idx) => (
+                              <span
+                                key={idx}
+                                className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {selectedInternship.requirements && (
+                          <div>
+                            <h4 className="font-medium text-gray-800 mb-2">Requirements</h4>
+                            <ul className="space-y-1">
+                              {(Array.isArray(selectedInternship.requirements)
+                                ? selectedInternship.requirements
+                                : [selectedInternship.requirements]
+                              ).map((req, idx) => (
+                                <li key={idx} className="flex items-start text-sm">
+                                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                                  <span className="text-gray-600">{req}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Job Details */}
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">Job Details</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-sm text-gray-500">Duration</span>
+                            <p className="font-medium">{selectedInternship.duration}</p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-500">Stipend</span>
+                            <p className="font-medium">{selectedInternship.stipend}</p>
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-sm text-gray-500">Openings</span>
+                            <p className="font-medium">{selectedInternship.applicants} positions</p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-500">Apply by</span>
+                            <p className="font-medium">{new Date(selectedInternship.deadline).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {selectedInternship.department && (
+                        <div className="mt-3">
+                          <span className="text-sm text-gray-500">Department</span>
+                          <p className="font-medium">{selectedInternship.department}</p>
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
+                  {/* Right Column - Company & AI Info */}
+                  <div className="space-y-6">
+                    
+                    {/* Company Details */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                        <Building2 className="w-5 h-5 mr-2 text-[#FF9982]" />
+                        Company Info
+                      </h2>
+                      <div className="space-y-3">
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {selectedInternship.companyDetails?.name || 
+                             (typeof selectedInternship.company === 'string' ? selectedInternship.company : selectedInternship.company?.name)}
+                          </h4>
+                          {selectedInternship.companyDetails?.industry && (
+                            <p className="text-[#FF9982] text-sm">{selectedInternship.companyDetails.industry}</p>
+                          )}
+                        </div>
+                        
+                        {selectedInternship.companyDetails?.location && (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            <span>{selectedInternship.companyDetails.location}</span>
+                          </div>
+                        )}
+                        
+                        {selectedInternship.fullLocation?.address && (
+                          <div className="text-sm text-gray-600">
+                            <strong>Full Address:</strong><br />
+                            {selectedInternship.fullLocation.address}<br />
+                            {selectedInternship.fullLocation.city} - {selectedInternship.fullLocation.pinCode}
+                          </div>
+                        )}
+                        
+                        {selectedInternship.companyDetails?.website && (
+                          <div className="text-sm">
+                            <span className="text-gray-600">Website: </span>
+                            <a
+                              href={selectedInternship.companyDetails.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#FF9982] hover:underline"
+                            >
+                              {selectedInternship.companyDetails.website.replace('https://', '')}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* AI Matching Insights */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                        <Star className="w-5 h-5 mr-2 text-[#FF9982]" />
+                        AI Match Analysis
+                      </h2>
+                      
+                      <div className="space-y-4">
+                        {/* Similarity Score */}
+                        {typeof selectedInternship.simScore !== "undefined" && (
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-medium text-gray-700">Skill Similarity</span>
+                              <span className="text-sm font-bold text-blue-600">
+                                {(selectedInternship.simScore * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${selectedInternship.simScore * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Metadata Score */}
+                        {typeof selectedInternship.metaScore !== "undefined" && (
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-medium text-gray-700">Profile Match</span>
+                              <span className="text-sm font-bold text-purple-600">
+                                {(selectedInternship.metaScore * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-purple-500 h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${selectedInternship.metaScore * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Combined Score */}
+                        {typeof selectedInternship.combinedScore !== "undefined" && (
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-medium text-gray-700">Overall Match</span>
+                              <span className="text-sm font-bold text-[#FF9982]">
+                                {(selectedInternship.combinedScore * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-[#FF9982] h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${selectedInternship.combinedScore * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-3">
+                      <button 
+                        onClick={() => router.push(`/proficiencyTest/${selectedInternship.id}`)}
+                        className="w-full bg-[#FF9982] text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors"
+                      >
+                        Apply Now
+                      </button>
+                      <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                        Save for Later
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
