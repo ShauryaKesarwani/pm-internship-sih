@@ -48,6 +48,7 @@ async function loginCompany(req, res) {
         if((!email || !uniqueId) && !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
+
         let query = {};
         if (email) query.email = email;
         if (uniqueId) query.uniqueId = uniqueId;
@@ -94,7 +95,6 @@ async function getCompanyProfile(req, res) {
     }
 }
 
-
 async function updateCompanyProfile(req, res) {
     try {
         const updates = req.body;
@@ -116,9 +116,27 @@ async function updateCompanyProfile(req, res) {
     }
 }
 
+async function logout(req, res) {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                console.log("Session destruction error", err);
+                return res.status(500).json({ error: "Failed to log out" });
+            }
+            res.clearCookie("connect.sid");
+            return res.status(200).json({ message: "Logout successful" });
+        });
+    } catch (err) {
+        console.log("logging out company error")
+        console.log(err);
+        return res.status(404).json({error : "Server error"});
+    }
+}
+
 module.exports = {
     loginCompany,
     getCompanyProfile,
     updateCompanyProfile,
-    signUp
+    signUp,
+    logout
 }

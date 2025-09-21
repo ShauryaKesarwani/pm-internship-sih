@@ -4,7 +4,8 @@ const {
     loginCompany,
     getCompanyProfile,
     updateCompanyProfile,
-    signUp
+    signUp,
+    logout
 } = require('../controller/CompanyController');
 
 const {
@@ -25,6 +26,7 @@ router.post("/login", loginCompany); //
 router.post("/signup", signUp); //
 router.get("/profile", requireCompanyLogin, getCompanyProfile); //
 router.patch("/profile/update", requireCompanyLogin, updateCompanyProfile); //
+router.patch("/logout", requireCompanyLogin, updateCompanyProfile); //
 
 router.post("/internship/create", requireCompanyLogin, createInternship); //
 router.get("/internships", requireCompanyLogin, getPostedInternships); //
