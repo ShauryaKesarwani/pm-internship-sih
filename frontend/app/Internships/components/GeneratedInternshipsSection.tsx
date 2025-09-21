@@ -92,7 +92,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                                         {internship.title}
                                     </h3>
                                     <p className="text-sm text-gray-600">
-                                        {internship.company?.name || "Unknown"}
+                                        {internship.companyDetails.name || "Unknown"}
                                     </p>
                                 </div>
                             </div>
