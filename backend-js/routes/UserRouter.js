@@ -42,9 +42,8 @@ router.get("/internship/ongoing", isUserAuthenticated, ongoingInternship); // --
 router.get("/internship/applied",isUserAuthenticated, appliedInternships); // --integrated
 router.get("/internship/details/:internshipId", internshipDetails); //
 router.get("/internship/past",isUserAuthenticated, getPastInternships); // -- integrated
-router.post("/internship/register",isUserAuthenticated, registerInternship); // --
-router.post("/internship/register",isUserAuthenticated, registerInternship); // --
-router.get("/internship/:internshipId/samples", sampleQuestions); 
+router.post("/:internshipId/register",isUserAuthenticated, registerInternship); // --
+router.get("/internship/:internshipId/samples", sampleQuestions);
 router.post("/:id/quiz", isUserAuthenticated, saveQuiz)
 
 module.exports = router;

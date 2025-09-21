@@ -164,7 +164,7 @@ async function getPastInternships(req, res) {
 
 async function registerInternship(req, res) {
     try {
-        const { internshipId } = req.body;
+        const internshipId = req.params;
         const userId = req.user._id;
 
         if (!userId || !internshipId) {
