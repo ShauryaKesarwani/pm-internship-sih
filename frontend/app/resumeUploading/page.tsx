@@ -1,15 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import HeaderWhite from "../components/header";
 import Menu from "../components/menu";
+import Button from "../components/buttons";
 
 const ResumePage = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [uploaded, setUploaded] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
+      setUploaded(false);
     }
   };
 
@@ -31,8 +35,9 @@ const ResumePage = () => {
         alert("Failed to upload resume.");
       } else {
         alert("Resume uploaded successfully.");
+        setUploaded(true);
         setFile(null);
-        window.location.href = "http://localhost:3000/profile";
+        // window.location.href = "http://localhost:3000/profile";
       }
     } catch (error) {
       alert("An error occurred while uploading.");
@@ -72,32 +77,36 @@ const ResumePage = () => {
                 accept=".pdf,.doc,.docx"
                 onChange={handleFileChange}
                 className="hidden"
+                ref={fileInputRef}
               />
-              <label
-                htmlFor="fileInput"
-                className="cursor-pointer px-6 py-2 rounded-md bg-red-400 text-white font-semibold hover:bg-red-500 transition"
+              <Button
+                variant="primary"
+                onClick={() => {
+                  fileInputRef.current?.click();
+                }}
+                style={uploaded ? { opacity: 0.5 } : {}}
               >
                 Choose File
-              </label>
-              <div className="flex flex-col items-center w-full">
+              </Button>
+              <div className="flex flex-col items-center w-full mt-4">
                 {file && <p className="mt-2 text-gray-600">{file.name}</p>}
 
-                <button
+                <Button
                   type="submit"
-                  disabled={!file}
-                  className="mt-6 px-8 py-2 rounded-md bg-red-600 text-white font-semibold disabled:bg-red-300 transition"
+                  disabled={!file || uploaded}
+                  style={!file || uploaded ? { opacity: 0.5 } : {}}
                 >
                   Upload
-                </button>
+                </Button>
                 <a
                   href="http://localhost:3000/resume-builder"
-                  className="text-gray-500 text-sm mt-2 hover:underline pt-4"
+                  className="text-gray-500 text-sm mt-2 underline pt-4"
                 >
                   Don't have one? Create Instead
                 </a>
                 <a
                   href="http://localhost:3000/profile"
-                  className="text-gray-500 text-sm mt-2 hover:underline"
+                  className="text-gray-500 text-sm mt-2 underline"
                 >
                   Skip this step
                 </a>

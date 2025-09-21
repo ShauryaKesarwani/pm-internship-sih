@@ -21,6 +21,7 @@ import { generateResumePDF, generateResumeText } from "../utils/resumePdfGenerat
 import { generateLatexResumePDF } from "../utils/latexPdfGenerator";
 import Menu from "../components/menu";
 
+
 interface PersonalInfo {
   fullName: string;
   email: string;
@@ -343,7 +344,7 @@ export default function ResumeBuilderPage() {
                   value={personalInfo.fullName}
                   onChange={(e) => setPersonalInfo({...personalInfo, fullName: e.target.value})}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="John Doe"
+                  placeholder="Ramesh kumar"
                 />
               </div>
 
@@ -356,7 +357,7 @@ export default function ResumeBuilderPage() {
                   value={personalInfo.email}
                   onChange={(e) => setPersonalInfo({...personalInfo, email: e.target.value})}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="john.doe@email.com"
+                  placeholder="ramesh.kumar@email.com"
                 />
               </div>
 
@@ -369,7 +370,7 @@ export default function ResumeBuilderPage() {
                   value={personalInfo.phone}
                   onChange={(e) => setPersonalInfo({...personalInfo, phone: e.target.value})}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+92 555-123-4567"
                 />
               </div>
 
@@ -382,33 +383,33 @@ export default function ResumeBuilderPage() {
                   value={personalInfo.location}
                   onChange={(e) => setPersonalInfo({...personalInfo, location: e.target.value})}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="New York, NY"
+                  placeholder="bilai, Rajashthan"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  LinkedIn Profile
+                  LinkedIn Profile (optional)
                 </label>
                 <input
                   type="url"
                   value={personalInfo.linkedin}
                   onChange={(e) => setPersonalInfo({...personalInfo, linkedin: e.target.value})}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="https://linkedin.com/in/johndoe"
+                  placeholder="https://linkedin.com/in/rameshK"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Website/Portfolio
+                  Website/Portfolio (optional)
                 </label>
                 <input
                   type="url"
                   value={personalInfo.website}
                   onChange={(e) => setPersonalInfo({...personalInfo, website: e.target.value})}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="https://johndoe.com"
+                  placeholder="https://rameshk.com"
                 />
               </div>
             </div>
@@ -461,7 +462,7 @@ export default function ResumeBuilderPage() {
                       value={exp.company}
                       onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Google"
+                      placeholder="TCS"
                     />
                   </div>
 
@@ -487,7 +488,7 @@ export default function ResumeBuilderPage() {
                       value={exp.location}
                       onChange={(e) => updateExperience(exp.id, 'location', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Mountain View, CA"
+                      placeholder="Mumbai, India"
                     />
                   </div>
 
@@ -613,7 +614,7 @@ export default function ResumeBuilderPage() {
                       value={edu.institution}
                       onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Stanford University"
+                      placeholder="IIT Bombay"
                     />
                   </div>
 
@@ -626,7 +627,7 @@ export default function ResumeBuilderPage() {
                       value={edu.degree}
                       onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Bachelor of Science"
+                      placeholder="B.Tech"
                     />
                   </div>
 
@@ -639,7 +640,7 @@ export default function ResumeBuilderPage() {
                       value={edu.field}
                       onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Computer Science"
+                      placeholder="Computer Science Engineering"
                     />
                   </div>
 
@@ -652,7 +653,7 @@ export default function ResumeBuilderPage() {
                       value={edu.location}
                       onChange={(e) => updateEducation(edu.id, 'location', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      placeholder="Stanford, CA"
+                      placeholder="Mumbai,India"
                     />
                   </div>
 
