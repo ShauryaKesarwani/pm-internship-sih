@@ -29,7 +29,8 @@ import GeneratedInternshipsSection from "./components/GeneratedInternshipsSectio
 
 import { Internship } from "./data/Internship";
 import { dummyInternships } from "./data/dummyInternships";
-import {log} from "console";
+import { courses } from "./data/course";
+import { log } from "console";
 
 const InternshipsPage = () => {
   const router = useRouter();
@@ -260,11 +261,11 @@ const InternshipsPage = () => {
                   d.startDate || new Date().toISOString().split("T")[0],
                 deadline: d.applicationDeadline
                   ? new Date(d.applicationDeadline)
-                      .toISOString()
-                      .split("T")[0]
+                    .toISOString()
+                    .split("T")[0]
                   : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                      .toISOString()
-                      .split("T")[0],
+                    .toISOString()
+                    .split("T")[0],
                 description: `Join ${internship.company.name} as a ${d.title}. ${d.responsibilities ? `Key responsibilities include ${d.responsibilities.slice(0, 2).join(", ")} and more.` : ""}`,
                 requirements: d.skillsRequired || rec.requirements,
                 skills: rec.tags,
@@ -396,15 +397,13 @@ const InternshipsPage = () => {
             <div
               key={internship.id}
               onClick={() => setSelectedInternship(internship)}
-              className={`cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex ${
-                viewMode === "list" ? "flex-row gap-6 items-start" : "flex-col"
-              }`}
+              className={`cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:border-orange-300 group relative overflow-hidden flex ${viewMode === "list" ? "flex-row gap-6 items-start" : "flex-col"
+                }`}
             >
               {/* Company Logo and Header */}
               <div
-                className={`flex items-start justify-between ${
-                  viewMode === "list" ? "flex-1" : "mb-4"
-                }`}
+                className={`flex items-start justify-between ${viewMode === "list" ? "flex-1" : "mb-4"
+                  }`}
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center">
@@ -427,11 +426,10 @@ const InternshipsPage = () => {
 
               {/* Description */}
               <p
-                className={`text-sm text-gray-600 ${
-                  viewMode === "list"
-                    ? "flex-1 line-clamp-2"
-                    : "mb-4 line-clamp-3 flex-grow"
-                }`}
+                className={`text-sm text-gray-600 ${viewMode === "list"
+                  ? "flex-1 line-clamp-2"
+                  : "mb-4 line-clamp-3 flex-grow"
+                  }`}
               >
                 {internship.description}
               </p>
@@ -460,11 +458,10 @@ const InternshipsPage = () => {
 
               {/* Footer */}
               <div
-                className={`flex ${
-                  viewMode === "list"
-                    ? "flex-col sm:flex-row sm:items-center sm:justify-between flex-1"
-                    : "flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100"
-                } gap-2`}
+                className={`flex ${viewMode === "list"
+                  ? "flex-col sm:flex-row sm:items-center sm:justify-between flex-1"
+                  : "flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100"
+                  } gap-2`}
               >
                 <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                   <div className="flex items-center space-x-1 whitespace-nowrap">
@@ -482,7 +479,7 @@ const InternshipsPage = () => {
                 </div>
                 <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
                   <button
-                    onClick={()=> router.push(`/proficiencyTest/${internship.id}`)}
+                    onClick={() => router.push(`/proficiencyTest/${internship.id}`)}
                     className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap"
                   >
                     Apply Now
@@ -509,11 +506,10 @@ const InternshipsPage = () => {
                 <button
                   key={i + 1}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-2 border rounded-md ${
-                    currentPage === i + 1
-                      ? "bg-[#FF9982] text-white border-[#FF9982]"
-                      : "border-gray-300 hover:bg-gray-50"
-                  }`}
+                  className={`px-3 py-2 border rounded-md ${currentPage === i + 1
+                    ? "bg-[#FF9982] text-white border-[#FF9982]"
+                    : "border-gray-300 hover:bg-gray-50"
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -587,8 +583,8 @@ const InternshipsPage = () => {
                       <div>
                         <h1 className="text-2xl font-bold mb-1">{selectedInternship.title}</h1>
                         <p className="text-orange-100 text-lg">
-                          {typeof selectedInternship.company === 'string' 
-                            ? selectedInternship.company 
+                          {typeof selectedInternship.company === 'string'
+                            ? selectedInternship.company
                             : selectedInternship.companyDetails?.name || selectedInternship.company}
                         </p>
                         <div className="flex items-center gap-3 mt-2">
@@ -614,10 +610,10 @@ const InternshipsPage = () => {
 
                 {/* Main Content */}
                 <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  
+
                   {/* Left Column - Main Content */}
                   <div className="lg:col-span-2 space-y-6">
-                    
+
                     {/* Job Description */}
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-3">Job Description</h3>
@@ -656,7 +652,7 @@ const InternshipsPage = () => {
                             ))}
                           </div>
                         </div>
-                        
+
                         {selectedInternship.requirements && (
                           <div>
                             <h4 className="font-medium text-gray-800 mb-2">Requirements</h4>
@@ -701,7 +697,7 @@ const InternshipsPage = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {selectedInternship.department && (
                         <div className="mt-3">
                           <span className="text-sm text-gray-500">Department</span>
@@ -714,7 +710,7 @@ const InternshipsPage = () => {
 
                   {/* Right Column - Company & AI Info */}
                   <div className="space-y-6">
-                    
+
                     {/* Company Details */}
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -724,21 +720,21 @@ const InternshipsPage = () => {
                       <div className="space-y-3">
                         <div>
                           <h4 className="font-medium text-gray-900">
-                            {selectedInternship.companyDetails?.name || 
-                             (typeof selectedInternship.company === 'string' ? selectedInternship.company : selectedInternship.company?.name)}
+                            {selectedInternship.companyDetails?.name ||
+                              (typeof selectedInternship.company === 'string' ? selectedInternship.company : selectedInternship.company?.name)}
                           </h4>
                           {selectedInternship.companyDetails?.industry && (
                             <p className="text-[#FF9982] text-sm">{selectedInternship.companyDetails.industry}</p>
                           )}
                         </div>
-                        
+
                         {selectedInternship.companyDetails?.location && (
                           <div className="flex items-center text-sm text-gray-600">
                             <MapPin className="w-4 h-4 mr-2" />
                             <span>{selectedInternship.companyDetails.location}</span>
                           </div>
                         )}
-                        
+
                         {selectedInternship.fullLocation?.address && (
                           <div className="text-sm text-gray-600">
                             <strong>Full Address:</strong><br />
@@ -746,7 +742,7 @@ const InternshipsPage = () => {
                             {selectedInternship.fullLocation.city} - {selectedInternship.fullLocation.pinCode}
                           </div>
                         )}
-                        
+
                         {selectedInternship.companyDetails?.website && (
                           <div className="text-sm">
                             <span className="text-gray-600">Website: </span>
@@ -769,7 +765,7 @@ const InternshipsPage = () => {
                         <Star className="w-5 h-5 mr-2 text-[#FF9982]" />
                         AI Match Analysis
                       </h2>
-                      
+
                       <div className="space-y-4">
                         {/* Similarity Score */}
                         {typeof selectedInternship.simScore !== "undefined" && (
@@ -829,7 +825,7 @@ const InternshipsPage = () => {
 
                     {/* Action Buttons */}
                     <div className="space-y-3">
-                      <button 
+                      <button
                         onClick={() => router.push(`/proficiencyTest/${selectedInternship.id}`)}
                         className="w-full bg-[#FF9982] text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors"
                       >
@@ -838,6 +834,35 @@ const InternshipsPage = () => {
                       <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
                         Save for Later
                       </button>
+
+                      {/* View Courses Button */}
+                      <div className="mt-3">
+                        {courses[selectedInternship.id] && courses[selectedInternship.id].length > 0 ? (
+                          <div className="space-y-2">
+                            <h4 className="text-gray-900 font-medium mb-2">Recommended Free Courses</h4>
+                            {courses[selectedInternship.id].map((course, idx) => (
+                              <a
+                                key={idx}
+                                href={course.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                              >
+                                {course.title}
+                              </a>
+                            ))}
+                          </div>
+                        ) : (
+                          <button
+                            className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+                            onClick={() => alert("No courses available for this internship yet.")}
+                          >
+                            View Free Courses
+                          </button>
+                        )}
+                      </div>
+
+
                     </div>
 
                   </div>
