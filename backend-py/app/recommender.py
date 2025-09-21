@@ -194,63 +194,82 @@ class Recommender:
         else:
             return 0.3  # Some mismatch but not terrible
 
-    def recommend(self, candidate, top_k=6, rerank_k=20):
-        """Main recommendation function with improved scoring"""
+    def recommend(self, candidate, top_k=6, rerank_k=20, filters=None):
+        """Main recommendation function with improved scoring and filtering"""
         if not self.index:
             raise RuntimeError("FAISS index not built. Run indexing first.")
+
+        # Filter jobs before scoring
+        jobs_to_consider = self.jobs
+        if filters:
+            if filters.get("category"):
+                jobs_to_consider = [j for j in jobs_to_consider if filters["category"].lower() in [t.lower() for t in j.get("tags", [])]]
+            if filters.get("location"):
+                jobs_to_consider = [j for j in jobs_to_consider if filters["location"].lower() in j.get("location", "").lower()]
+            if filters.get("type"):
+                jobs_to_consider = [j for j in jobs_to_consider if filters["type"].lower() in j.get("type", "").lower()]
+            if filters.get("duration"):
+                jobs_to_consider = [j for j in jobs_to_consider if filters["duration"].lower() in j.get("duration", "").lower()]
+            if filters.get("minStipend") is not None:
+                jobs_to_consider = [j for j in jobs_to_consider if int(j.get("stipend", 0)) >= filters["minStipend"]]
+            if filters.get("maxStipend") is not None:
+                jobs_to_consider = [j for j in jobs_to_consider if int(j.get("stipend", 0)) <= filters["maxStipend"]]
 
         # Get semantic similarity from FAISS
         text = self.candidate_to_text(candidate)
         if not text.strip():
             return []
-            
+
         c_emb = self.embed([text])[0].astype("float32")
         D, I = self.index.search(np.expand_dims(c_emb, 0), rerank_k)
 
         results = []
-        
+
         # Get candidate skills using getattr
         try:
             candidate_skills = getattr(candidate, 'skills', []) or []
         except:
             candidate_skills = []
-        
+
+        # Only score jobs that are in jobs_to_consider
+        job_indices = {job["id"]: job for job in jobs_to_consider}
         for pos, idx in enumerate(I[0]):
             if idx < 0 or idx >= len(self.jobs):
                 continue
-                
             job = self.jobs[idx]
-            
+            if job["id"] not in job_indices:
+                continue
+
             # 1. Semantic similarity (normalize FAISS score to 0-1)
             faiss_score = float(D[0][pos])
             # FAISS returns dot product for normalized vectors (cosine similarity)
             # Convert to 0-1 range where 1 is best match
             semantic_score = max(0, min(1, faiss_score))
-            
+
             # 2. Skill matching score
             skill_score = self.calculate_skill_match_score(
-                candidate_skills, 
+                candidate_skills,
                 job.get("requirements", [])
             )
-            
+
             # 3. Domain relevance score
             domain_score = self.calculate_domain_relevance(candidate, job)
-            
+
             # 4. Combined scoring with adjusted weights
             combined_score = (
                 0.3 * semantic_score +    # Reduced weight for general semantic similarity
                 0.5 * skill_score +       # Higher weight for specific skill matching
                 0.2 * domain_score        # Domain alignment
             )
-            
+
             # Apply additional penalties for obvious mismatches
             job_title_lower = job.get("title", "").lower()
             manual_job_keywords = ["plumber", "electrician", "welder", "mechanic", "hvac"]
-            
+
             if any(keyword in job_title_lower for keyword in manual_job_keywords):
                 if skill_score < 0.1:  # No relevant skills
                     combined_score *= 0.3  # Heavy penalty
-            
+
             results.append({
                 "job_id": job["id"],
                 "title": job["title"],
