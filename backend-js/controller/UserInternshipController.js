@@ -115,17 +115,20 @@ async function internshipDetails(req, res) {
 async function saveQuiz(req, res){
     try{
         const {id} = req.params
-        const {quiz} = req.body
+        const {quiz, finalScore, finalDifficultyLevel} = req.body
         const application = await Application.findById(id);
         if (!application) return res.status(404).json({ error: "Application not found" });
 
-        application.quiz.push(...quiz);  // merge quiz history
+        application.quiz = quiz;  // merge quiz history
+        application.finalScore = finalScore ?? 0;
+        application.finalDifficultyLevel = finalDifficultyLevel ?? null;
         application.updatedAt = new Date();
         await application.save();
 
         res.json({ message: "Quiz saved", application });
     }
     catch{
+        console.error("Error saving quiz :", err);
         res.status(500).json({ error: err.message });
     }
 }

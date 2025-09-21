@@ -206,14 +206,24 @@ async def end_quiz(application_id:str):
             "answer": q["user_answer"],
             "status": "Correct" if q.get("was_correct") else "Incorrect"
         })
-    final_data = {"quiz": formatted_quiz}
+    final_score = quiz_history[-1].get("score_after",0)
+    final_difficulty = quiz_history[-1].get("difficulty", 0.5)
+    final_data = {
+        "quiz": formatted_quiz,
+        "finalScore": final_score,
+        "finalDifficultyLevel":final_difficulty
+        }
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f"http://localhost:7470/applications/{application_id}/quiz",
+            f"http://localhost:7470/user/{application_id}/quiz",
             json=final_data
         )
 
-    return {"message": "Quiz ended", "data": response.json()}
+    return {"message": "Quiz ended",
+            "finalScore":final_score,
+            "finalDifficultyLevel":final_difficulty,
+            "data": response.json()
+        }
 
 
 

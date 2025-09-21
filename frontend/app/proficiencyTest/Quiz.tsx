@@ -54,7 +54,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
   useEffect(() => {
     const fetchFirst = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/quiz/start-quiz/68cea5c2663cb8f365924065`);
+        const res = await fetch(`http://127.0.0.1:8000/quiz/start-quiz/${internshipId}`);
         console.log(res);
         const data = await res.json();
         setCurrentQuestion(data);
@@ -128,7 +128,9 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
     console.log("Quiz submitted!");
     await fetch(`http://127.0.0.1:8000/quiz/end-quiz/${internshipId}`,{
       method:"POST",
+      headers:{"Content-Type":"application/json"},
     })
+    console.log("Quiz ended");
   };
 
   if (!currentQuestion) {

@@ -15,6 +15,14 @@ const applicationSchema = new mongoose.Schema({
         answer: { type: String, required: true },
         status: {type: String, required: true}
     }],
+    finalScore:{
+        type: Number,
+        default:0,
+    },
+    finalDifficultyLevel:{
+        type:Number,
+        default:0,
+    },
     documents: [String], //.pdf, .docs
 
     appliedAt: { type: Date, default: Date.now },

@@ -28,6 +28,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
     // generateInternships,
 }) => {
     const router = useRouter();
+    console.log(generatedInternships);
     if (!showGeneratedInternships) {
         return null;
     }
@@ -65,6 +66,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {generatedInternships.map((internship) => (
+                    
                     <div
                         key={internship.id}
                         onClick={() => onInternshipClick(internship)}
@@ -196,9 +198,25 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                             <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
 
                                 <button 
-                                onClick={(e) => {
+                                onClick={async (e) => {
                                     e.stopPropagation();
-                                    router.push(`/proficiencyTest/${internship.id}`);
+                                    try{
+
+                                        const response = await fetch(`/user/${internship.id}/register`,{
+                                            method:"POST",
+                                            headers:{
+                                                "Content-Type":"application/json",
+                                            },
+                                        });
+                                        if(!response.ok){
+                                            throw new Error("Registration failed");
+                                        }
+                                        console.log("Registered successfully");
+                                        router.push(`/proficiencyTest/${internship.id}`);
+
+                                    } catch(error){
+                                        console.error(error);
+                                    }
                                 }}
                                 className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap">
                                     Apply Now
