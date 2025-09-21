@@ -200,22 +200,26 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                                 <button 
                                 onClick={async (e) => {
                                     e.stopPropagation();
-                                    try{
+                                    try {
+                                        const response = await fetch(`http://localhost:7470/user/${internship.id}/register`, {
+                                        method: "POST",
+                                        headers: { 
+                                        "Content-Type": "application/json",
+                                        },
+                                        credentials: "include", // ✅ include cookies/auth
+                                        // optional body if needed
+                                        // body: JSON.stringify({ userId: currentUserId }),
+                                    });
 
-                                        const response = await fetch(`/user/${internship.id}/register`,{
-                                            method:"POST",
-                                            headers:{
-                                                "Content-Type":"application/json",
-                                            },
-                                        });
-                                        if(!response.ok){
-                                            throw new Error("Registration failed");
-                                        }
-                                        console.log("Registered successfully");
-                                        router.push(`/proficiencyTest/${internship.id}`);
+                                    if (!response.ok) {
+                                        throw new Error("Registration failed");
+                                    }
 
-                                    } catch(error){
-                                        console.error(error);
+                                    console.log("Registered successfully");
+                                    router.push(`/proficiencyTest/${internship.id}`);
+
+                                    } catch (error) {
+                                    console.error(error);
                                     }
                                 }}
                                 className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium whitespace-nowrap">

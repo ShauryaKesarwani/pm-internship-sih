@@ -167,7 +167,8 @@ async function getPastInternships(req, res) {
 
 async function registerInternship(req, res) {
     try {
-        const internshipId = req.params;
+        console.log(1);
+        const {internshipId} = req.params;
         const userId = req.user._id;
 
         if (!userId || !internshipId) {
@@ -199,6 +200,8 @@ async function registerInternship(req, res) {
 
         internship.applications.push(application._id);
         await internship.save();
+        console.log(2);
+        console.log(application);
 
         return res.status(200).json({ message: "Registered successfully", application });
     } catch (err) {

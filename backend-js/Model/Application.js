@@ -6,7 +6,7 @@ const applicationSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Submitted", "Under Review", "Shortlisted", "Rejected", "Hired"],
+        enum: ["Submitted", "Under Review", "Shortlisted", "Rejected", "Hired", "Registered"],
         default: "Submitted"
     },
 
