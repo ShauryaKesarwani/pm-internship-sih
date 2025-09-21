@@ -56,20 +56,23 @@ async function appliedInternships(req, res) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const appliedInternships = user.internships.applications.map(app => ({
-            _id: app._id,
-            applicationStatus: app.status,
-            internship: {
-                _id: app.internship._id,
-                title: app.internship.internshipDetails.title,
-                company: app.internship.company.name,
-                duration: app.internship.internshipDetails.duration,
-                location: app.internship.internshipDetails.location,
-                stipend: app.internship.internshipDetails.stipend
-            },
-            documents: app.documents,
-            appliedAt: app.appliedAt
-        }));
+        const appliedInternships = user.internships.applications
+            .filter(app => app.internship)
+            .map(app => ({
+                _id: app._id,
+                applicationStatus: app.status,
+                internship: {
+                    _id: app.internship._id,
+                    title: app.internship?.internshipDetails?.title ?? "N/A",
+                    company: app.internship?.company?.name ?? "Unknown",
+                    duration: app.internship?.internshipDetails?.duration ?? "N/A",
+                    location: app.internship?.internshipDetails?.location ?? "N/A",
+                    stipend: app.internship?.internshipDetails?.stipend ?? "N/A"
+                },
+                documents: app.documents,
+                appliedAt: app.appliedAt
+            }));
+
 
         if (!appliedInternships || appliedInternships.length === 0) {
             return res.status(404).json({ message: "No Applications Found" });
@@ -98,8 +101,6 @@ async function internshipDetails(req, res) {
             return res.status(404).json({message : "No Internship Found for this ID"})
         }
 
-        console.log(i++);
-        console.log(internship)
         return res.status(200).json({
             internship : internship,
         })
