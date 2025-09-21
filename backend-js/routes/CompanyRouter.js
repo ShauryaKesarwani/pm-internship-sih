@@ -15,7 +15,8 @@ const {
     getApplicantProfile,
     updateInternshipDetails,
     deleteInternship,
-    internshipDetails
+    internshipDetails,
+    acceptIntern
 } = require('../controller/InternshipController');
 
 const router = express.Router();
@@ -33,5 +34,6 @@ router.get("/internship/applicant/:applicationId", requireCompanyLogin, getAppli
 router.patch("/internship/:internshipId", requireCompanyLogin, updateInternshipDetails); //
 router.delete("/internship/:internshipId", requireCompanyLogin, deleteInternship); //
 router.get("/internship/:internshipId", requireCompanyLogin, internshipDetails); //
+router.post("/:internshipId/accept/:userId", requireCompanyLogin, acceptIntern); //
 
 module.exports = router;

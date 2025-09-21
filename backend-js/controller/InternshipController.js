@@ -17,16 +17,26 @@ async function createInternship(req, res) {
             applicationDeadline,
             location,
             stipend,
-            eligibility
+            eligibility,
+            pastInternshipId,
         } = req.body;
-        console.log(req.body)
 
-        console.log(1)
         if (!title || !responsibilities || !duration) {
             return res.status(400).json({ message: "Title, description, and duration are required" });
         }
 
-        console.log(2)
+        let exSkills = {
+            pastHired: [],
+            currHired: [],
+        };
+
+        if (pastInternshipId) {
+            const pastInternship = await Internship.findById(pastInternshipId);
+            if (pastInternship) {
+                exSkills.pastHired = pastInternship.internshipDetails.skillsRequired || [];
+            }
+        }
+
         const newInternship = await Internship.create({
             internshipDetails: {
                 title: title || "",
@@ -43,18 +53,17 @@ async function createInternship(req, res) {
                 },
                 stipend: stipend || ""
             },
-            eligibility: eligibility || [],
-            company: req.session.companyId
+            eligibility: eligibility || {},
+            company: req.session.companyId,
+            exSkills
         });
 
-        console.log(3)
         return res.status(201).json({
             message: "Internship created successfully",
             newInternship
         });
     } catch (err) {
-        console.log("error in post Internship");
-        console.log(err);
+        console.error("Error in createInternship:", err);
         return res.status(500).json({ error: "Server Error!!" });
     }
 }
@@ -62,21 +71,15 @@ async function createInternship(req, res) {
 
 async function getPostedInternships(req, res) {
     try {
-        console.log(1)
         const internships = await Internship.find({ company: req.session.companyId })
             .populate("applications")
             .populate("assignments");
 
 
-        console.log(internships)
-        console.log("hehe")
-        console.log(2)
         if(!internships) {
             return res.status(401).json({ message: "No Internship Found" });
         }
 
-        console.log(3)
-        console.log(internships)
         return res.status(200).json({
             message: "Fetched posted internships",
             count: internships.length,
@@ -133,7 +136,7 @@ async function getApplicants(req, res) {
             applications
         });
     } catch (err) {
-        console.error("error in geting application");
+        console.error("error in getting application");
         console.error(err);
         return res.status(500).json({ message: "Server error" });
     }
@@ -194,7 +197,6 @@ async function internshipDetails(req, res) {
 }
 
 
-
 async function updateInternshipDetails(req, res) {
     try {
         const { internshipId } = req.params;
@@ -251,6 +253,65 @@ async function deleteInternship(req, res) {
 }
 
 
+async function acceptIntern(req, res) {
+    try {
+        const { internshipId, userId } = req.params;
+
+        if (!internshipId || !userId) {
+            return res.status(400).json({ message: "internshipId and userId are required" });
+        }
+
+        const internship = await Internship.findById(internshipId);
+        if (!internship) {
+            return res.status(404).json({ message: "Internship not found" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!internship.currentInterns.includes(userId)) {
+            internship.currentInterns.push(userId);
+        }
+
+        if (user.resume?.skills?.length > 0) {
+            internship.exSkills.currHired.push(...user.resume.skills);
+            internship.exSkills.currHired = [...new Set(internship.exSkills.currHired)];
+        }
+
+        user.internships.currentInternship = internship._id;
+
+        const internshipSummary = {
+            title: internship.internshipDetails.title,
+            company: internship.company.toString(),
+            duration: internship.internshipDetails.duration,
+            description: internship.internshipDetails.responsibilities.join(", ")
+        };
+
+        const alreadyExists = user.experience.internships.some(
+            exp => exp.title === internshipSummary.title && exp.company === internshipSummary.company
+        );
+        if (!alreadyExists) {
+            user.experience.internships.push(internshipSummary);
+        }
+
+        await internship.save();
+        await user.save();
+
+        return res.status(200).json({
+            message: "User accepted, skills added, and user profile updated",
+            internshipExSkills: internship.exSkills,
+            userExperience: user.experience
+        });
+
+    } catch (err) {
+        console.error("Error in acceptIntern:", err);
+        return res.status(500).json({ error: "Server Error" });
+    }
+}
+
+
 module.exports = {
     createInternship,
     getPostedInternships,
@@ -259,5 +320,6 @@ module.exports = {
     getApplicantProfile,
     updateInternshipDetails,
     deleteInternship,
-    internshipDetails
+    internshipDetails,
+    acceptIntern,
 }
