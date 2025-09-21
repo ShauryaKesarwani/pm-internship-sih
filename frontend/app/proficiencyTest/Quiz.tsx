@@ -26,16 +26,21 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
   const [submitted, setSubmitted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ---------------- MOCK DATA ----------------
   /*
   const mockData: Question[] = [
     {
       question: "What is the capital of France?",
       options: ["Berlin", "Madrid", "Paris", "Rome"],
+      difficulty: "easy",
+      weight: 1,
+      timer: 30,
     },
     {
       question: "Which language runs in a web browser?",
       options: ["Java", "C", "Python", "JavaScript"],
+      difficulty: "easy",
+      weight: 1,
+      timer: 30,
     },
     {
       question: "What does CSS stand for?",
@@ -45,10 +50,12 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
         "Cascading Simple Sheets",
         "Control Style Sheets",
       ],
+      difficulty: "medium",
+      weight: 2,
+      timer: 45,
     },
   ];
   */
-  // ------------------------------------------
 
   // Fetch questions from backend
   useEffect(() => {
@@ -61,7 +68,6 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
         setTimeLeft(data.timer);
         console.log(data);
       } catch (error) {
-        console.log(1);
         console.error("Failed to fetch questions:", error);
       }
     };
@@ -162,7 +168,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
 
         {/* Question */}
         <div
-          className="bg-[#FCFCFC] w-full sm:w-4/5 md:w-3/5 max-w-[800px] rounded-3xl h-auto md:h-[70%] 
+          className="bg-[#FCFCFC] w-full sm:w-4/5 md:w-4/5 max-w-[1500px] rounded-3xl h-auto md:h-[70%] 
         p-5 sm:p-8 md:p-10 mt-10 sm:mt-16 md:mt-24 
         shadow-[0px_7px_29px_0px_#FF8F76] flex flex-col items-center z-[1]"
         >
@@ -172,7 +178,7 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
             </div>
           </div>
 
-          <h2 className="mb-5">{currentQuestion.question}</h2>
+          <h2 className="mb-5 font-bold text-[30px]">{currentQuestion.question}</h2>
 
           <div className="flex flex-col gap-3 w-full items-center">
             {currentQuestion.options.map((option) => {
@@ -182,8 +188,8 @@ const Quiz: React.FC<Props> = ({internshipId}) => {
                 <button
                   key={option}
                   onClick={() => setSelectedOption(option)}
-                  className={`w-full sm:w-4/5 md:w-3/5 h-[50px] flex items-center justify-center 
-                rounded-lg border-2 font-medium text-[16px] transition-colors
+                  className={`w-full sm:w-4/5 md:w-3/5 py-3 px-4 flex items-center justify-center 
+                rounded-lg border-2 font-bold text-[20px] transition-colors
                 ${
                   isSelected
                     ? "bg-[#FF704D] text-white border-[#FF704D]"
