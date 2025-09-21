@@ -17,7 +17,7 @@ recommender = Recommender()
 def recommend(user_id: str, prompt: str = "", filters: dict = Body(None)):
     # 1. Load candidate data from Mongo
     candidate = get_user_candidate(user_id, prompt)
-
+    print(candidate)
     # 2. Run recommender with filters
     recs = recommender.recommend(candidate, filters=filters)
 

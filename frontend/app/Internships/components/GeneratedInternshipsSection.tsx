@@ -97,10 +97,10 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                                 </div>
                             </div>
                             <div className="flex items-center space-x-1">
-                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                {/* <Star className="w-4 h-4 text-yellow-400 fill-current" />
                                 <span className="text-sm font-medium text-gray-700">
                                     {internship.rating}
-                                </span>
+                                </span> */}
                             </div>
                         </div>
 

@@ -47,10 +47,10 @@ export const InternshipCardList = ({ internship, daysLeft, onLike, onBookmark }:
 
                 <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
+                        {/* <div className="flex items-center space-x-1">
                             <Star size={16} className="text-yellow-400 fill-current" />
                             <span className="text-sm font-medium">{internship.rating}</span>
-                        </div>
+                        </div> */}
                         <InternshipCardSkills skills={internship.skills} limit={3} />
                     </div>
 

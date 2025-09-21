@@ -128,6 +128,60 @@ class Recommender:
         combined_score = 0.7 * exact_score + 0.3 * semantic_score
         return combined_score
 
+    def calculate_interest_score(self, candidate_interests, job):
+        """Calculate how well the job matches candidate's stated interests"""
+        if not candidate_interests:
+            return 0.0
+        
+        # Get job content to match against
+        job_title = job.get("title", "").lower()
+        job_desc = job.get("description", "").lower()
+        job_tags = [tag.lower() for tag in job.get("tags", [])]
+        
+        # Combine all job text
+        job_content = f"{job_title} {job_desc} {' '.join(job_tags)}"
+        
+        # Clean interests
+        clean_interests = [interest.lower().strip() for interest in candidate_interests if interest.strip()]
+        if not clean_interests:
+            return 0.0
+        
+        # 1. Direct keyword matching (exact/substring)
+        direct_matches = 0
+        for interest in clean_interests:
+            if interest in job_content:
+                direct_matches += 1
+        
+        direct_score = direct_matches / len(clean_interests)
+        
+        # 2. Semantic matching using embeddings
+        if len(clean_interests) > 0:
+            # Create expanded job text for better matching
+            job_texts = [job_title, job_desc] + job_tags
+            job_texts = [text for text in job_texts if text.strip()]
+            
+            if job_texts:
+                interest_embs = self.embed(clean_interests)
+                job_embs = self.embed(job_texts)
+                
+                similarities = util.cos_sim(interest_embs, job_embs).cpu().numpy()
+                
+                # For each interest, find max similarity to any job content
+                max_sims = similarities.max(axis=1)  # Max for each interest
+                
+                # Count interests with good matches (threshold 0.5)
+                threshold = 0.5
+                semantic_matches = sum(1 for sim in max_sims if sim >= threshold)
+                semantic_score = semantic_matches / len(clean_interests)
+            else:
+                semantic_score = 0.0
+        else:
+            semantic_score = 0.0
+        
+        # Combine direct and semantic matching
+        combined_interest_score = 0.6 * direct_score + 0.4 * semantic_score
+        return combined_interest_score
+    
     def calculate_domain_relevance(self, candidate, job):
         """Calculate how relevant the job is to candidate's domain/experience"""
         job_tags = job.get("tags", [])
@@ -255,11 +309,19 @@ class Recommender:
             # 3. Domain relevance score
             domain_score = self.calculate_domain_relevance(candidate, job)
 
-            # 4. Combined scoring with adjusted weights
+            # 4. Interest matching score
+            try:
+                candidate_interests = getattr(candidate, 'interests', []) or []
+            except:
+                candidate_interests = []
+            interest_score = self.calculate_interest_score(candidate_interests, job)
+
+            # 5. Combined scoring with adjusted weights (including interests)
             combined_score = (
-                0.3 * semantic_score +    # Reduced weight for general semantic similarity
-                0.5 * skill_score +       # Higher weight for specific skill matching
-                0.2 * domain_score        # Domain alignment
+                0.3 * semantic_score +    # Reduced from 0.3
+                0.5 * skill_score +        # Reduced from 0.5
+                0.2 * domain_score +      # Reduced from 0.2
+                0.25 * interest_score       # NEW: 20% weight for interests
             )
 
             # Apply additional penalties for obvious mismatches
@@ -284,7 +346,8 @@ class Recommender:
                 # Optional: Keep detailed scores as well for debugging
                 "semantic_score": round(semantic_score, 3),
                 "skill_score": round(skill_score, 3),
-                "domain_score": round(domain_score, 3)
+                "domain_score": round(domain_score, 3),
+                "interest_score": round(interest_score, 3)
             })
 
         # Sort by combined score and return top k

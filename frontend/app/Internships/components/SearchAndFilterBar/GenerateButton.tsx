@@ -22,7 +22,7 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
         </>
       ) : (
         <>
-          <span>Personalised recomendations</span>
+          <span>₊✦ Personalised recomendations</span>
         </>
       )}
     </button>

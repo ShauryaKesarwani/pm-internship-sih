@@ -60,10 +60,10 @@ export const InternshipCardGrid = ({ internship, daysLeft, onLike, onBookmark }:
                         <p className="text-gray-600 text-sm">{internship.company}</p>
                     </div>
                 </div>
-                <div className="flex items-center space-x-1">
+                {/* <div className="flex items-center space-x-1">
                     <Star size={16} className="text-yellow-400 fill-current" />
                     <span className="text-sm font-medium">{internship.rating}</span>
-                </div>
+                </div> */}
             </div>
 
             <p className="text-gray-700 text-sm mb-4 line-clamp-2">{internship.description}</p>

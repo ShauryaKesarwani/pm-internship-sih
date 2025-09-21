@@ -108,19 +108,19 @@ const SearchAndFilterBar: React.FC<SearchAndFilterBarProps> = ({
             options={categories}
             allOptionLabel='All Categories'
           />
-          <QuickFilterSelect
+          {/* <QuickFilterSelect
             label='Location'
             value={selectedLocation}
             onChange={e => setSelectedLocation(e.target.value)}
             options={locations}
             allOptionLabel='All Locations'
-          />
+          /> */}
           <QuickFilterSelect
             label='Type'
             value={selectedType}
             onChange={e => setSelectedType(e.target.value)}
             options={['Remote', 'On-site', 'Hybrid']}
-            allOptionLabel='All Types'
+            allOptionLabel='All Location'
           />
 
           <button

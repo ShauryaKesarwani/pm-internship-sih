@@ -15,9 +15,10 @@ def get_user_candidate(user_id: str, prompt: str) -> CandidateRequest:
         raise ValueError(f"User {user_id} not found")
 
     # Build CandidateRequest from user_doc
-    interests = user_doc.get("resume", {}).get("skills", [])  # start with skills
+    # interests = user_doc.get("resume", {}).get("skills", [])  # start with skills
+    interests = []
     if prompt:
-        interests.append(prompt.lower())
+        interests += prompt.lower().split()
 
     # add projects
     projects_list = []

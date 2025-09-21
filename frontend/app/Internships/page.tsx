@@ -131,10 +131,19 @@ const InternshipsPage = () => {
     }
 
     // Stipend filter
-    filtered = filtered.filter(
-      (internship) =>
-        internship.stipend >= minStipend && internship.stipend <= maxStipend
-    );
+    filtered = filtered.filter((internship) => {
+      const raw = internship.stipend;
+
+      // Convert to a plain number:
+      //  - If it's already a number, keep it.
+      //  - If it's a string like "$20,000/month", remove all non-digits and parse.
+      const stipendValue =
+        typeof raw === "number"
+          ? raw
+          : Number(String(raw).replace(/[^\d]/g, "")) || 0;
+
+      return stipendValue >= minStipend && stipendValue <= maxStipend;
+    });
 
     // Sort
     filtered.sort((a, b) => {
@@ -212,15 +221,26 @@ const InternshipsPage = () => {
       const profileData = await profileRes.json();
       const userId = profileData.user._id;
 
+      // Collect filters from state
+      const filters = {
+        category: selectedCategory !== "all" ? selectedCategory : undefined,
+        location: selectedLocation !== "all" ? selectedLocation : undefined,
+        type: selectedType !== "all" ? selectedType : undefined,
+        duration: selectedDuration !== "all" ? selectedDuration : undefined,
+        minStipend,
+        maxStipend,
+      };
+
       // Backend API call for generating internships
       const response = await fetch(
-        `http://127.0.0.1:8000/recommend/${userId}`,
+        `http://127.0.0.1:8000/recommend/${userId}?prompt=${searchTerm}`,
         {
           method: "POST",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ filters }),
         }
       );
 
@@ -417,10 +437,10 @@ const InternshipsPage = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  {/* <Star className="w-4 h-4 text-yellow-400 fill-current" />
                   <span className="text-sm font-medium text-gray-700">
                     {internship.rating}
-                  </span>
+                  </span> */}
                 </div>
               </div>
 
@@ -599,11 +619,11 @@ const InternshipsPage = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center justify-end mb-1">
+                      {/* <div className="flex items-center justify-end mb-1">
                         <Star className="w-5 h-5 text-yellow-300 fill-current mr-1" />
                         <span className="text-xl font-bold">{selectedInternship.rating}</span>
-                      </div>
-                      <div className="text-orange-100 text-sm">Match Rating</div>
+                      </div> */}
+                      {/* <div className="text-orange-100 text-sm">Match Rating</div> */}
                     </div>
                   </div>
                 </div>
