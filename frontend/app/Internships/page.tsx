@@ -29,6 +29,7 @@ import GeneratedInternshipsSection from "./components/GeneratedInternshipsSectio
 
 import { Internship } from "./data/Internship";
 import { dummyInternships } from "./data/dummyInternships";
+import {log} from "console";
 
 const InternshipsPage = () => {
   const [internships, setInternships] = useState<Internship[]>([]);
@@ -238,10 +239,12 @@ const InternshipsPage = () => {
                   ? `${d.location.city}, ${d.location.address}`
                   : "Remote";
 
+              console.log(d.skillsRequired)
+              console.log(rec.tags)
               return {
                 id: rec.job_id,
                 title: d.title,
-                company: internship.company || rec.company,
+                company: internship.company.name,
                 companyLogo: "/api/placeholder/40/40",
                 location: location,
                 type:
@@ -260,7 +263,7 @@ const InternshipsPage = () => {
                   : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                       .toISOString()
                       .split("T")[0],
-                description: `Join ${rec.company} as a ${d.title}. Responsibilities include ${d.responsibilities?.join(
+                description: `Join ${internship.company.name} as a ${d.title}. Responsibilities include ${d.responsibilities?.join(
                   ", "
                 )}.`,
                 requirements: d.skillsRequired || rec.requirements,
@@ -269,7 +272,7 @@ const InternshipsPage = () => {
                 postedDate: new Date(internship.createdAt)
                   .toISOString()
                   .split("T")[0],
-                applicants: Math.floor(Math.random() * 50) + 10,
+                applicants: d.openings,
                 rating: Math.round(rec.combined_score * 5 * 10) / 10,
                 isBookmarked: false,
                 isLiked: false,

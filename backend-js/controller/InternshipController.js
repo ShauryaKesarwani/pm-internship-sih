@@ -1,6 +1,7 @@
 const Company = require("../Model/Company");
 const Internship = require("../Model/Internship");
 const Application = require("../Model/Application");
+const User = require("../Model/User");
 require('dotenv').config();
 
 
@@ -143,23 +144,25 @@ async function getApplicantProfile(req, res) {
     try {
         const { applicationId } = req.params;
 
-        // Populate applicant details and optionally internship in one go
         const application = await Application.findById(applicationId)
-            .populate("applicant")          // applicant details
-            .populate("internship");        // bring internship ref too
+            .populate("applicant")
+            .populate("internship");
 
         if (!application) {
             return res.status(404).json({ message: "Application not found" });
         }
 
-        // Security check: company must own this internship
-        if (application.internship.company.toString() !== req.session.companyId) {
-            return res.status(403).json({ message: "Unauthorized" });
+        if (!req.session.companyId) {
+            return res.status(401).json({ message: "Unauthorized: Please log in" });
+        }
+
+        if (!application.internship || application.internship.company.toString() !== req.session.companyId) {
+            return res.status(403).json({ message: "Unauthorized: You do not own this internship" });
         }
 
         return res.status(200).json({
             message: "Applicant profile fetched",
-            applicant: application.applicant,     // populated applicant data
+            applicant: application.applicant,
             answers: application.answers || [],
             documents: application.documents || [],
             status: application.status,

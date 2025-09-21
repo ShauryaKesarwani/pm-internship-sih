@@ -2,7 +2,7 @@ const User = require("../Model/User");
 const Internship = require("../Model/Internship");
 const Company = require("../Model/Company");
 const Application = require("../Model/Application");
-
+var i = 1;
 
 async function ongoingInternship(req, res) {
     try {
@@ -92,11 +92,15 @@ async function internshipDetails(req, res) {
 
         const internship = await Internship.findById(internshipId)
             .select("-eligibility -assignments -applications")
-            .populate("company", "name uniqueName description industry website location");
+            .populate("company", "name industry website location");
 
         if(!internship) {
             return res.status(404).json({message : "No Internship Found for this ID"})
         }
+
+        console.log(i++);
+        // console.log(internship)
+        console.log(internship.internshipDetails.openings)
         return res.status(200).json({
             internship : internship,
         })
