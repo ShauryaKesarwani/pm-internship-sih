@@ -174,6 +174,10 @@ async function registerInternship(req, res) {
         if (!userId || !internshipId) {
             return res.status(400).json({ error: "Missing userId or internshipId" });
         }
+        console.log(userId)
+        console.log(internshipId)
+
+        console.log(-4);
 
         const user = await User.findById(userId);
         const internship = await Internship.findById(internshipId);
@@ -181,12 +185,14 @@ async function registerInternship(req, res) {
         if (!user || !internship) {
             return res.status(404).json({ error: "User or Internship not found" });
         }
+        console.log(-3);
 
         // Check if user already has a placeholder application
         let application = await Application.findOne({ applicant: userId, internship: internshipId });
         if (application) {
-            return res.status(400).json({ error: "User already registered for this internship" });
+            return res.status(409).json({ error: "User already registered for this internship" });
         }
+        console.log(-2);
 
         application = await Application.create({
             applicant: user._id,
@@ -194,6 +200,7 @@ async function registerInternship(req, res) {
             status: "Registered",
             quiz: [],
         });
+        console.log(-1);
 
         user.internships.applications.push(application._id);
         await user.save();

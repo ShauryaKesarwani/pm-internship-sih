@@ -2,6 +2,7 @@
 
 // React
 import React from "react";
+import { toast, Toaster } from "react-hot-toast";
 
 // Icons
 import { MapPin, Clock, DollarSign, Building2, Users, Star } from "lucide-react";
@@ -34,7 +35,9 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
     }
 
     return (
-        <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl border border-orange-200 p-6 mb-8">
+        <>
+          <Toaster position="top-right" reverseOrder={false} />
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl border border-orange-200 p-6 mb-8">
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
@@ -66,7 +69,7 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {generatedInternships.map((internship) => (
-                    
+
                     <div
                         key={internship.id}
                         onClick={() => onInternshipClick(internship)}
@@ -197,25 +200,31 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                             </div>
                             <div className="flex items-center justify-end sm:justify-normal space-x-2 flex-shrink-0">
 
-                                <button 
+                                <button
                                 onClick={async (e) => {
                                     e.stopPropagation();
                                     try {
+                                        toast.loading("Registering...", { id: "register-toast" });
                                         const response = await fetch(`http://localhost:7470/user/${internship.id}/register`, {
                                         method: "POST",
-                                        headers: { 
+                                        headers: {
                                         "Content-Type": "application/json",
                                         },
                                         credentials: "include", // ✅ include cookies/auth
                                         // optional body if needed
                                         // body: JSON.stringify({ userId: currentUserId }),
                                     });
-
-                                    if (!response.ok) {
+                                        console.log(response.status)
+                                    if(response.status == 409) {
+                                        toast.error("You have already registered for this internship", { id: "register-toast" });
+                                        throw new Error("Already Registered.");
+                                    } else if (!response.ok) {
+                                        toast.error("Registration failed. Please try again", { id: "register-toast" });
                                         throw new Error("Registration failed");
                                     }
 
                                     console.log("Registered successfully");
+                                    toast.success("Registered successfully, moving to quiz...", { id: "register-toast" });
                                     router.push(`/proficiencyTest/${internship.id}`);
 
                                     } catch (error) {
@@ -230,7 +239,8 @@ const GeneratedInternshipsSection: React.FC<GeneratedInternshipsSectionProps> = 
                     </div>
                 ))}
             </div>
-        </div>
+          </div>
+        </>
     );
 };
 
