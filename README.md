@@ -1,5 +1,15 @@
 # PM Internship Scheme – AI-based Smart Internship Recommendation Platform
 
+ ================== SIH - 2025 ===================
+| PM Internship SIH - PS-No 2034                  |
+| Ref Link : https://www.sih.gov.in/sih2025PS     |
+| Name : Al-Based Internship Recommendation Engine|
+|        for PM Internship Scheme                 |
+|                                                 |
+ =================================================
+
+
+
 ## Overview
 
 This project is an AI-powered platform designed to match students with the most suitable internships under the PM Internship Scheme. Leveraging content-based filtering and Natural Language Processing (NLP), the system extracts skills and experiences from student resumes and matches them with job descriptions provided by top companies. The platform aims to provide a fair, inclusive, and efficient internship matching experience, especially for first-generation and rural learners.
